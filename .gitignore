@@ -1,9 +1,14 @@
 __pycache__/
 *.pyc
 output.log
+nohup.out
 .venv/
 venv/
 env/
 *.egg-info/
 .DS_Store
 node_modules/
+.secret_key
+users/users.json
+users/messages.json
+
