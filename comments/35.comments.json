@@ -1,0 +1,132 @@
+[
+  {
+    "id": "72c218ea-4c7c-4440-8a78-76772a820b07",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "自由落寞地说了一句：我忘了开P了",
+    "comment": "开开你的",
+    "anchor": {
+      "start": 512,
+      "end": 528,
+      "quote": "自由落寞地说了一句：我忘了开P了"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-24T11:26:53.282936",
+    "likes": [],
+    "avatar": "114514_07c93cf5.gif"
+  },
+  {
+    "id": "608203a5-439b-41f0-be34-ec0d3f31ca76",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "？，P是防空炮和副炮开关。你以为是啥？算了，你以为是啥就是啥吧",
+    "anchor": null,
+    "parentId": "72c218ea-4c7c-4440-8a78-76772a820b07",
+    "timestamp": "2026-04-24T11:28:14.715439",
+    "likes": [],
+    "avatar": "Zn_Y_57b55b9c.jpg"
+  },
+  {
+    "id": "6ea383eb-6885-4755-ba21-0b9c4ab09a50",
+    "username": "mxz",
+    "nickname": "杰里",
+    "selectedText": "",
+    "comment": "好",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-24T13:25:18.994801",
+    "likes": [],
+    "avatar": null
+  },
+  {
+    "id": "0c2860e1-67fd-4b65-8ed7-6d45165deb79",
+    "username": "MAXHOYO",
+    "nickname": "诺贝尔闻雪奖",
+    "selectedText": "",
+    "comment": "当哥伦布走向砍头场的时候想起了一年半前获得传奇插的日子。海洋也被区区25%砍成了海胆，终究还是变成了英航的大胆，我们的战舰世界到底会变成什么样子😭",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-24T20:57:29.572549",
+    "likes": [
+      "MAXHOYO"
+    ],
+    "avatar": "MAXHOYO_52fa74f0.jpg"
+  },
+  {
+    "id": "da0c157b-ee0d-4310-a8fd-88557ab8bb3e",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "自由落寞地说了一句：我忘了开P了",
+    "comment": "看看你的",
+    "anchor": {
+      "start": 512,
+      "end": 528,
+      "quote": "自由落寞地说了一句：我忘了开P了"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-25T01:03:16.703934",
+    "likes": [],
+    "avatar": "114514_07c93cf5.gif"
+  },
+  {
+    "id": "5acf1cc5-08ca-4e42-bff4-713f0633e98d",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "（非原创）",
+    "comment": "飞原创",
+    "anchor": {
+      "start": 565,
+      "end": 570,
+      "quote": "（非原创）"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-25T01:03:48.643575",
+    "likes": [],
+    "avatar": "114514_07c93cf5.gif"
+  },
+  {
+    "id": "0d7f1fc3-f7f4-403d-bbb0-8e1a9638d761",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "相见",
+    "comment": "相见",
+    "anchor": {
+      "start": 561,
+      "end": 563,
+      "quote": "相见"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-25T01:04:37.517229",
+    "likes": [],
+    "avatar": "114514_07c93cf5.gif"
+  },
+  {
+    "id": "031b474f-8d22-49db-bc05-e3d651648ca3",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "窝窝屎",
+    "comment": "窝窝屎",
+    "anchor": {
+      "start": 182,
+      "end": 185,
+      "quote": "窝窝屎"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-25T01:05:02.541917",
+    "likes": [],
+    "avatar": "114514_07c93cf5.gif"
+  },
+  {
+    "id": "b774eeda-bae0-47ea-9f06-c2a9d7412d1b",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "洛神，从古至今都是美的化身。记一位洛神的陨落，读来有种凄美感。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.777095",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

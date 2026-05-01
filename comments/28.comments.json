@@ -1,0 +1,80 @@
+[
+  {
+    "id": "175fac85-517a-4bb5-84e6-bdd18b6de16b",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "众多狗屎中的一篇鲜花。",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-23T19:52:25.511918",
+    "likes": [
+      "114514",
+      "shenxia",
+      "1",
+      "2314836955"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "dc145bf7-e48d-4136-a84c-40e2bd6463db",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "男人过了20就老了，或许作者是真的老了",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-23T19:55:34.433084",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "Zn_Y_d380cade.png",
+    "role": "user"
+  },
+  {
+    "id": "a7908759-1ece-4b00-9d91-faf4b89596b3",
+    "username": "MAXHOYO",
+    "nickname": "诺贝尔闻雪奖",
+    "selectedText": "",
+    "comment": "相逢已是上上签，何须相思煮余年",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-24T09:13:43.014094",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "MAXHOYO_d7103ff4.gif",
+    "role": "user"
+  },
+  {
+    "id": "08bd3bbd-2646-4bef-b5d5-859c6c2a371f",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "年轻真好",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T01:20:08.338054",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "2314836955_8541dc63.jpg",
+    "role": "user"
+  },
+  {
+    "id": "4f882424-a9fe-4b07-be37-f18c3f8b558f",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "随笔最能看出一个人的真实状态，零散的思绪拼起来反而是最完整的自画像。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.744567",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png",
+    "role": "ai"
+  }
+]

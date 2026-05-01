@@ -1,0 +1,214 @@
+[
+  {
+    "id": "e0aa6db1-f282-4a7a-a772-3fa078645110",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "尚家的少奶奶——她张京华！",
+    "comment": "我跟你有仇吗",
+    "anchor": {
+      "start": 268,
+      "end": 281,
+      "quote": "尚家的少奶奶——她张京华！"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-27T11:23:01.593575",
+    "likes": [
+      "2314836955",
+      "114514"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "09e1bccb-d0cb-4ff8-a4cb-dd4e8bb9ee79",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "“啊，啊√b啊，我不玩了！”",
+    "comment": "这波贪了",
+    "anchor": {
+      "start": 2429,
+      "end": 2443,
+      "quote": "“啊，啊√b啊，我不玩了！”"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-27T11:24:29.711668",
+    "likes": [
+      "mxz",
+      "2314836955",
+      "114514"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "56be4ca4-f63f-4b07-a36f-f345b17fc699",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "阴暗的油腻男学生。",
+    "comment": "别骂了",
+    "anchor": {
+      "start": 2145,
+      "end": 2154,
+      "quote": "阴暗的油腻男学生。"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-27T11:25:11.119963",
+    "likes": [
+      "2314836955",
+      "114514"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "58aa5db5-3323-434b-87bb-2ba0552b42af",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "草率了吧",
+    "anchor": null,
+    "parentId": "09e1bccb-d0cb-4ff8-a4cb-dd4e8bb9ee79",
+    "timestamp": "2026-04-28T02:18:05.462976",
+    "likes": [
+      "2314836955",
+      "114514"
+    ],
+    "avatar": "2314836955_8541dc63.jpg",
+    "role": "user"
+  },
+  {
+    "id": "9f9860b6-8871-4362-a1f4-f00bfba04ddd",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "那是一个宛若谪仙的俊美男子，敞露的胸膛和腹肌无时无刻不在吸引她的视线。",
+    "comment": "前后照应，你看，写了两遍，你自己也觉得这段写的牛逼",
+    "anchor": {
+      "start": 2040,
+      "end": 2075,
+      "quote": "那是一个宛若谪仙的俊美男子，敞露的胸膛和腹肌无时无刻不在吸引她的视线。"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-28T10:55:04.764090",
+    "likes": [
+      "2314836955",
+      "114514"
+    ],
+    "avatar": "Zn_Y_d380cade.png",
+    "role": "user"
+  },
+  {
+    "id": "bc203e03-dc7e-40ea-8d28-8e9f8a400025",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "白得近乎透明的腕骨",
+    "comment": "？什么工艺处理的？透明工艺是，脱钙，脱脂，透明化。来，给我解释解释，什么，tmd，叫tmd，白得近乎透明？",
+    "anchor": {
+      "start": 2514,
+      "end": 2523,
+      "quote": "白得近乎透明的腕骨"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-28T11:03:23.474924",
+    "likes": [
+      "2314836955",
+      "114514"
+    ],
+    "avatar": "Zn_Y_d380cade.png",
+    "role": "user"
+  },
+  {
+    "id": "305577f3-212a-44f0-8444-5b3e849dade2",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "南极庭院技术宝贝",
+    "anchor": null,
+    "parentId": "bc203e03-dc7e-40ea-8d28-8e9f8a400025",
+    "timestamp": "2026-04-28T13:50:50.465633",
+    "likes": [
+      "2314836955",
+      "114514"
+    ],
+    "avatar": "2314836955_8541dc63.jpg",
+    "role": "user"
+  },
+  {
+    "id": "c4114939-b004-4b65-8ffd-78ab3f60e2b6",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "关键是他就长这样啊，我不那么写怎么办？",
+    "anchor": null,
+    "parentId": "9f9860b6-8871-4362-a1f4-f00bfba04ddd",
+    "timestamp": "2026-04-28T13:51:34.120645",
+    "likes": [
+      "2314836955",
+      "114514"
+    ],
+    "avatar": "2314836955_8541dc63.jpg",
+    "role": "user"
+  },
+  {
+    "id": "6cac70e6-b27e-49a0-9a88-33e06a15dda4",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "亢幕义苏其二！系列在延续，世界在展开，期待后续发展。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.867027",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "misaka_mikoto_3ba546a5.png",
+    "role": "ai"
+  },
+  {
+    "id": "450f9b2b-05a0-4181-8b8c-89020eb851d2",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "/static/uploads/stickers/114514/9708425de68b.gif",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-05-01T15:44:56.290895",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "4aa057b0-dd98-447c-ab23-43d99b42355b",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "/static/uploads/stickers/114514/715637f34b23.jpg /static/uploads/stickers/114514/97011d8bf3eb.jpg",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-05-01T15:46:42.505601",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "5c82c710-c4e8-4ccd-aed3-117b1bd3374f",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "/static/uploads/stickers/114514/8be1b6ea8a94.jpg",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-05-01T15:47:15.750343",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  }
+]

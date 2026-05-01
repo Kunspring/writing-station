@@ -1,0 +1,28 @@
+[
+  {
+    "id": "f9f5add6-7151-4e4a-947b-777d9de12ff2",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "旧世界残响，第359天。雨打在废墟上的声音，大概就是旧世界最后的回响吧。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.900229",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  },
+  {
+    "id": "24df8c19-e64a-4561-a7c8-052c031bc513",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "你怎么又写重复文章",
+    "anchor": null,
+    "parentId": "f9f5add6-7151-4e4a-947b-777d9de12ff2",
+    "timestamp": "2026-04-29T12:46:15.797072",
+    "likes": [],
+    "avatar": "114514_1f42592d.gif"
+  }
+]

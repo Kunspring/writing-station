@@ -1,0 +1,30 @@
+[
+  {
+    "id": "529808f1-e358-4a5f-8283-76304c31ad05",
+    "username": "mxz",
+    "nickname": "杰里",
+    "selectedText": "",
+    "comment": "来啦来啦来啦来啦",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-27T16:00:50.587445",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": null
+  },
+  {
+    "id": "336afe0f-7ea4-4861-8017-2dd5363b30a3",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "末日回想，重置版。第一章就2万多字，看得出是认真构筑的世界观，期待后续！",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.814863",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

@@ -1,0 +1,107 @@
+[
+  {
+    "id": "e1963f35-9f72-4c8d-8a9c-47f840bbd991",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "椎名真昼是我的理想型。",
+    "anchor": null,
+    "timestamp": "2026-04-23T01:19:33.817707",
+    "likes": [
+      "114514"
+    ]
+  },
+  {
+    "id": "62474e97-c312-4419-b42c-c630058a8654",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "此人阅番无数，是个高人。",
+    "anchor": null,
+    "timestamp": "2026-04-23T12:57:00.603695",
+    "likes": [
+      "114514"
+    ]
+  },
+  {
+    "id": "a25acba4-c1e7-4410-9308-c3738e0cd7f8",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "你不只看脸，你还看大胸美腿翘臀，还有玉足。。。。⚆_⚆",
+    "comment": "其实大胸翘臀是对最原始的生物本能的欲望。达尔文自然选择学说里说“生物都有过度繁殖的倾向”，人也是动物，当然也不例外，只是我们把它起了一个更高级的词汇叫做“性欲”。大胸，意味着她能给后代带来更多的营养；而翘臀，意味着她的生殖能力强劲。呃，美腿意味着她善于奔跑？对更有趋利避害本能来保护后代？玉足？玉足我编不下去了。",
+    "anchor": {
+      "start": 63,
+      "end": 90,
+      "quote": "你不只看脸，你还看大胸美腿翘臀，还有玉足。。。。⚆_⚆"
+    },
+    "timestamp": "2026-04-23T13:35:24.657615",
+    "likes": [
+      "MAXHOYO"
+    ]
+  },
+  {
+    "id": "765d2c31-47ac-46b5-8fd9-1560226f9042",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "玉足是糟粕。",
+    "anchor": null,
+    "timestamp": "2026-04-23T13:44:59.916899",
+    "likes": [
+      "114514",
+      "shenxia",
+      "MAXHOYO"
+    ]
+  },
+  {
+    "id": "865f6f8e-ec2c-4101-9965-9b63d993de4b",
+    "username": "ata_sama",
+    "nickname": "木兰朵",
+    "selectedText": "",
+    "comment": "太老火喽",
+    "anchor": null,
+    "parentId": "a25acba4-c1e7-4410-9308-c3738e0cd7f8",
+    "timestamp": "2026-04-23T18:58:00.904021",
+    "likes": [
+      "114514"
+    ]
+  },
+  {
+    "id": "8e5f9e41-0de9-439a-bcd4-52e7086b337c",
+    "username": "Aiyoru",
+    "nickname": "Aiyoru",
+    "selectedText": "",
+    "comment": "我去不早说",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-23T23:53:10.616721",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "Aiyoru_4b911c8e.jpg"
+  },
+  {
+    "id": "1e434692-c1e1-46b3-ada5-d733d02fc7fc",
+    "username": "shenxia",
+    "nickname": "霍亨索伦",
+    "selectedText": "",
+    "comment": "看完这个特地去看了下雪乃  感觉欲望不是很强烈",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-24T00:41:51.371578",
+    "likes": [],
+    "avatar": "shenxia_95ac88a2.jpg"
+  },
+  {
+    "id": "9f077482-3755-4308-8d8f-8b43b07cf58c",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "二次元其实是一面镜子，照出的是我们内心渴望成为的样子，或者渴望拥有的世界。写得挺触动人的。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.717133",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

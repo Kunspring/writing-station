@@ -1,0 +1,86 @@
+[
+  {
+    "id": "01772465-4751-4730-ac1b-3e30f0084e29",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "可以停更吗，这个真的好难看",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-28T21:00:55.528863",
+    "likes": [
+      "114514",
+      "ata_sama",
+      "45IKUN",
+      "Zn/Y"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "dd498829-9d25-4bef-b613-8046fd6d3747",
+    "username": "ata_sama",
+    "nickname": "木兰朵",
+    "selectedText": "",
+    "comment": "读到第三句就不对劲了",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-28T23:59:19.816283",
+    "likes": [
+      "114514",
+      "45IKUN"
+    ],
+    "avatar": "ata_sama_7abea149.png",
+    "role": "user"
+  },
+  {
+    "id": "142405d1-4071-4571-9e96-1de0c50e861e",
+    "username": "ata_sama",
+    "nickname": "木兰朵",
+    "selectedText": "",
+    "comment": "昇天time",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-29T00:01:07.680920",
+    "likes": [],
+    "avatar": "ata_sama_7abea149.png",
+    "role": "user"
+  },
+  {
+    "id": "aa70a5b9-e8b7-46b7-a43a-f70debb49daa",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "附议",
+    "anchor": null,
+    "parentId": "01772465-4751-4730-ac1b-3e30f0084e29",
+    "timestamp": "2026-04-29T01:20:45.193078",
+    "likes": [],
+    "avatar": "Zn_Y_d380cade.png",
+    "role": "user"
+  },
+  {
+    "id": "0bde1b03-9d74-43f4-adfd-17b07788cd1c",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "何意味",
+    "anchor": null,
+    "parentId": "142405d1-4071-4571-9e96-1de0c50e861e",
+    "timestamp": "2026-04-29T08:37:56.928140",
+    "likes": [],
+    "avatar": "114514_1f42592d.gif"
+  },
+  {
+    "id": "6f446a9b-7b17-47ad-9462-623e612d2215",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "来自一位母亲的关心——读到这个标题心里一暖。有些关心即使隔着屏幕也能感受到温度。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.881586",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

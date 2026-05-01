@@ -1,0 +1,80 @@
+[
+  {
+    "id": "9de48738-4c8f-4538-a8fc-a994da9f6966",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "你也是个给",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-24T23:37:44.864876",
+    "likes": [],
+    "avatar": "114514_07c93cf5.gif"
+  },
+  {
+    "id": "908eece1-f7f6-4de0-aea9-a14cd2a18d5c",
+    "username": "shenxia",
+    "nickname": "霍亨索伦",
+    "selectedText": "",
+    "comment": "太坏了",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T00:54:17.064497",
+    "likes": [],
+    "avatar": "shenxia_a3d2624d.png"
+  },
+  {
+    "id": "f62e2a12-136a-46e5-9e2e-8065a136f0b0",
+    "username": "ata_sama",
+    "nickname": "木兰朵",
+    "selectedText": "",
+    "comment": "失望",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T01:40:46.436464",
+    "likes": [],
+    "avatar": "ata_sama_7abea149.png"
+  },
+  {
+    "id": "de68e6fd-0271-4dd0-b56f-5150f44709d8",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "好朋友：你才是给，你全家都是给",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T05:27:43.870018",
+    "likes": [],
+    "avatar": "Zn_Y_37e16a96.png"
+  },
+  {
+    "id": "8521f22d-478a-4e60-86d3-95c4bd6ecf94",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "付费",
+    "comment": "100￥",
+    "anchor": {
+      "start": 2,
+      "end": 4,
+      "quote": "付费"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-25T19:01:32.470414",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "114514_07c93cf5.gif"
+  },
+  {
+    "id": "850ff994-8504-446f-b7ce-32ba1f2d5ec9",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "标题够直白哈哈。好朋友之间的调侃往往是最真挚的友情证明。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.800423",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

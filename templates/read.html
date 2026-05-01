@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script crossorigin="anonymous" src="https://polyfill.io/v3/polyfill.min.js?features=default,es2015,es2016,es2017,fetch,Promise,Object.assign,Array.prototype.includes,Element.prototype.closest,CSSVariables,IntersectionObserver"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>阅读 - {{ doc_id }}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+        /* ===== 所有原有样式(完整保留) ===== */
+        :root {
+            --bg: #fdf6ee;
+            --card-bg: #fffbf5;
+            --text: #2d2418;
+            --border: #e8ddd0;
+            --primary: #d4a574;
+            --primary-hover: #c4915a;
+            --secondary: #a09080;
+            --secondary-hover: #8a7a6a;
+            --shadow: rgba(180,140,100,0.08);
+            --noti-bg: #fffbf5;
+            --comment-highlight: rgba(212,165,116,0.10);
+            --search-bg: #f5ede2;
+            --search-glow: rgba(212,165,116,0.10);
+            --bell-bg: #fffbf5;
+            --bell-icon: #a09080;
+            --bell-gradient-start: #d4a574;
+            --bell-gradient-end: #e8c9a0;
+            --avatar-bg: #f5ede2;
+            --button-text: #2d2418;
+body.dark-mode {
+            --bg: #1e1814;
+            --card-bg: #2a221c;
+            --text: #ffffff;
+            --border: #3a3028;
+            --primary: #d4a574;
+            --primary-hover: #c4915a;
+            --secondary: #8a7a6a;
+            --secondary-hover: #a09080;
+            --shadow: rgba(0,0,0,0.3);
+            --noti-bg: #2a221c;
+            --comment-highlight: rgba(212,165,116,0.15);
+            --search-bg: #2a221c;
+            --search-glow: rgba(212,165,116,0.15);
+            --bell-bg: #2a221c;
+            --bell-icon: #a09080;
+            --bell-gradient-start: #d4a574;
+            --bell-gradient-end: #e8c9a0;
+            --avatar-bg: #2a221c;
+            --button-text: #000000;
+            --bg-color-card: #2a221c;
+            --bg-color-alt: #a09080;
+            --font-color: #e8ddd0;
+            --main-color: #e8ddd0;
+        }}
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; scrollbar-width: none !important; }
+        ::-webkit-scrollbar, *::-webkit-scrollbar { display: none !important; }
+        html, body { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+        html::-webkit-scrollbar, body::-webkit-scrollbar, *::-webkit-scrollbar { display: none !important; }
+        body {
+            font-family: 'Noto Serif SC', 'SimSun', 'STSong', '宋体', serif;
+            font-weight: 500;
+            max-width: 800px; margin: 0 auto; padding: 20px; background: var(--bg);
+            line-height: 1.6; color: var(--text); overflow-x: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+        h1 { font-size: 2em; border-bottom: 2px solid var(--border); padding-bottom: 10px; font-weight: 700; }
+        .meta { color: var(--text); opacity: 0.8; margin: 15px 0 30px; font-size: 1.1em; }
+        .content {
+            background: var(--card-bg); padding: 30px; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); white-space: pre-wrap;
+            word-break: break-word; font-size: 1.1em; position: relative;
+            -webkit-user-select: text; user-select: text;
+        }
+        .content img {
+            max-width: 100%;
+            height: auto;
+        }
+        .toolbar { margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
+        button {
+            padding: 10px 20px; background: var(--primary); color: white;
+            border: none; border-radius: 30px; cursor: pointer; font-size: 16px; font-weight: 600;
+            outline: none;
+        }
+        button:hover { background: var(--primary-hover); }
+
+        .basic-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            cursor: pointer;
+            width: auto;
+            min-width: 80px;
+            height: 36px;
+            padding: 0 18px;
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            color: #000000;
+            border-radius: 30px;
+            border: 1px solid #8F9092 !important;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: #000000 !important;
+            text-shadow: 0 1px #fff;
+            white-space: nowrap;
+        }
+        .basic-btn:hover {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 3px 3px #CECFD1 !important;
+        }
+        .basic-btn:active,
+        .basic-btn:focus {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa !important;
+        }
+
+        .back-btn { background: var(--secondary); }
+        .back-btn:hover { background: var(--secondary-hover); }
+
+        .switch {
+            position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+            font-size: 17px;
+            display: inline-block;
+            width: 3.5em;
+            height: 2em;
+            transform-style: preserve-3d;
+            perspective: 500px;
+            animation: toggle__animation 3s infinite;
+        }
+        .switch::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            filter: blur(20px);
+            z-index: -1;
+            border-radius: 50px;
+            background-color: #d8ff99;
+            background-image: radial-gradient(at 21% 46%, hsla(183,65%,60%,1) 0px, transparent 50%),
+            radial-gradient(at 23% 25%, hsla(359,74%,70%,1) 0px, transparent 50%),
+            radial-gradient(at 20% 1%, hsla(267,83%,75%,1) 0px, transparent 50%),
+            radial-gradient(at 86% 87%, hsla(204,69%,68%,1) 0px, transparent 50%),
+            radial-gradient(at 99% 41%, hsla(171,72%,77%,1) 0px, transparent 50%),
+            radial-gradient(at 55% 24%, hsla(138,60%,62%,1) 0px, transparent 50%);
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #fdfefedc;
+            transition: .4s;
+            border-radius: 30px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 1.4em;
+            width: 1.4em;
+            left: 0.3em;
+            bottom: 0.35em;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: rgba(0, 0, 0, 0.17) 0px -10px 10px 0px inset,
+                 rgba(0, 0, 0, 0.09) 0px -1px 15px -8px;
+            background-color: #ff99fd;
+            background-image: radial-gradient(at 81% 39%, hsla(327,79%,79%,1) 0px, transparent 50%),
+            radial-gradient(at 11% 72%, hsla(264,64%,79%,1) 0px, transparent 50%),
+            radial-gradient(at 23% 20%, hsla(75,98%,71%,1) 0px, transparent 50%);
+        }
+        .input__check:checked + .slider {
+            background-color: #17202A;
+        }
+        .input__check:checked + .slider:before {
+            transform: translateX(1.5em);
+        }
+        @keyframes toggle__animation {
+            0%, 100% { transform: translateY(-10px) rotateX(15deg) rotateY(-20deg); }
+            50% { transform: translateY(0px) rotateX(15deg) rotateY(-20deg); }
+        }
+
+        .selection-popup {
+            position: fixed;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 5px 10px;
+            box-shadow: var(--shadow);
+            display: none;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+        }
+        .selection-popup button { padding: 5px 12px; font-size: 14px; background: var(--primary); }
+
+        .comment-anchor {
+            color: var(--primary); border-bottom: 2px dashed var(--primary);
+            cursor: pointer; transition: background 0.2s;
+        }
+        .comment-anchor:hover { background: var(--comment-highlight); }
+
+        .comment-bubble {
+            position: absolute; z-index: 2000;
+            background: var(--card-bg); border-radius: 12px;
+            box-shadow: var(--shadow); border: 1px solid var(--border);
+            padding: 10px 12px; max-width: 260px; min-width: 180px;
+            font-size: 0.9em; line-height: 1.4; color: var(--text);
+            backdrop-filter: blur(4px);
+        }
+        .comment-bubble .bubble-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .comment-avatar {
+            width: 22px; height: 22px; border-radius: 50%; object-fit: cover; background: var(--primary);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 11px;
+        }
+        .comment-avatar-img {
+            width: 22px; height: 22px; border-radius: 50%; object-fit: cover;
+            background-color: var(--avatar-bg);
+        }
+        .bubble-user, .comment-user { font-weight: 600; font-size: 0.95em; }
+        .bubble-time, .comment-time { font-size: 0.7em; opacity: 0.6; margin-left: auto; }
+        .bubble-quote, .comment-quote {
+            background: var(--comment-highlight); padding: 4px 8px; border-radius: 8px;
+            margin: 5px 0; font-style: italic; border-left: 3px solid var(--primary);
+        }
+        .bubble-content, .comment-content { margin: 5px 0; word-break: break-word; }
+        .bubble-actions, .comment-actions {
+            display: flex; align-items: center; gap: 12px; margin-top: 6px;
+        }
+        .like-btn { color: var(--text); cursor: pointer; font-size: 0.85em; }
+        .like-btn.liked { color: var(--like-color); }
+        .reply-btn, .delete-btn { cursor: pointer; font-size: 0.85em; }
+        .reply-btn { color: #6c757d; }
+        .delete-btn { color: var(--danger); }
+
+        .comment-section { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px; }
+        /* 表情包面板基础样式 */
+        .sticker-picker { background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; box-shadow: 0 4px 20px var(--shadow); z-index: 200; overflow: hidden; }
+        .sticker-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.85em; }
+        .sticker-header span { font-weight: 600; }
+        .sticker-upload-btn { padding: 3px 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--primary); color: white; font-size: 0.85em; cursor: pointer; }
+        .sticker-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 10px; max-height: 200px; overflow-y: auto; }
+        .sticker-loading { grid-column: 1 / -1; text-align: center; color: var(--secondary); padding: 20px 0; font-size: 0.8em; }
+        .sticker-btn { font-size: 1.4em; cursor: pointer; border: none; background: none; padding: 0 4px; flex-shrink: 0; }
+        .post-box { display: flex; gap: 10px; margin-bottom: 20px; align-items: flex-start; }
+        .post-box textarea {
+            flex: 1; padding: 8px; border-radius: 12px; border: 1px solid var(--border);
+            background: var(--card-bg); color: var(--text); resize: vertical;
+            font-family: inherit; font-size: 14px;
+        }
+        .comment-card {
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+            padding: 12px; margin: 10px 0; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .reply-box { margin-left: 30px; border-left: 2px solid var(--primary); padding-left: 15px; }
+        .reply-input-area { display: flex; gap: 8px; margin-top: 10px; align-items: flex-start; }
+        .reply-input-area textarea { flex: 1; padding: 8px; border-radius: 12px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); resize: vertical; }
+
+        .perm-panel {
+            position: fixed; top: 0; right: 0; width: 300px; max-width: 90%; height: 100vh;
+            background: var(--panel-bg); border-left: 1px solid var(--border);
+            box-shadow: -4px 0 20px rgba(0,0,0,0.2); z-index: 3000; transform: translateX(100%);
+            transition: transform 0.3s; padding: 20px; overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+        .perm-panel.open { transform: translateX(0); }
+        .perm-panel h3 { margin-top: 0; }
+        .perm-panel label { display: block; margin: 15px 0 5px; font-weight: 600; }
+        .perm-panel select, .perm-panel input {
+            width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border);
+            background: var(--card-bg); color: var(--text); margin-bottom: 10px;
+        }
+        .perm-panel .save-btn, .perm-panel .delete-btn-full {
+            width: 100%; margin-top: 15px; border-radius: 8px; font-weight: 600;
+        }
+        .perm-panel .delete-btn-full { background: var(--danger); }
+        .perm-panel .close-btn { position: absolute; top: 10px; right: 15px; background: none; color: var(--text); font-size: 1.5em; border: none; cursor: pointer; }
+
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .toolbar {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .toolbar button, .back-btn {
+                font-size: 12px !important;
+                padding: 0 12px !important;
+                height: 30px !important;
+                white-space: nowrap;
+            }
+            h1 { font-size: 1.4em; }
+            .content {
+                padding: 16px;
+                font-size: 15px;
+                line-height: 1.7;
+            }
+            .switch { width: 3em; height: 1.7em; bottom: 16px; right: 16px; }
+            .perm-panel {
+                width: calc(100vw - 24px) !important;
+                max-width: calc(100vw - 24px) !important;
+                right: 12px !important;
+                top: 60px !important;
+            }
+            .post-box { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+            .post-box textarea { order: 0; width: 100%; }
+            .post-box .sticker-btn { order: 1; margin-left: auto; }
+            .post-box .basic-btn { order: 2; width: auto; padding: 6px 14px; font-size: 13px; }
+            .reply-box { margin-left: 12px; }
+            .comment-item { flex-direction: column; gap: 6px; }
+            .comment-item .comment-actions { align-self: flex-end; }
+            .meta { font-size: 0.95em; }
+            /* 添加评论框适配 */
+            #commentForm { flex-direction: column; }
+            #commentForm > * { width: 100%; }
+            .comment-sticker-picker { position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; max-height: 50vh !important; border-radius: 16px 16px 0 0 !important; border-bottom: none !important; z-index: 9999 !important; }
+            .comment-sticker-picker .sticker-grid { grid-template-columns: repeat(5, 1fr) !important; max-height: 30vh !important; }
+        }
+        ::selection { background: var(--primary); color: white; }
+
+        .nav-links button, .nav-links button:hover, .nav-links button:focus,
+        .back-btn, .back-btn:hover, .back-btn:focus,
+        .btn-secondary, .btn-secondary:hover, .btn-secondary:focus,
+        .read-btn, .read-btn:hover, .read-btn:focus,
+        .delete-btn, .delete-btn:hover, .delete-btn:focus {
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            background-color: transparent !important;
+            color: #000000 !important;
+            border: 1px solid #8F9092 !important;
+            box-shadow: none !important;
+            text-shadow: 0 1px #fff !important;
+            font-weight: 600 !important;
+            transition: all 0.2s ease !important;
+            font-family: inherit !important;
+            font-size: 14px !important;
+            height: 36px !important;
+            padding: 0 18px !important;
+            border-radius: 30px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+        }
+        .nav-links button:hover, .back-btn:hover, .btn-secondary:hover, .read-btn:hover, .delete-btn:hover {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 3px 3px #CECFD1 !important;
+        }
+        .nav-links button:active, .back-btn:active, .btn-secondary:active, .read-btn:active, .delete-btn:active,
+        .nav-links button:focus, .back-btn:focus, .btn-secondary:focus, .read-btn:focus, .delete-btn:focus {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa !important;
+        }
+        body.dark-mode .nav-links button,
+        body.dark-mode .back-btn,
+        body.dark-mode .btn-secondary,
+        body.dark-mode .read-btn,
+        body.dark-mode .delete-btn,
+        body.dark-mode .nav-links button:hover,
+        body.dark-mode .back-btn:hover,
+        body.dark-mode .btn-secondary:hover,
+        body.dark-mode .read-btn:hover,
+        body.dark-mode .delete-btn:hover,
+        body.dark-mode .nav-links button:focus,
+        body.dark-mode .back-btn:focus,
+        body.dark-mode .btn-secondary:focus,
+        body.dark-mode .read-btn:focus,
+        body.dark-mode .delete-btn:focus {
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            color: #000000 !important;
+            text-shadow: 0 1px #fff !important;
+        }
+        .heart-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            user-select: none;
+            transition: 100ms;
+        }
+        .heart-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+        .heart-checkmark {
+            height: 1.2em;
+            width: 1.2em;
+            transition: 100ms;
+            animation: dislike_effect 400ms ease;
+        }
+        .heart-container input:checked ~ .heart-checkmark path {
+            fill: #ff5353;
+            stroke-width: 0;
+        }
+        .heart-container input:checked ~ .heart-checkmark {
+            animation: like_effect 400ms ease;
+        }
+        .heart-container:hover {
+            transform: scale(1.15);
+        }
+        .like-count {
+            font-size: 0.85em;
+            color: var(--text);
+            line-height: 1;
+        }
+        @keyframes like_effect {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        @keyframes dislike_effect {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* ===== 渐入准备 ===== */
+        body > .toolbar,
+        body > h1,
+        body > .meta,
+        body > #viewsInfo,
+        body > .content,
+        body > .comment-section {
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        .loader {
+            --main-size: 6em;
+            --text-color: #2d2418;
+            --shine-color: #d4a57440;
+            --shadow-color: #b8a090;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+            position: relative;
+            font-size: var(--main-size);
+            font-weight: 900;
+            text-transform: uppercase;
+            color: var(--text-color);
+            width: 7.3em;
+            height: 1em;
+            filter: drop-shadow(0 0 0.05em var(--shine-color));
+        }
+        .loader .text { display: flex; align-items: center; justify-content: center; text-align: center; white-space: nowrap; overflow: hidden; position: absolute; }
+        .loader .text:nth-child(1) { clip-path: polygon(0% 0%, 11.11% 0%, 11.11% 100%, 0% 100%); font-size: calc(var(--main-size) / 20); margin-left: -2.1em; opacity: 0.6; }
+        .loader .text:nth-child(2) { clip-path: polygon(11.11% 0%, 22.22% 0%, 22.22% 100%, 11.11% 100%); font-size: calc(var(--main-size) / 16); margin-left: -0.98em; opacity: 0.7; }
+        .loader .text:nth-child(3) { clip-path: polygon(22.22% 0%, 33.33% 0%, 33.33% 100%, 22.22% 100%); font-size: calc(var(--main-size) / 13); margin-left: -0.33em; opacity: 0.8; }
+        .loader .text:nth-child(4) { clip-path: polygon(33.33% 0%, 44.44% 0%, 44.44% 100%, 33.33% 100%); font-size: calc(var(--main-size) / 11); margin-left: -0.05em; opacity: 0.9; }
+        .loader .text:nth-child(5) { clip-path: polygon(44.44% 0%, 55.55% 0%, 55.55% 100%, 44.44% 100%); font-size: calc(var(--main-size) / 10); margin-left: 0em; opacity: 1; }
+        .loader .text:nth-child(6) { clip-path: polygon(55.55% 0%, 66.66% 0%, 66.66% 100%, 55.55% 100%); font-size: calc(var(--main-size) / 11); margin-left: 0.05em; opacity: 0.9; }
+        .loader .text:nth-child(7) { clip-path: polygon(66.66% 0%, 77.77% 0%, 77.77% 100%, 66.66% 100%); font-size: calc(var(--main-size) / 13); margin-left: 0.33em; opacity: 0.8; }
+        .loader .text:nth-child(8) { clip-path: polygon(77.77% 0%, 88.88% 0%, 88.88% 100%, 77.77% 100%); font-size: calc(var(--main-size) / 16); margin-left: 0.98em; opacity: 0.7; }
+        .loader .text:nth-child(9) { clip-path: polygon(88.88% 0%, 100% 0%, 100% 100%, 88.88% 100%); font-size: calc(var(--main-size) / 20); margin-left: 2.1em; opacity: 0.6; }
+        .loader .text span {  animation: scrolling 2s cubic-bezier(0.1, 0.6, 0.9, 0.4) infinite, shadow 2s cubic-bezier(0.1, 0.6, 0.9, 0.4) infinite; }
+        .loader .text:nth-child(1) span { background: linear-gradient(to right, var(--text-color) 4%, var(--shadow-color) 7%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(2) span { background: linear-gradient(to right, var(--text-color) 9%, var(--shadow-color) 13%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(3) span { background: linear-gradient(to right, var(--text-color) 15%, var(--shadow-color) 18%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(4) span { background: linear-gradient(to right, var(--text-color) 20%, var(--shadow-color) 23%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(6) span { background: linear-gradient(to right, var(--shadow-color) 29%, var(--text-color) 32%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(7) span { background: linear-gradient(to right, var(--shadow-color) 34%, var(--text-color) 37%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(8) span { background: linear-gradient(to right, var(--shadow-color) 39%, var(--text-color) 42%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(9) span { background: linear-gradient(to right, var(--shadow-color) 45%, var(--text-color) 48%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .line { position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; height: 0.05em; width: calc(var(--main-size) / 2); margin-top: 0.9em; border-radius: 0.05em; }
+        body.dark-mode .loader { --text-color: #ffffff; --shine-color: #ffffff40; --shadow-color: #aaaaaa; }
+        @keyframes wobble { 0% { transform: translateX(-90%); } 50% { transform: translateX(90%); } 100% { transform: translateX(-90%); } }
+        @keyframes scrolling { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        @keyframes shadow { 0% { background-position: -98% 0; } 100% { background-position: 102% 0; } }
+
+        #loadingOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); display: flex; justify-content: center; align-items: center;
+            z-index: 9999;
+            transition: opacity 0.4s ease;
+        }
+    
+        
+    
+
+
+        </style>
+</head>
+<body>
+    <div id="loadingOverlay">
+        
+        <div class="loader">
+         <div class="text"><span>吃人吃人吃人吃人</span></div>
+         <div class="text"><span>吃人吃人吃人</span></div>
+         <div class="text"><span>吃人吃人</span></div>
+         <div class="text"><span>吃人吃人</span></div>
+         <div class="text"><span>吃人吃人</span></div>
+         <div class="text"><span>吃人吃人吃人</span></div>
+            <div class="text"><span>吃人吃人吃人吃人</span></div>
+            <div class="text"><span>吃人吃人吃人</span></div>
+
+         <div class="line"></div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <button class="basic-btn" style="background:linear-gradient(to top,#D8D9DB 0%,#fff 80%,#FDFDFD 100%) !important; color:#606060 !important; border:1px solid #8F9092 !important;" onclick="location.href='/edit/{{ doc_id }}'">✏️ 编辑</button>
+        <button class="back-btn" onclick="location.href='/'">← 返回大厅</button>
+        <button id="permBtn" class="basic-btn" style="display:none;" onclick="togglePermPanel()" title="文章权限">⚙</button>
+        <button id="addToCollectionBtn" class="basic-btn" style="display:none;" onclick="showCollectionPicker()">加入合集</button>
+    </div>
+
+    <h1 id="docTitle">加载中...</h1>
+    <div class="meta" id="authorInfo"></div>
+    <div id="viewsInfo" style="margin-bottom:15px; display:none;">阅读量:<span id="viewCount"></span></div>
+    <div class="content" id="contentArea">加载中...</div>
+
+    <div id="selectionPopup" class="selection-popup">
+        <span id="selectedTextPreview"></span>
+        <button id="commentBtn">写评论</button>
+    </div>
+
+    <div id="commentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:3000; justify-content:center; align-items:center;">
+        <div style="background:var(--card-bg); padding:24px; border-radius:16px; max-width:400px; width:90%;">
+            <h3>写评论</h3>
+            <p><strong>引用:</strong><span id="quotePreview"></span></p>
+            <textarea id="commentInput" placeholder="写下你的想法..." style="width:100%; height:80px; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--card-bg); color:var(--text);"></textarea>
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button class="basic-btn" onclick="submitComment()">发布</button>
+                <button class="back-btn" onclick="closeModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="permPanel" class="perm-panel">
+        <button class="close-btn" onclick="togglePermPanel()">✕</button>
+        <h3>文章管理</h3>
+        <label>标题</label>
+        <input type="text" id="titleInput" placeholder="文章标题">
+        <label>编辑权限</label>
+        <select id="editModeSelect" onchange="handleModeChange()">
+            <option value="public">任何人可编辑</option>
+            <option value="authors">仅作者可编辑</option>
+            <option value="restricted">指定用户可编辑</option>
+        </select>
+        <div id="restrictedUsersArea" style="display:none;">
+            <label>允许编辑的用户名(逗号分隔)</label>
+            <input type="text" id="allowedUsersInput" placeholder="如: alice, bob">
+        </div>
+        <button class="save-btn" onclick="savePermission()">保存权限与标题</button>
+        <hr>
+        <label>文章封面</label>
+        <input type="file" id="coverUpload" accept="image/*" onchange="uploadCover()">
+        <div style="margin:5px 0;">
+        </label>
+        </div>
+        <button class="delete-btn-full" onclick="deleteArticle()">删除文章</button>
+    </div>
+
+    <div class="comment-section">
+        <h3>全部评论 (<span id="commentCount">0</span>)</h3>
+        <div class="post-box" style="position:relative;">
+            <div id="currentUserAvatar" style="width:36px;height:36px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:16px;"></div>
+            <textarea id="directCommentInput" placeholder="写下你的评论..." rows="2"></textarea>
+            <button class="sticker-btn" onclick="toggleCommentSticker(event)" title="表情包" style="font-size:1.4em;cursor:pointer;border:none;background:none;padding:0 4px;flex-shrink:0;">😊</button>
+            <button class="basic-btn" onclick="submitDirectComment()">发布</button>
+        </div>
+        <div id="commentStickerPicker" class="sticker-picker comment-sticker-picker" style="display:none;position:absolute;bottom:50px;right:0;width:240px;background:var(--card-bg);border:1px solid var(--border);border-radius:14px;box-shadow:0 4px 20px var(--shadow);z-index:200;overflow:hidden;">
+            <div class="sticker-header" style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid var(--border);font-size:0.85em;">
+                <span style="font-weight:600;">我的表情包</span>
+                <button class="sticker-upload-btn" onclick="document.getElementById('commentStickerFileInput').click()" style="padding:3px 10px;border-radius:12px;border:1px solid var(--border);background:var(--primary);color:white;font-size:0.85em;cursor:pointer;">+ 上传</button>
+                <input type="file" id="commentStickerFileInput" accept="image/*" style="display:none" onchange="uploadCommentSticker(this)">
+            </div>
+            <div class="sticker-grid" id="commentStickerGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px;max-height:180px;overflow-y:auto;">
+                <div class="sticker-loading" style="grid-column:1/-1;text-align:center;color:var(--secondary);padding:20px 0;font-size:0.8em;">加载中...</div>
+            </div>
+        </div>
+        <div id="allCommentsList"></div>
+    </div>
+
+    <label class="switch">
+        <input type="checkbox" class="input__check" id="themeCheckbox">
+        <span class="slider"></span>
+    </label>
+
+    <script>
+        // ===== 统一认证 fetch =====
+        function authFetch(url, options = {}) {
+            const token = localStorage.getItem('token');
+            if (token) {
+                options.headers = {
+                    ...options.headers,
+                    'Authorization': 'Bearer ' + token
+                };
+            }
+            return fetch(url, { ...options, signal: AbortSignal.timeout(15000) });
+        }
+
+        const themeCheckbox = document.getElementById('themeCheckbox');
+        function initTheme() {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            document.body.classList.toggle('dark-mode', isDark);
+            themeCheckbox.checked = isDark;
+        }
+        themeCheckbox.addEventListener('change', function(e) {
+            document.body.classList.toggle('dark-mode', this.checked);
+            localStorage.setItem('theme', this.checked ? 'dark' : 'light');
+        });
+        initTheme();
+
+        const docId = "{{ doc_id }}";
+        let currentUser = null;
+        let comments = [];
+        let selectedRange = null, selectedText = '';
+        let currentBubble = null;
+
+        let originalMarkedHTML = '';
+        const contentDiv = document.getElementById('contentArea');
+        const popup = document.getElementById('selectionPopup');
+        const modal = document.getElementById('commentModal');
+        const commentInput = document.getElementById('commentInput');
+        const quotePreview = document.getElementById('quotePreview');
+
+        async function uploadCover() {
+            const file = document.getElementById('coverUpload').files[0];
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('cover', file);
+            const res = await authFetch(`/api/doc/${docId}/cover`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                alert('封面上传成功');
+                location.reload();
+            } else {
+                alert(data.message || '上传失败');
+            }
+        }
+
+        async function restoreSession() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('请先登录');
+                window.location.href = '/';
+                return false;
+            }
+            try {
+                const res = await authFetch('/api/current_user');
+                const data = await res.json();
+                if (!data.user) throw new Error('token invalid');
+                currentUser = data.user;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                return true;
+            } catch(e) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('currentUser');
+                // 在 alert 后、跳转前
+                alert('登录已过期,请重新登录');
+window.location.href = '/';
+                return false;
+            }
+
+        }
+
+        async function toggleTextStroke() {
+            const enabled = document.getElementById('textStrokeCheckbox').checked;
+            const res = await authFetch(`/api/doc/${docId}/text_stroke`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ enabled })
+            });
+            if (!res.ok) alert('设置失败');
+        }
+
+        async function load() {
+            const res = await authFetch(`/api/doc/${docId}`);
+            if (res.status === 404) {
+                try {
+                    const errData = await res.json();
+                    alert(errData.message || '文章不存在');
+                } catch (e) {
+                    alert('文章不存在');
+                }
+                window.location.href = '/';
+                return;
+            }
+            if (!res.ok) {
+                alert('加载文章失败');
+                window.location.href = '/';
+                return;
+            }
+            const data = await res.json();
+            const titleStr = data.title || docId;
+            document.getElementById('docTitle').innerHTML = data.number ? `#${data.number} ${titleStr}` : titleStr;
+            const authors = data.authors || [];
+            const usernames = data.author_usernames || [];
+            const infoDiv = document.getElementById('authorInfo');
+            if (authors.length === 0) {
+                infoDiv.innerText = '作者:未知';
+            } else {
+                const first = authors[0];
+                const others = authors.slice(1);
+                const firstUser = usernames[0] ? `<a href="/user/${encodeURIComponent(usernames[0])}" style="color: var(--primary);">${first}</a>` : first;
+                const othersHtml = others.map((name, i) => {
+                    const uname = usernames[i+1];
+                    return uname ? `<a href="/user/${encodeURIComponent(uname)}" style="color: var(--primary);">${name}</a>` : name;
+                }).join('、');
+                infoDiv.innerHTML = others.length === 0 ? `✍️ 第一作者:${firstUser}` : `✍️ 第一作者:${firstUser}  |  🙌 协作者:${othersHtml}`;
+            }
+            document.getElementById('viewCount').innerHTML = data.views || 0;
+            document.getElementById('viewsInfo').style.display = 'block';
+            // 渲染文章内容,如果有"作者正在编辑"标记,在顶部插入提醒
+            let renderedHTML = marked.parse(data.content || '(暂无内容)');
+            if (data.is_published_version) {
+                renderedHTML = `<div style="background:#fff3cd;color:#856404;padding:12px;border-radius:8px;margin-bottom:16px;border:1px solid #ffeeba;">📢 作者正在编辑新内容,以下为上次发布版本。</div>` + renderedHTML;
+            }
+            contentDiv.innerHTML = renderedHTML;
+            originalMarkedHTML = contentDiv.innerHTML;   // 后续锚点渲染依赖此变量
+            updateCurrentUserAvatar();
+
+            document.getElementById('titleInput').value = titleStr;
+            document.getElementById('editModeSelect').value = data.edit_mode || 'public';
+            document.getElementById('allowedUsersInput').value = (data.allowed_users || []).join(', ');
+            handleModeChange();
+            const isAdmin = currentUser && (currentUser.role === 'admin' || currentUser.role === 'owner');
+            const isFirstAuthor = currentUser && data.authors && data.authors[0] === currentUser.nickname;
+            document.getElementById('permBtn').style.display = (isFirstAuthor || isAdmin) ? 'inline-block' : 'none';
+            document.getElementById('addToCollectionBtn').style.display = currentUser ? 'inline-block' : 'none';
+            await loadComments();
+            renderAnchors();
+            renderCommentTree();
+
+            // 淡入效果（等待加载动画至少播放1秒）
+            setTimeout(() => {
+    // 1. 先隐藏遮罩，确保无论如何都会被执行
+    const overlay = document.getElementById('loadingOverlay');
+    if (overlay) {
+        overlay.style.transition = 'opacity 0.6s ease';
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+            if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        }, 600);
+    }
+
+    // 2. 淡入内容（对可能不存在的元素做可选的判空）
+    const vi = document.getElementById('viewsInfo');
+    if (vi) vi.style.opacity = '0.8';
+
+    const fadeElements = document.querySelectorAll('.toolbar, h1, .meta, .content, .comment-section');
+    fadeElements.forEach(el => el.style.opacity = '1');
+}, 400);
+        }
+
+        // ===== 表情包功能（评论页） =====
+        // 将内容中的 sticker/图片 URL 渲染为图片
+        function renderCommentContent(text) {
+            if (!text) return '';
+            return text.replace(/(https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp)(?:\?[^\s]*)?)/gi, function(m) {
+                return '<img src="' + m + '" style="max-width:120px;max-height:120px;border-radius:8px;display:inline-block;margin:4px 0;vertical-align:middle;object-fit:cover;" loading="lazy">';
+            }).replace(/(\/static\/uploads\/stickers\/[^\s]+)/g, function(m) {
+                return '<img src="' + m + '" style="max-width:120px;max-height:120px;border-radius:8px;display:inline-block;margin:4px 0;vertical-align:middle;object-fit:cover;" loading="lazy">';
+            });
+        }
+
+        function toggleCommentSticker(e) {
+            e.stopPropagation();
+            var picker = document.getElementById('commentStickerPicker');
+            if (picker.style.display !== 'none') { picker.style.display = 'none'; return; }
+            picker.style.display = 'block';
+            loadCommentStickers();
+        }
+        document.addEventListener('click', function(e) {
+            var picker = document.getElementById('commentStickerPicker');
+            if (picker && !e.target.closest('#commentStickerPicker') && !e.target.closest('.sticker-btn')) {
+                picker.style.display = 'none';
+            }
+        });
+
+        async function loadCommentStickers() {
+            var grid = document.getElementById('commentStickerGrid');
+            try {
+                var res = await authFetch('/api/stickers');
+                var data = await res.json();
+                var stickers = data.stickers || [];
+                if (stickers.length === 0) {
+                    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--secondary);padding:20px 0;font-size:0.8em;">还没有表情包，点「+ 上传」添加</div>';
+                    return;
+                }
+                grid.innerHTML = stickers.map(function(s) {
+                    return '<div style="position:relative;"><img style="width:100%;aspect-ratio:1;border-radius:8px;cursor:pointer;transition:transform 0.15s;object-fit:contain;padding:4px;background:var(--bg);" src="' + s.url + '" onclick="insertCommentSticker(\'' + s.url.replace(/'/g, "\\'") + '\')"><button style="position:absolute;top:-2px;right:-2px;width:18px;height:18px;border-radius:50%;border:none;background:rgba(0,0,0,0.5);color:white;font-size:10px;cursor:pointer;display:none;align-items:center;justify-content:center;line-height:1;" onclick="event.stopPropagation();deleteCommentSticker(\'' + (s.name||'').replace(/'/g, "\\'") + '\')">✕</button></div>';
+                }).join('');
+            } catch(e) {
+                grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--secondary);padding:20px 0;">加载失败</div>';
+            }
+        }
+
+        function insertCommentSticker(url) {
+            var input = document.getElementById('directCommentInput');
+            if (input) input.value += (input.value ? ' ' : '') + url;
+            document.getElementById('commentStickerPicker').style.display = 'none';
+        }
+
+        async function deleteCommentSticker(name) {
+            if (!confirm('删除这个表情包？')) return;
+            try {
+                var res = await authFetch('/api/stickers/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name })
+                });
+                var data = await res.json();
+                if (data.status === 'ok') loadCommentStickers();
+                else alert(data.message || '删除失败');
+            } catch(e) { alert('删除失败'); }
+        }
+
+        async function uploadCommentSticker(input) {
+            var file = input.files[0];
+            if (!file) return;
+            var formData = new FormData();
+            formData.append('sticker', file);
+            try {
+                var res = await authFetch('/api/stickers/upload', { method: 'POST', body: formData });
+                var data = await res.json();
+                if (data.status === 'ok') loadCommentStickers();
+                else alert(data.message || '上传失败');
+            } catch(e) { alert('上传失败'); }
+            input.value = '';
+        }
+
+        function updateCurrentUserAvatar() {
+            const avatarDiv = document.getElementById('currentUserAvatar');
+            if (currentUser) {
+                if (currentUser.avatar) {
+                    avatarDiv.innerHTML = `<img src="/avatars/${currentUser.avatar}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">`;
+                } else {
+                    avatarDiv.innerHTML = currentUser.nickname.charAt(0).toUpperCase();
+                }
+            } else avatarDiv.innerHTML = '?';
+        }
+
+        async function loadComments() {
+            const res = await authFetch(`/api/comments/${docId}`);
+            comments = await res.json();
+            document.getElementById('commentCount').innerHTML = comments.length;
+        }
+
+        function renderAnchors() {
+            contentDiv.innerHTML = originalMarkedHTML;
+            if (!originalMarkedHTML) return;
+            const sorted = [...comments]
+                .filter(c => c.selectedText)
+                .sort((a, b) => b.selectedText.length - a.selectedText.length || 0);
+            sorted.forEach(c => {
+                highlightTextInDOM(contentDiv, c.selectedText, c.id);
+            });
+        }
+
+        function highlightTextInDOM(container, searchText, commentId) {
+            const textNodes = [];
+            const walk = (node) => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    textNodes.push(node);
+                } else {
+                    node.childNodes.forEach(walk);
+                }
+            };
+            walk(container);
+            const fullText = textNodes.map(n => n.nodeValue).join('');
+            const index = fullText.indexOf(searchText);
+            if (index === -1) return;
+            let charCount = 0;
+            let startNode, startOffset, endNode, endOffset;
+            for (const node of textNodes) {
+                const len = node.nodeValue.length;
+                if (startNode === undefined && charCount + len > index) {
+                    startNode = node;
+                    startOffset = index - charCount;
+                }
+                if (startNode !== undefined && endNode === undefined && charCount + len >= index + searchText.length) {
+                    endNode = node;
+                    endOffset = index + searchText.length - charCount;
+                    break;
+                }
+                charCount += len;
+            }
+            if (!startNode || !endNode) return;
+            const range = document.createRange();
+            range.setStart(startNode, startOffset);
+            range.setEnd(endNode, endOffset);
+            const span = document.createElement('span');
+            span.className = 'comment-anchor';
+            span.dataset.commentId = commentId;
+            span.onclick = function(e) { toggleCommentBubble(e, commentId); };
+            try {
+                range.surroundContents(span);
+            } catch(e) {
+                const fragment = range.extractContents();
+                span.appendChild(fragment);
+                range.insertNode(span);
+            }
+        }
+
+        function handleSelection(e) {
+            const selection = window.getSelection();
+            const text = selection.toString().trim();
+            if (text.length > 0 && currentUser) {
+                selectedText = text;
+                selectedRange = selection.getRangeAt(0);
+                const rect = selection.getRangeAt(0).getBoundingClientRect();
+                popup.style.display = 'flex';
+                popup.style.left = rect.left + 'px';
+                popup.style.top = (rect.bottom + 5) + 'px';
+                document.getElementById('selectedTextPreview').innerHTML = text.length > 15 ? text.substring(0,15)+'...' : text;
+            } else {
+                popup.style.display = 'none';
+            }
+        }
+
+        contentDiv.addEventListener('pointerup', () => setTimeout(handleSelection, 150));
+        contentDiv.addEventListener('contextmenu', (e) => {
+            const sel = window.getSelection().toString().trim();
+            if (sel.length > 0) {
+                e.preventDefault();
+                setTimeout(handleSelection, 50);
+            }
+        });
+
+        document.addEventListener('pointerdown', (e) => {
+            if (e.target.closest('.comment-bubble, .comment-card, .reply-input-area, .selection-popup, #commentModal, .perm-panel')) return;
+            if (!popup.contains(e.target) && !contentDiv.contains(e.target)) popup.style.display = 'none';
+        });
+
+        document.getElementById('commentBtn').addEventListener('click', () => {
+            if (!currentUser) return alert('请先登录');
+            quotePreview.innerHTML = selectedText;
+            modal.style.display = 'flex';
+            popup.style.display = 'none';
+        });
+
+        window.closeModal = () => { modal.style.display = 'none'; commentInput.value = ''; };
+
+        window.submitComment = async function() {
+            const commentText = commentInput.value.trim();
+            if (!commentText) return alert('请输入评论');
+            if (!selectedRange) return alert('请重新选中文字');
+            const preRange = document.createRange();
+            preRange.selectNodeContents(contentDiv);
+            preRange.setEnd(selectedRange.startContainer, selectedRange.startOffset);
+            const start = preRange.toString().length, end = start + selectedText.length;
+            const anchor = { start, end, quote: selectedText };
+            const res = await authFetch(`/api/comments/${docId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ selectedText, comment: commentText, anchor, parentId: null })
+            });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                comments.push(data.comment);
+                closeModal();
+                renderAnchors();
+                renderCommentTree();
+                document.getElementById('commentCount').innerHTML = comments.length;
+            } else alert(data.message);
+        };
+
+        window.toggleCommentBubble = function(event, commentId) {
+            event.stopPropagation();
+            const anchorEl = event.currentTarget;
+            if (currentBubble && currentBubble.dataset.commentId === commentId) {
+                currentBubble.remove(); currentBubble = null; return;
+            }
+            if (currentBubble) currentBubble.remove();
+            const comment = comments.find(c => c.id === commentId);
+            if (!comment) return;
+
+            const avatarHtml = comment.avatar
+                ? `<img src="/avatars/${comment.avatar}" onclick="location.href='/user/${encodeURIComponent(comment.username)}'" class="comment-avatar-img" style="cursor:pointer;">`
+                : `<div class="comment-avatar" onclick="location.href='/user/${encodeURIComponent(comment.username)}'" style="cursor:pointer;">${comment.nickname.charAt(0).toUpperCase()}</div>`;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'comment-bubble';
+            bubble.dataset.commentId = commentId;
+            bubble.innerHTML = `
+                <div class="bubble-header">
+                    ${avatarHtml}
+                    <a href="/user/${encodeURIComponent(comment.username)}" class="bubble-user" style="color: var(--text); text-decoration: none;">${comment.nickname}</a>${comment.role === 'ai' ? `<span style="font-size:0.75em; margin-left:4px; background:#8b5cf6; color:white; border-radius:4px; padding:1px 6px; font-weight:600;">AI</span>` : (comment.role && comment.role !== 'user' ? `<span style="font-size:0.8em; margin-left:4px;">${comment.role==='owner'?'👑':'🛡️'}</span>` : '')}
+                    <span class="bubble-time">${new Date(comment.timestamp).toLocaleString()}</span>
+                </div>
+                ${comment.selectedText ? `<div class="bubble-quote">"${comment.selectedText}"</div>` : ''}
+                <div class="bubble-content">${renderCommentContent(comment.comment)}</div>
+                <div class="bubble-actions">
+                    <label class="heart-container">
+    <input type="checkbox" id="bubble-check-${comment.id}" ${comment.likes && comment.likes.includes(currentUser?.username) ? 'checked' : ''} onclick="likeComment(this, '${comment.id}')">
+    <div class="heart-checkmark">
+        <svg viewBox="0 0 256 256"><rect fill="none" height="256" width="256"></rect><path d="M224.6,51.9a59.5,59.5,0,0,0-43-19.9,60.5,60.5,0,0,0-44,17.6L128,59.1l-7.5-7.4C97.2,28.3,59.2,26.3,35.9,47.4a59.9,59.9,0,0,0-2.3,87l83.1,83.1a15.9,15.9,0,0,0,22.6,0l81-81C243.7,113.2,245.6,75.2,224.6,51.9Z" stroke-width="10px" stroke="#000" fill="none"></path></svg>
+    </div>
+    <span class="like-count" id="bubble-like-${comment.id}">${comment.likes?.length || 0}</span>
+</label>
+                    ${comment.username === currentUser?.username ? `<span class="delete-btn" onclick="deleteComment('${comment.id}')">删除</span>` : ''}
+                </div>
+            `;
+            document.body.appendChild(bubble);
+
+            const anchorRect = anchorEl.getBoundingClientRect();
+            let left = anchorRect.left + window.scrollX;
+            let top = anchorRect.bottom + window.scrollY + 5;
+            const bubbleWidth = 270;
+            if (left + bubbleWidth > window.innerWidth + window.scrollX) {
+                left = window.innerWidth + window.scrollX - bubbleWidth - 10;
+            }
+            if (left < window.scrollX + 10) {
+                left = window.scrollX + 10;
+            }
+            bubble.style.left = left + 'px';
+            bubble.style.top = top + 'px';
+            currentBubble = bubble;
+
+            setTimeout(() => {
+                document.addEventListener('pointerdown', function close(e) {
+                    if (currentBubble && !currentBubble.contains(e.target) && !e.target.classList.contains('comment-anchor')) {
+                        currentBubble.remove(); currentBubble = null;
+                        document.removeEventListener('pointerdown', close);
+                    }
+                }, { once: true });
+            }, 10);
+        };
+
+        const likeLocks = {};
+        window.likeComment = async function(checkbox, commentId) {
+            if (!currentUser) {
+                checkbox.checked = !checkbox.checked;
+                return alert('请先登录');
+            }
+            if (likeLocks[commentId]) return;
+            likeLocks[commentId] = true;
+            try {
+                const res = await authFetch(`/api/comments/${docId}/${commentId}/like`, {
+                    method: 'POST'
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    const countSpans = document.querySelectorAll(`#like-count-${commentId}, #bubble-like-${commentId}`);
+                    countSpans.forEach(s => s.innerText = data.likes);
+                    const c = comments.find(x => x.id === commentId);
+                    if (c) {
+                        if (data.action === 'liked') {
+                            c.likes.push(currentUser.username);
+                        } else {
+                            c.likes = c.likes.filter(u => u !== currentUser.username);
+                        }
+                    }
+                    const allCheckboxes = document.querySelectorAll(`#like-check-${commentId}, #bubble-check-${commentId}`);
+                    allCheckboxes.forEach(cb => cb.checked = data.action === 'liked');
+                } else {
+                    checkbox.checked = !checkbox.checked;
+                    alert(data.message || '操作失败');
+                }
+            } catch(e) {
+                checkbox.checked = !checkbox.checked;
+            }
+            likeLocks[commentId] = false;
+        };
+
+        window.deleteComment = async (commentId) => {
+            if (!confirm('确定删除此评论?')) return;
+            const res = await authFetch(`/api/comments/${docId}/${commentId}`, { method: 'DELETE' });
+            if (res.ok) {
+                comments = comments.filter(c => c.id !== commentId);
+                if (currentBubble?.dataset.commentId === commentId) { currentBubble.remove(); currentBubble = null; }
+                renderAnchors(); renderCommentTree();
+                document.getElementById('commentCount').innerHTML = comments.length;
+            } else {
+                const data = await res.json();
+                alert(data.message || '删除失败');
+            }
+        };
+
+        function buildCommentTree(flat) {
+            const map = {}, roots = [];
+            flat.forEach(c => { map[c.id] = { ...c, replies: [] }; });
+            flat.forEach(c => {
+                if (c.parentId && map[c.parentId]) map[c.parentId].replies.push(map[c.id]);
+                else roots.push(map[c.id]);
+            });
+            roots.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+            return roots;
+        }
+
+        function renderCommentNode(comment, isReply = false) {
+            const div = document.createElement('div');
+            div.className = 'comment-card';
+            div.style.marginLeft = isReply ? '20px' : '0';
+            div.dataset.commentId = comment.id;
+            const avatarHtml = comment.avatar ? `<img src="/avatars/${comment.avatar}" onclick="location.href='/user/${encodeURIComponent(comment.username)}'" class="comment-avatar-img" style="cursor:pointer;">` : `<div class="comment-avatar" onclick="location.href='/user/${encodeURIComponent(comment.username)}'" style="cursor:pointer;">${comment.nickname.charAt(0).toUpperCase()}</div>`;
+            div.innerHTML = `
+                <div class="bubble-header">
+                    ${avatarHtml}
+                    <a href="/user/${encodeURIComponent(comment.username)}" class="bubble-user" style="color: var(--text); text-decoration: none;">${comment.nickname}</a>${comment.role === 'ai' ? `<span style="font-size:0.75em; margin-left:4px; background:#8b5cf6; color:white; border-radius:4px; padding:1px 6px; font-weight:600;">AI</span>` : (comment.role && comment.role !== 'user' ? `<span style="font-size:0.8em; margin-left:4px;">${comment.role==='owner'?'👑':'🛡️'}</span>` : '')}
+                    <span class="bubble-time">${new Date(comment.timestamp).toLocaleString()}</span>
+                </div>
+                ${comment.selectedText ? `<div class="bubble-quote">"${comment.selectedText}"</div>` : ''}
+                <div class="bubble-content">${renderCommentContent(comment.comment)}</div>
+                <div class="bubble-actions">
+                    <label class="heart-container">
+    <input type="checkbox" id="like-check-${comment.id}" ${comment.likes && comment.likes.includes(currentUser?.username) ? 'checked' : ''} onclick="likeComment(this, '${comment.id}')">
+    <div class="heart-checkmark">
+        <svg viewBox="0 0 256 256"><rect fill="none" height="256" width="256"></rect><path d="M224.6,51.9a59.5,59.5,0,0,0-43-19.9,60.5,60.5,0,0,0-44,17.6L128,59.1l-7.5-7.4C97.2,28.3,59.2,26.3,35.9,47.4a59.9,59.9,0,0,0-2.3,87l83.1,83.1a15.9,15.9,0,0,0,22.6,0l81-81C243.7,113.2,245.6,75.2,224.6,51.9Z" stroke-width="10px" stroke="#000" fill="none"></path></svg>
+    </div>
+    <span class="like-count" id="like-count-${comment.id}">${comment.likes?.length || 0}</span>
+</label>
+                    <span class="basic-btn" onclick="toggleReplyBox('${comment.id}')">回复</span>
+                    ${comment.username === currentUser?.username ? `<span class="delete-btn" onclick="deleteComment('${comment.id}')">删除</span>` : ''}
+                </div>
+                <div id="reply-box-${comment.id}" class="reply-box hidden"></div>
+                <div class="replies-container" id="replies-${comment.id}"></div>
+            `;
+            const repliesContainer = div.querySelector(`#replies-${comment.id}`);
+            if (comment.replies) {
+                comment.replies.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+                comment.replies.forEach(r => repliesContainer.appendChild(renderCommentNode(r, true)));
+            }
+            return div;
+        }
+
+        function renderCommentTree() {
+            const container = document.getElementById('allCommentsList');
+            if (comments.length === 0) { container.innerHTML = '<p style="opacity:0.7;">暂无评论,快来发表第一条吧~</p>'; return; }
+            const tree = buildCommentTree(comments);
+            container.innerHTML = '';
+            tree.forEach(root => container.appendChild(renderCommentNode(root)));
+        }
+
+        window.toggleReplyBox = function(commentId) {
+            const box = document.getElementById(`reply-box-${commentId}`);
+            if (box.classList.contains('hidden')) {
+                box.classList.remove('hidden');
+                box.innerHTML = `<div class="reply-input-area"><textarea placeholder="写下回复..." rows="2"></textarea><button class="basic-btn"onclick="submitReply('${commentId}')">发送</button><button class="back-btn" onclick="cancelReply('${commentId}')">取消</button></div>`;
+            } else { box.classList.add('hidden'); box.innerHTML = ''; }
+        };
+        window.cancelReply = (id) => { const box = document.getElementById(`reply-box-${id}`); box.classList.add('hidden'); box.innerHTML = ''; };
+        window.submitReply = async (parentId) => {
+            const box = document.getElementById(`reply-box-${parentId}`);
+            const text = box.querySelector('textarea').value.trim();
+            if (!text) return alert('请输入回复');
+            const res = await authFetch(`/api/comments/${docId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ selectedText: '', comment: text, parentId })
+            });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                comments.push(data.comment);
+                await loadComments();
+                renderAnchors(); renderCommentTree();
+                document.getElementById('commentCount').innerHTML = comments.length;
+            }
+        };
+
+        window.submitDirectComment = async () => {
+            if (!currentUser) return alert('请先登录');
+            const inputEl = document.getElementById('directCommentInput');
+            if (!inputEl) return alert('评论框未找到,请刷新页面');
+            const text = inputEl.value.trim();
+            if (!text) return alert('请输入评论');
+            const res = await authFetch(`/api/comments/${docId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ selectedText: '', comment: text, parentId: null })
+            });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                comments.push(data.comment);
+                document.getElementById('directCommentInput').value = '';
+                renderAnchors(); renderCommentTree();
+                document.getElementById('commentCount').innerHTML = comments.length;
+            }
+        };
+
+        window.togglePermPanel = () => document.getElementById('permPanel').classList.toggle('open');
+        window.handleModeChange = () => {
+            document.getElementById('restrictedUsersArea').style.display = document.getElementById('editModeSelect').value === 'restricted' ? 'block' : 'none';
+        };
+        window.savePermission = async () => {
+            if (!currentUser) return alert('请先登录');
+            const mode = document.getElementById('editModeSelect').value;
+            const allowed = mode === 'restricted' ? document.getElementById('allowedUsersInput').value.split(',').map(s => s.trim()).filter(s => s) : [];
+            const title = document.getElementById('titleInput').value.trim();
+            if (title) {
+                await authFetch(`/api/doc/${docId}/title`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title })
+                });
+                document.getElementById('docTitle').innerHTML = document.getElementById('docTitle').innerHTML.replace(/^#\d+\s*/, '').replace(/.*/, title);
+            }
+            const res = await authFetch(`/api/doc/${docId}/permission`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mode, allowed_users: allowed })
+            });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                alert('权限与标题已更新');
+                togglePermPanel();
+            } else {
+                alert(data.message || '更新失败');
+            }
+        };
+        window.deleteArticle = async () => {
+            if (!currentUser) return alert('请先登录');
+            if (!confirm('确定要永久删除这篇文章吗?不可恢复!')) return;
+            const res = await authFetch(`/api/doc/${docId}`, { method: 'DELETE' });
+            if (res.ok) {
+                window.location.href = '/';
+            } else {
+                alert('删除失败,可能没有权限');
+            }
+        };
+
+        (async () => {
+            if (await restoreSession()) {
+                await load();
+            }
+        })();
+
+    // ===== 合集相关 =====
+    async function showCollectionPicker() {
+        if (!currentUser) { alert('请先登录'); return; }
+        const modal = document.getElementById('collectionPickerModal');
+        modal.style.display = 'flex';
+        const list = document.getElementById('collectionPickerList');
+        list.innerHTML = '<p>加载中...</p>';
+
+        const res = await authFetch('/api/my_collections');
+        const collections = await res.json();
+        if (collections.length === 0) {
+            list.innerHTML = '<p>你还没有创建合集,<a href="/collections" style="color:var(--primary);">去创建</a></p>';
+            return;
+        }
+        list.innerHTML = collections.map(c => `
+            <div onclick="addToCollection('${c.id}')" style="padding:12px 16px; border:1px solid var(--border); border-radius:8px; margin-bottom:8px; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='var(--card-bg)'" onmouseout="this.style.background='transparent'">
+                <div style="font-weight:600;">${c.name}</div>
+                <div style="font-size:0.85em; opacity:0.7;">${c.article_count} 篇文章</div>
+            </div>
+        `).join('');
+    }
+
+    async function addToCollection(collectionId) {
+        const docId = '{{ doc_id }}';
+        const res = await authFetch('/api/collections/' + collectionId + '/articles', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ doc_id: docId })
+        });
+        const data = await res.json();
+        if (data.status === 'ok') {
+            alert('已添加到合集!');
+            document.getElementById('collectionPickerModal').style.display = 'none';
+        } else {
+            alert(data.message);
+        }
+    }
+
+</script>
+    <!-- 添加到合集弹窗 -->
+    <script>
+    // 点弹窗外部关闭
+    var pickerModal = document.getElementById('collectionPickerModal');
+    if (pickerModal) {
+        pickerModal.addEventListener('click', function(e) {
+            if (e.target === this) this.style.display = 'none';
+        });
+    }
+    </script>
+    <div class="modal" id="collectionPickerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:var(--card-bg); padding:24px; border-radius:16px; max-width:400px; width:90%; max-height:80vh; overflow-y:auto;">
+            <h3 style="margin-top:0;">添加到合集</h3>
+            <div id="collectionPickerList"></div>
+            <div style="margin-top:12px;">
+                <button class="basic-btn" onclick="document.getElementById('collectionPickerModal').style.display='none'">取消</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

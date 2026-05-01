@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>编辑 - {{ doc_id }}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+        :root {
+            --bg: #fafbfc;
+            --card-bg: #ffffff;
+            --text: #1e1e2f;
+            --border: #ddd;
+            --primary: #0070f3;
+            --primary-hover: #005bb5;
+            --secondary: #6c757d;
+            --secondary-hover: #5a6268;
+            --read-bg: #17a2b8;
+            --read-hover: #138496;
+        }
+        body.dark-mode {
+            --bg: #1a1a2e;
+            --card-bg: #16213e;
+            --text: #e0e0e0;
+            --border: #2a2a4a;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #4b5563;
+            --secondary-hover: #374151;
+            --read-bg: #0e7490;
+            --read-hover: #0891b2;
+        }
+
+        * { -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            font-weight: 500;
+            max-width: 900px; margin: 0 auto; padding: 16px; background: var(--bg);
+            line-height: 1.6; color: var(--text);
+            transition: background 0.3s, color 0.3s;
+        }
+        h1 { font-size: 1.6em; border-bottom: 2px solid var(--border); padding-bottom: 8px; word-break: break-word; font-weight: 700; }
+        .toolbar { 
+            display: flex; flex-wrap: wrap; align-items: center; gap: 10px; 
+            margin: 20px 0; 
+        }
+        textarea { 
+            width: 100%; height: 60vh; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 16px; 
+            padding: 12px; border: 1px solid var(--border); border-radius: 8px; 
+            background: var(--card-bg); color: var(--text);
+            -webkit-text-size-adjust: 100%; line-height: 1.5;
+            outline: none;
+        }
+        button { 
+            padding: 10px 16px; background: var(--primary); color: white; 
+            border: none; border-radius: 30px; cursor: pointer; font-size: 16px; 
+            white-space: nowrap; font-family: inherit; font-weight: 600;
+            transition: background 0.2s; outline: none;
+        }
+        button:hover { background: var(--primary-hover); }
+        .back-btn { background: var(--secondary); }
+        .back-btn:hover { background: var(--secondary-hover); }
+        .read-btn { background: var(--read-bg); }
+        .read-btn:hover { background: var(--read-hover); }
+        .status { color: var(--text); opacity: 0.8; margin-left: 10px; font-size: 14px; }
+        #authorInfo, #viewsInfo { color: var(--text); margin-bottom: 8px; font-size: 0.95em; font-weight: 500; }
+button.theme-toggle,
+button.theme-toggle,
+button.theme-toggle,
+button.theme-toggle,
+.theme-toggle {
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    font-size: 2.5em;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--text) !important;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.2s;
+}
+button.theme-toggle:hover,
+.theme-toggle:hover,
+button.theme-toggle:focus,
+.theme-toggle:focus,
+button.theme-toggle:focus-visible,
+.theme-toggle:focus-visible,
+button.theme-toggle:active,
+.theme-toggle:active {
+    background: transparent !important;
+    outline: none !important;
+    opacity: 0.8;
+}
+button.theme-toggle:hover,
+.theme-toggle:hover,
+button.theme-toggle:focus,
+.theme-toggle:focus,
+button.theme-toggle:focus-visible,
+.theme-toggle:focus-visible,
+button.theme-toggle:active,
+.theme-toggle:active {
+    background: transparent !important;
+    outline: none !important;
+    opacity: 0.8;
+}
+button.theme-toggle:hover,
+.theme-toggle:hover,
+button.theme-toggle:focus,
+.theme-toggle:focus,
+button.theme-toggle:focus-visible,
+.theme-toggle:focus-visible,
+button.theme-toggle:active,
+.theme-toggle:active {
+    background: transparent !important;
+    outline: none !important;
+    opacity: 0.8;
+}
+button.theme-toggle:hover,
+.theme-toggle:hover,
+button.theme-toggle:focus,
+.theme-toggle:focus,
+button.theme-toggle:focus-visible,
+.theme-toggle:focus-visible,
+button.theme-toggle:active,
+.theme-toggle:active {
+    background: transparent !important;
+    outline: none !important;
+    opacity: 0.8;
+}
+        @media (max-width: 600px) {
+            .toolbar button { flex: 1; }
+            button { padding: 10px 14px; font-size: 15px; }
+        }
+        ::selection { background: var(--primary); color: white; }
+    </style>
+</head>
+<body>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>✍️ 正在编辑：<span id="docTitle"></span></h1>
+        <button class="theme-toggle" onclick="toggleTheme(event)">🌙</button>
+    </div>
+    <div id="authorInfo">作者：加载中...</div>
+    <div id="viewsInfo">👁️ 阅读量：<span id="viewCount">0</span></div>
+    
+    <div class="toolbar">
+        <button onclick="saveDoc()">💾 保存</button>
+        <button class="read-btn" onclick="location.href='/read/{{ doc_id }}'">📖 阅读</button>
+        <button class="back-btn" onclick="location.href='/'">← 返回大厅</button>
+        <span id="saveStatus" class="status"></span>
+    </div>
+
+    <textarea id="editor" placeholder="在这里写内容..."></textarea>
+
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+    <script>
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            if (saved === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.querySelectorAll('.theme-toggle').forEach(btn => btn.textContent = '☀️');
+            }
+        }
+        function toggleTheme(event) {
+            const btn = event.currentTarget;
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.querySelectorAll('.theme-toggle').forEach(btn => { btn.textContent = isDark ? '☀️' : '🌙'; });
+        }
+        initTheme();
+
+        const docId = "{{ doc_id }}";
+        let currentUser = null;
+        try { currentUser = JSON.parse(localStorage.getItem('currentUser')); } catch(e) {}
+        if (!currentUser) { alert('请先登录'); window.location.href = '/'; }
+        const nickname = currentUser ? currentUser.nickname : '访客';
+        const username = currentUser ? currentUser.username : '';
+        const socket = io();
+        let editor = document.getElementById('editor');
+        let currentNumber = null;
+
+        async function loadContent() {
+            const res = await authFetch(`/api/doc/${docId}`);
+            const data = await res.json();
+            editor.value = data.content;
+            currentNumber = data.number;
+            document.getElementById('viewCount').innerText = data.views || 0;
+            const titleSpan = document.getElementById('docTitle');
+            if (currentNumber) titleSpan.innerText = `#${currentNumber}  ${docId}`;
+            else titleSpan.innerText = docId;
+            
+            if (!data.authors || data.authors.length === 0) {
+                const createRes = await authFetch('/api/create_doc', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Username': username },
+                    body: JSON.stringify({ docId })
+                });
+                const createData = await createRes.json();
+                currentNumber = createData.number;
+                titleSpan.innerText = `#${currentNumber}  ${docId}`;
+                const res2 = await authFetch(`/api/doc/${docId}`);
+                const data2 = await res2.json();
+                displayAuthors(data2.authors);
+            } else displayAuthors(data.authors);
+        }
+
+        function displayAuthors(authors) {
+            const infoDiv = document.getElementById('authorInfo');
+            if (!authors || authors.length === 0) { infoDiv.innerText = '作者：未知'; return; }
+            const first = authors[0];
+            const others = authors.slice(1);
+            infoDiv.innerText = others.length === 0 ? `✍️ 第一作者：${first}` : `✍️ 第一作者：${first}  |  🙌 协作者：${others.join('、')}`;
+        }
+
+        loadContent();
+        
+        editor.oninput = (e) => socket.emit('edit', { docId, content: e.target.value, username, user: nickname });
+        socket.on('update', (data) => {
+            if (data.docId === docId) {
+                editor.value = data.content;
+                document.getElementById('saveStatus').innerText = `✏️ ${data.user} 正在编辑...`;
+                setTimeout(() => document.getElementById('saveStatus').innerText = '', 1000);
+            }
+        });
+
+        async function saveDoc() {
+            await authFetch(`/api/doc/${docId}`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({content: editor.value})
+            });
+            document.getElementById('saveStatus').innerText = '✅ 已保存';
+            setTimeout(() => document.getElementById('saveStatus').innerText = '', 2000);
+        }
+
+        // 自动保存：每30秒静默保存
+        setInterval(async () => {
+            if (!currentUser) return;
+            try {
+                await authFetch(`/api/doc/${docId}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({content: editor.value})
+                });
+                // 静默保存，不提示
+            } catch(e) {}
+        }, 30000);
+    </script>
+</body>
+</html>

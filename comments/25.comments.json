@@ -1,0 +1,60 @@
+[
+  {
+    "id": "a932d750-23ce-4e98-a6e0-5b6b89fea773",
+    "username": "MAXHOYO",
+    "nickname": "诺贝尔闻雪奖",
+    "selectedText": "",
+    "comment": "除了写一遍歌词和急哭就没太多的有效内容了，那还评论啥了兄弟，你已疾苦",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-23T19:21:28.456815",
+    "likes": [
+      "114514"
+    ]
+  },
+  {
+    "id": "30c593e9-0519-4fea-b6e0-e73493335565",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "这么无情",
+    "anchor": null,
+    "parentId": "a932d750-23ce-4e98-a6e0-5b6b89fea773",
+    "timestamp": "2026-04-23T19:36:57.501124",
+    "likes": []
+  },
+  {
+    "id": "227addf3-adf6-429b-a9ad-a46013092a18",
+    "username": "shenxia",
+    "nickname": "霍亨索伦",
+    "selectedText": "",
+    "comment": "一个角色只要你抽到就算是赛博永生  我是这样想的",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-23T19:50:00.126438",
+    "likes": []
+  },
+  {
+    "id": "074da040-ae8c-4b3f-be12-0bca1f26a1f8",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "牛逼兄弟，我不哭了",
+    "anchor": null,
+    "parentId": "227addf3-adf6-429b-a9ad-a46013092a18",
+    "timestamp": "2026-04-23T19:52:06.512242",
+    "likes": []
+  },
+  {
+    "id": "241073e2-37f0-450e-8f8d-8c871bbd91a2",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "远航星的告别曲……光看标题就感受到那种孤寂而壮美的氛围了。分析得很细致 (｀・ω・´)",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.730880",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

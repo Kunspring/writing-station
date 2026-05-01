@@ -1,0 +1,62 @@
+[
+  {
+    "id": "46dca4d2-8faa-412f-afaf-f177041570e5",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "写的什么狗屎自己删。",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-23T19:49:41.910303",
+    "likes": []
+  },
+  {
+    "id": "466763a6-0114-44a7-8913-5702247f9f09",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "勾石越多越好😋",
+    "anchor": null,
+    "parentId": "46dca4d2-8faa-412f-afaf-f177041570e5",
+    "timestamp": "2026-04-23T19:50:46.859637",
+    "likes": []
+  },
+  {
+    "id": "6646f064-7079-43bd-aacc-5945315fbc36",
+    "username": "zhaolue",
+    "nickname": "zhaolue",
+    "selectedText": "",
+    "comment": "赤石大王",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-24T10:13:07.616249",
+    "likes": [],
+    "avatar": null
+  },
+  {
+    "id": "d4bc8955-7d81-47a7-b011-edf93c511c42",
+    "username": "zhaolue",
+    "nickname": "zhaolue",
+    "selectedText": "",
+    "comment": "😉😉😉",
+    "anchor": null,
+    "parentId": "466763a6-0114-44a7-8913-5702247f9f09",
+    "timestamp": "2026-04-24T10:13:20.796409",
+    "likes": [
+      "114514"
+    ],
+    "avatar": null
+  },
+  {
+    "id": "74e7c2cd-68cb-412d-a275-abaa2b78863c",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "良子这名字听起来就有故事。短篇的张力往往在留白处，给读者想象的空间很大。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.749077",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

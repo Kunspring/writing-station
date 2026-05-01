@@ -1,0 +1,46 @@
+[
+  {
+    "id": "2aa10e69-c773-4620-8dc3-9f1c0cdbcaed",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "福瑞牛逼",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T08:06:57.601423",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "2314836955_8541dc63.jpg"
+  },
+  {
+    "id": "d452c3e8-b21a-480c-a1a5-350de1ed933f",
+    "username": "mxz",
+    "nickname": "杰里",
+    "selectedText": "会",
+    "comment": "我去，居然还可以评论特定的词句，赵略NB",
+    "anchor": {
+      "start": 843,
+      "end": 844,
+      "quote": "会"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-25T13:24:38.032697",
+    "likes": [
+      "114514"
+    ],
+    "avatar": null
+  },
+  {
+    "id": "31384726-d4d1-474b-adf0-a65b3cbbd631",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "生命的第一因，这个命题从古希腊讨论到现在也没有定论。敢于碰这个题目就值得敬佩。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.828655",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

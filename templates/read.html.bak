@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>阅读 - {{ doc_id }}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+        :root {
+            --bg: #fafbfc;
+            --card-bg: #ffffff;
+            --text: #1e1e2f;
+            --border: #ddd;
+            --primary: #0070f3;
+            --primary-hover: #005bb5;
+            --secondary: #6c757d;
+            --secondary-hover: #5a6268;
+            --comment-highlight: rgba(0,112,243,0.15);
+            --like-color: #e74c3c;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --fab-bg: rgba(255,255,255,0.9);
+            --danger: #e74c3c;
+            --danger-hover: #c0392b;
+            --panel-bg: rgba(255,255,255,0.95);
+        }
+        body.dark-mode {
+            --bg: #1a1a2e;
+            --card-bg: #16213e;
+            --text: #e0e0e0;
+            --border: #2a2a4a;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #4b5563;
+            --secondary-hover: #374151;
+            --comment-highlight: rgba(59,130,246,0.25);
+            --shadow: 0 4px 12px rgba(0,0,0,0.3);
+            --fab-bg: rgba(30,41,59,0.9);
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --panel-bg: rgba(22,33,62,0.95);
+        }
+
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            font-weight: 500;
+            max-width: 800px; margin: 0 auto; padding: 20px; background: var(--bg);
+            line-height: 1.6; color: var(--text);
+            transition: background 0.3s, color 0.3s;
+        }
+        h1 { font-size: 2em; border-bottom: 2px solid var(--border); padding-bottom: 10px; font-weight: 700; }
+        .meta { color: var(--text); opacity: 0.8; margin: 15px 0 30px; font-size: 1.1em; }
+        .content {
+            background: var(--card-bg); padding: 30px; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); white-space: pre-wrap;
+            word-break: break-word; font-size: 1.1em; position: relative;
+            -webkit-user-select: text; user-select: text;
+        }
+        .toolbar { margin-bottom: 20px; display: flex; gap: 10px; align-items: center; }
+        button {
+            padding: 10px 20px; background: var(--primary); color: white;
+            border: none; border-radius: 30px; cursor: pointer; font-size: 16px; font-weight: 600;
+            outline: none;
+        }
+        button:hover { background: var(--primary-hover); }
+
+        .basic-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            cursor: pointer;
+            width: auto;
+            min-width: 80px;
+            height: 36px;
+            padding: 0 18px;
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            border-radius: 30px;
+            border: 1px solid #8F9092 !important;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: #606060 !important;
+            text-shadow: 0 1px #fff;
+            white-space: nowrap;
+        }
+        .basic-btn:hover {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 3px 3px #CECFD1 !important;
+        }
+        .basic-btn:active,
+        .basic-btn:focus {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa !important;
+        }
+
+        .back-btn { background: var(--secondary); }
+        .back-btn:hover { background: var(--secondary-hover); }
+
+        /* 夜间滑块开关 */
+        .switch {
+            position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+            font-size: 17px;
+            display: inline-block;
+            width: 3.5em;
+            height: 2em;
+            transform-style: preserve-3d;
+            perspective: 500px;
+            animation: toggle__animation 3s infinite;
+        }
+        .switch::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            filter: blur(20px);
+            z-index: -1;
+            border-radius: 50px;
+            background-color: #d8ff99;
+            background-image: radial-gradient(at 21% 46%, hsla(183,65%,60%,1) 0px, transparent 50%),
+            radial-gradient(at 23% 25%, hsla(359,74%,70%,1) 0px, transparent 50%),
+            radial-gradient(at 20% 1%, hsla(267,83%,75%,1) 0px, transparent 50%),
+            radial-gradient(at 86% 87%, hsla(204,69%,68%,1) 0px, transparent 50%),
+            radial-gradient(at 99% 41%, hsla(171,72%,77%,1) 0px, transparent 50%),
+            radial-gradient(at 55% 24%, hsla(138,60%,62%,1) 0px, transparent 50%);
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #fdfefedc;
+            transition: .4s;
+            border-radius: 30px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 1.4em;
+            width: 1.4em;
+            left: 0.3em;
+            bottom: 0.35em;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: rgba(0, 0, 0, 0.17) 0px -10px 10px 0px inset,
+                 rgba(0, 0, 0, 0.09) 0px -1px 15px -8px;
+            background-color: #ff99fd;
+            background-image: radial-gradient(at 81% 39%, hsla(327,79%,79%,1) 0px, transparent 50%),
+            radial-gradient(at 11% 72%, hsla(264,64%,79%,1) 0px, transparent 50%),
+            radial-gradient(at 23% 20%, hsla(75,98%,71%,1) 0px, transparent 50%);
+        }
+        .input__check:checked + .slider {
+            background-color: #17202A;
+        }
+        .input__check:checked + .slider:before {
+            transform: translateX(1.5em);
+        }
+        @keyframes toggle__animation {
+            0%, 100% { transform: translateY(-10px) rotateX(15deg) rotateY(-20deg); }
+            50% { transform: translateY(0px) rotateX(15deg) rotateY(-20deg); }
+        }
+
+        .selection-popup {
+            position: absolute; background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 20px; padding: 5px 10px; box-shadow: var(--shadow);
+            display: none; align-items: center; gap: 8px; z-index: 1000;
+        }
+        .selection-popup button { padding: 5px 12px; font-size: 14px; background: var(--primary); }
+
+        .comment-anchor {
+            color: var(--primary); border-bottom: 2px dashed var(--primary);
+            cursor: pointer; transition: background 0.2s;
+        }
+        .comment-anchor:hover { background: var(--comment-highlight); }
+
+        .comment-bubble {
+            position: absolute; z-index: 2000;
+            background: var(--card-bg); border-radius: 16px;
+            box-shadow: var(--shadow); border: 1px solid var(--border);
+            padding: 10px 12px; max-width: 260px; min-width: 180px;
+            font-size: 0.9em; line-height: 1.4; color: var(--text);
+            backdrop-filter: blur(4px);
+        }
+        .comment-bubble .bubble-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .comment-avatar {
+            width: 22px; height: 22px; border-radius: 50%; object-fit: cover; background: var(--primary);
+            color: white; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 11px;
+        }
+        .comment-avatar-img { width: 22px; height: 22px; border-radius: 50%; object-fit: cover; }
+        .bubble-user, .comment-user { font-weight: 600; font-size: 0.95em; }
+        .bubble-time, .comment-time { font-size: 0.7em; opacity: 0.6; margin-left: auto; }
+        .bubble-quote, .comment-quote {
+            background: var(--comment-highlight); padding: 4px 8px; border-radius: 8px;
+            margin: 5px 0; font-style: italic; border-left: 3px solid var(--primary);
+        }
+        .bubble-content, .comment-content { margin: 5px 0; word-break: break-word; }
+        .bubble-actions, .comment-actions {
+            display: flex; align-items: center; gap: 12px; margin-top: 6px;
+        }
+        .like-btn { color: var(--text); cursor: pointer; font-size: 0.85em; }
+        .like-btn.liked { color: var(--like-color); }
+        .reply-btn, .delete-btn { cursor: pointer; font-size: 0.85em; }
+        .reply-btn { color: #6c757d; }
+        .delete-btn { color: var(--danger); }
+
+        .comment-section { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px; }
+        .post-box { display: flex; gap: 10px; margin-bottom: 20px; align-items: flex-start; }
+        .post-box textarea {
+            flex: 1; padding: 8px; border-radius: 12px; border: 1px solid var(--border);
+            background: var(--card-bg); color: var(--text); resize: vertical;
+            font-family: inherit; font-size: 14px;
+        }
+        .comment-card {
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px;
+            padding: 12px; margin: 10px 0; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .reply-box { margin-left: 30px; border-left: 2px solid var(--primary); padding-left: 15px; }
+        .reply-input-area { display: flex; gap: 8px; margin-top: 10px; align-items: flex-start; }
+        .reply-input-area textarea { flex: 1; padding: 8px; border-radius: 12px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); resize: vertical; }
+
+        .perm-panel {
+            position: fixed; top: 0; right: 0; width: 300px; max-width: 90%; height: 100vh;
+            background: var(--panel-bg); border-left: 1px solid var(--border);
+            box-shadow: -4px 0 20px rgba(0,0,0,0.2); z-index: 3000; transform: translateX(100%);
+            transition: transform 0.3s; padding: 20px; overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+        .perm-panel.open { transform: translateX(0); }
+        .perm-panel h3 { margin-top: 0; }
+        .perm-panel label { display: block; margin: 15px 0 5px; font-weight: 600; }
+        .perm-panel select, .perm-panel input {
+            width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border);
+            background: var(--card-bg); color: var(--text); margin-bottom: 10px;
+        }
+        .perm-panel .save-btn, .perm-panel .delete-btn-full {
+            width: 100%; margin-top: 15px; border-radius: 8px; font-weight: 600;
+        }
+        .perm-panel .delete-btn-full { background: var(--danger); }
+        .perm-panel .close-btn { position: absolute; top: 10px; right: 15px; background: none; color: var(--text); font-size: 1.5em; border: none; cursor: pointer; }
+
+        @media (max-width: 600px) {
+            body { padding: 16px; }
+            .content { padding: 20px; }
+            .switch { width: 3em; height: 1.7em; bottom: 16px; right: 16px; }
+            .post-box { flex-direction: column; }
+            .post-box button { width: 100%; }
+            .reply-box { margin-left: 15px; }
+        }
+        ::selection { background: var(--primary); color: white; }
+    
+        
+
+    
+        /* 彻底清除旧按钮样式，统一为立体按钮 */
+        .nav-links button, .nav-links button:hover, .nav-links button:focus,
+        .back-btn, .back-btn:hover, .back-btn:focus,
+        .btn-secondary, .btn-secondary:hover, .btn-secondary:focus,
+        .read-btn, .read-btn:hover, .read-btn:focus,
+        .delete-btn {
+        background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+        background-color: transparent !important;
+        color: #606060 !important;
+        border: 1px solid #8F9092 !important;
+        box-shadow: none !important;
+        text-shadow: 0 1px #fff !important;
+        font-weight: 600 !important;
+        transition: all 0.2s ease !important;
+        font-family: inherit !important;
+        font-size: 12px !important;
+        height: 30px !important;
+        padding: 0 12px !important;
+        border-radius: 30px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: nowrap !important;
+    }
+    .delete-btn:hover, .delete-btn:focus {
+        box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 3px 3px #CECFD1 !important;
+    }
+        .nav-links button:hover, .back-btn:hover, .btn-secondary:hover, .read-btn:hover {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 3px 3px #CECFD1 !important;
+        }
+        .nav-links button:active, .back-btn:active, .btn-secondary:active, .read-btn:active,
+        .nav-links button:focus, .back-btn:focus, .btn-secondary:focus, .read-btn:focus {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa !important;
+        }
+        body.dark-mode .nav-links button,
+        body.dark-mode .back-btn,
+        body.dark-mode .btn-secondary,
+        body.dark-mode .read-btn,
+        body.dark-mode .nav-links button:hover,
+        body.dark-mode .back-btn:hover,
+        body.dark-mode .btn-secondary:hover,
+        body.dark-mode .read-btn:hover,
+        body.dark-mode .nav-links button:focus,
+        body.dark-mode .back-btn:focus,
+        body.dark-mode .btn-secondary:focus,
+        body.dark-mode .read-btn:focus {
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            color: #606060 !important;
+            text-shadow: 0 1px #fff !important;
+        }
+    
+    
+        /* 新加载动画 */
+        .loader-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 120px;
+            width: auto;
+            margin: 2rem;
+            font-family: "Poppins", sans-serif;
+            font-size: 1.6em;
+            font-weight: 600;
+            user-select: none;
+            color: #fff;
+            scale: 2;
+        }
+        .loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            z-index: 1;
+            background-color: transparent;
+            mask: repeating-linear-gradient(
+                90deg,
+                transparent 0,
+                transparent 6px,
+                black 7px,
+                black 8px
+            );
+        }
+        .loader::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 50% 50%, #ff0 0%, transparent 50%),
+                radial-gradient(circle at 45% 45%, #f00 0%, transparent 45%),
+                radial-gradient(circle at 55% 55%, #0ff 0%, transparent 45%),
+                radial-gradient(circle at 45% 55%, #0f0 0%, transparent 45%),
+                radial-gradient(circle at 55% 45%, #00f 0%, transparent 45%);
+            mask: radial-gradient(
+                circle at 50% 50%,
+                transparent 0%,
+                transparent 10%,
+                black 25%
+            );
+            animation:
+                transform-animation 2s infinite alternate,
+                opacity-animation 4s infinite;
+            animation-timing-function: cubic-bezier(0.6, 0.8, 0.5, 1);
+        }
+        @keyframes transform-animation {
+            0% { transform: translate(-55%); }
+            100% { transform: translate(55%); }
+        }
+        @keyframes opacity-animation {
+            0%, 100% { opacity: 0; }
+            15% { opacity: 1; }
+            65% { opacity: 0; }
+        }
+        .loader-letter {
+            display: inline-block;
+            opacity: 0;
+            animation: loader-letter-anim 4s infinite linear;
+            z-index: 2;
+        }
+        .loader-letter:nth-child(1) { animation-delay: 0.1s; }
+        .loader-letter:nth-child(2) { animation-delay: 0.205s; }
+        .loader-letter:nth-child(3) { animation-delay: 0.31s; }
+        .loader-letter:nth-child(4) { animation-delay: 0.415s; }
+        .loader-letter:nth-child(5) { animation-delay: 0.521s; }
+        .loader-letter:nth-child(6) { animation-delay: 0.626s; }
+        .loader-letter:nth-child(7) { animation-delay: 0.731s; }
+        @keyframes loader-letter-anim {
+            0% { opacity: 0; }
+            5% { opacity: 1; text-shadow: 0 0 4px #fff; transform: scale(1.1) translateY(-2px); }
+            20% { opacity: 0.2; }
+            100% { opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button class="basic-btn" style="background:linear-gradient(to top,#D8D9DB 0%,#fff 80%,#FDFDFD 100%) !important; color:#606060 !important; border:1px solid #8F9092 !important;" onclick="location.href='/edit/{{ doc_id }}'">✏️ 编辑</button>
+        <button class="back-btn" onclick="location.href='/'" class="basic-btn">← 返回大厅</button>
+        <button id="permBtn" class="basic-btn" style="display:none;" onclick="togglePermPanel()" title="文章权限">⚙</button>
+    </div>
+
+    <h1 id="docTitle">加载中...</h1>
+    <div class="meta" id="authorInfo"></div>
+    <div id="viewsInfo" style="margin-bottom:15px; opacity:0.8;">👁️ 阅读量：<span id="viewCount">0</span></div>
+    <div class="content" id="contentArea">加载中...</div>
+
+    <div id="selectionPopup" class="selection-popup">
+        <span id="selectedTextPreview"></span>
+        <button id="commentBtn">💬 写评论</button>
+    </div>
+
+    <div id="commentModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:3000; justify-content:center; align-items:center;">
+        <div style="background:var(--card-bg); padding:24px; border-radius:16px; max-width:400px; width:90%;">
+            <h3>写评论</h3>
+            <p><strong>引用：</strong><span id="quotePreview"></span></p>
+            <textarea id="commentInput" placeholder="写下你的想法..." style="width:100%; height:80px; padding:8px; border-radius:8px; border:1px solid var(--border); background:var(--card-bg); color:var(--text);"></textarea>
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button onclick="submitComment()">提交</button>
+                <button class="back-btn" onclick="closeModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="permPanel" class="perm-panel">
+        <button class="close-btn" onclick="togglePermPanel()">✕</button>
+        <h3>文章管理</h3>
+        <label>标题</label>
+        <input type="text" id="titleInput" placeholder="文章标题">
+        <label>编辑权限</label>
+        <select id="editModeSelect" onchange="handleModeChange()">
+            <option value="public">任何人可编辑</option>
+            <option value="authors">仅作者可编辑</option>
+            <option value="restricted">指定用户可编辑</option>
+        </select>
+        <div id="restrictedUsersArea" style="display:none;">
+            <label>允许编辑的用户名（逗号分隔）</label>
+            <input type="text" id="allowedUsersInput" placeholder="如: alice, bob">
+        </div>
+        <button class="save-btn" onclick="savePermission()">💾 保存权限与标题</button>
+        <hr>
+        <button class="delete-btn-full" onclick="deleteArticle()">🗑️ 删除文章</button>
+    </div>
+
+    <div class="comment-section">
+        <h3>💬 全部评论 (<span id="commentCount">0</span>)</h3>
+        <div class="post-box">
+            <div id="currentUserAvatar" style="width:36px;height:36px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:16px;"></div>
+            <textarea id="directCommentInput" placeholder="写下你的评论..." rows="2"></textarea>
+            <button class="basic-btn" onclick="submitDirectComment()">发布</button>
+        </div>
+        <div id="allCommentsList"></div>
+    </div>
+
+    <!-- 夜间切换开关 -->
+    <label class="switch">
+        <input type="checkbox" class="input__check" id="themeCheckbox">
+        <span class="slider"></span>
+    </label>
+
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+    <script>
+        // 夜间模式
+        const themeCheckbox = document.getElementById('themeCheckbox');
+        function initTheme() {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            document.body.classList.toggle('dark-mode', isDark);
+            themeCheckbox.checked = isDark;
+        }
+        themeCheckbox.addEventListener('change', function(e) {
+            document.body.classList.toggle('dark-mode', this.checked);
+            localStorage.setItem('theme', this.checked ? 'dark' : 'light');
+        });
+        initTheme();
+
+        const docId = "{{ doc_id }}";
+        let currentUser = null;
+        let comments = [];
+        let selectedRange = null, selectedText = '';
+        let currentBubble = null;
+
+        const contentDiv = document.getElementById('contentArea');
+        const popup = document.getElementById('selectionPopup');
+        const modal = document.getElementById('commentModal');
+        const commentInput = document.getElementById('commentInput');
+        const quotePreview = document.getElementById('quotePreview');
+
+        async function restoreSession() {
+            const stored = localStorage.getItem('currentUser');
+            if (!stored) { window.location.href = '/'; return false; }
+            try {
+                currentUser = JSON.parse(stored);
+                const res = await authFetch('/api/current_user', { headers: { 'X-Username': currentUser.username } });
+                const data = await res.json();
+                if (!data.user) throw new Error();
+                currentUser = data.user;
+                localStorage.setItem('token', data.token);
+localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                return true;
+            } catch(e) {
+                localStorage.removeItem('currentUser');
+                alert('登录已过期，请重新登录');
+                window.location.href = '/';
+                return false;
+            }
+        }
+
+        async function load() {
+            const res = await authFetch(`/api/doc/${docId}`);
+            if (res.status === 404) { alert('文章不存在'); window.location.href = '/'; return; }
+            const data = await res.json();
+            const titleStr = data.title || docId;
+            document.getElementById('docTitle').innerText = data.number ? `#${data.number} ${titleStr}` : titleStr;
+            const authors = data.authors || [];
+            const usernames = data.author_usernames || [];
+            const infoDiv = document.getElementById('authorInfo');
+            if (authors.length === 0) {
+                infoDiv.innerText = '作者：未知';
+            } else {
+                const first = authors[0];
+                const others = authors.slice(1);
+                const firstUser = usernames[0] ? `<a href="/user/${encodeURIComponent(usernames[0])}" style="color: var(--primary);">${first}</a>` : first;
+                const othersHtml = others.map((name, i) => {
+                    const uname = usernames[i+1];
+                    return uname ? `<a href="/user/${encodeURIComponent(uname)}" style="color: var(--primary);">${name}</a>` : name;
+                }).join('、');
+                infoDiv.innerHTML = others.length === 0 ? `✍️ 第一作者：${firstUser}` : `✍️ 第一作者：${firstUser}  |  🙌 协作者：${othersHtml}`;
+            }
+            document.getElementById('viewCount').innerText = data.views || 0;
+            contentDiv.innerText = data.content || '(暂无内容)';
+            updateCurrentUserAvatar();
+
+            document.getElementById('titleInput').value = titleStr;
+            document.getElementById('editModeSelect').value = data.edit_mode || 'public';
+            document.getElementById('allowedUsersInput').value = (data.allowed_users || []).join(', ');
+            handleModeChange();
+            const isFirstAuthor = currentUser && data.authors && data.authors[0] === currentUser.nickname;
+            document.getElementById('permBtn').style.display = isFirstAuthor ? 'inline-block' : 'none';
+
+            await loadComments();
+            renderAnchors();
+            renderCommentTree();
+        }
+
+        function updateCurrentUserAvatar() {
+            const avatarDiv = document.getElementById('currentUserAvatar');
+            if (currentUser) {
+                if (currentUser.avatar) {
+                    avatarDiv.innerHTML = `<img src="/avatars/${currentUser.avatar}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">`;
+                } else {
+                    avatarDiv.innerText = currentUser.nickname.charAt(0).toUpperCase();
+                }
+            } else avatarDiv.innerText = '?';
+        }
+
+        async function loadComments() {
+            const res = await authFetch(`/api/comments/${docId}`);
+            comments = await res.json();
+            document.getElementById('commentCount').innerText = comments.length;
+        }
+
+        function renderAnchors() {
+            let html = contentDiv.innerText;
+            if (!html) return;
+            const sorted = [...comments].sort((a,b) => (b.anchor?.start || 0) - (a.anchor?.start || 0));
+            sorted.forEach(c => {
+                if (c.anchor && c.selectedText && c.anchor.start !== undefined && c.anchor.end !== undefined) {
+                    const start = c.anchor.start, end = c.anchor.end;
+                    const before = html.substring(0, start);
+                    const middle = html.substring(start, end);
+                    const after = html.substring(end);
+                    const span = `<span class="comment-anchor" data-comment-id="${c.id}" onclick="toggleCommentBubble(event, '${c.id}')">${middle}</span>`;
+                    html = before + span + after;
+                }
+            });
+            contentDiv.innerHTML = html;
+        }
+
+        function handleSelection(e) {
+            const selection = window.getSelection();
+            const text = selection.toString().trim();
+            if (text.length > 0 && currentUser) {
+                selectedText = text;
+                selectedRange = selection.getRangeAt(0);
+                const rect = selection.getRangeAt(0).getBoundingClientRect();
+                popup.style.display = 'flex';
+                popup.style.left = (rect.left + window.scrollX) + 'px';
+                popup.style.top = (rect.bottom + window.scrollY + 5) + 'px';
+                document.getElementById('selectedTextPreview').innerText = text.length > 15 ? text.substring(0,15)+'…' : text;
+            } else {
+                popup.style.display = 'none';
+            }
+        }
+
+        contentDiv.addEventListener('pointerup', () => setTimeout(handleSelection, 150));
+        contentDiv.addEventListener('contextmenu', (e) => {
+            const sel = window.getSelection().toString().trim();
+            if (sel.length > 0) {
+                e.preventDefault();
+                setTimeout(handleSelection, 50);
+            }
+        });
+
+        document.addEventListener('pointerdown', (e) => {
+            if (e.target.closest('.comment-bubble, .comment-card, .reply-input-area, .selection-popup, #commentModal, .perm-panel')) return;
+            if (!popup.contains(e.target) && !contentDiv.contains(e.target)) popup.style.display = 'none';
+        });
+
+        document.getElementById('commentBtn').addEventListener('click', () => {
+            if (!currentUser) return alert('请先登录');
+            quotePreview.innerText = selectedText;
+            modal.style.display = 'flex';
+            popup.style.display = 'none';
+        });
+
+        window.closeModal = () => { modal.style.display = 'none'; commentInput.value = ''; };
+
+        window.submitComment = async function() {
+            const commentText = commentInput.value.trim();
+            if (!commentText) return alert('请输入评论');
+            if (!selectedRange) return alert('请重新选中文字');
+            const preRange = document.createRange();
+            preRange.selectNodeContents(contentDiv);
+            preRange.setEnd(selectedRange.startContainer, selectedRange.startOffset);
+            const start = preRange.toString().length, end = start + selectedText.length;
+            const anchor = { start, end, quote: selectedText };
+            const res = await authFetch(`/api/comments/${docId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Username': currentUser.username },
+                body: JSON.stringify({ selectedText, comment: commentText, anchor, parentId: null })
+            });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                comments.push(data.comment);
+                closeModal();
+                renderAnchors();
+                renderCommentTree();
+                document.getElementById('commentCount').innerText = comments.length;
+            } else alert(data.message);
+        };
+
+        window.toggleCommentBubble = function(event, commentId) {
+            event.stopPropagation();
+            const anchorEl = event.currentTarget;
+            if (currentBubble && currentBubble.dataset.commentId === commentId) {
+                currentBubble.remove(); currentBubble = null; return;
+            }
+            if (currentBubble) currentBubble.remove();
+            const comment = comments.find(c => c.id === commentId);
+            if (!comment) return;
+            const avatarHtml = comment.avatar ? `<img src="/avatars/${comment.avatar}" onclick="location.href='/user/${encodeURIComponent(comment.username)}'" class="comment-avatar-img" style="cursor:pointer;">` : `<div class="comment-avatar" onclick="location.href='/user/${encodeURIComponent(comment.username)}'" style="cursor:pointer;">${comment.nickname.charAt(0).toUpperCase()}</div>`;
+            const bubble = document.createElement('div');
+            bubble.className = 'comment-bubble';
+            bubble.dataset.commentId = commentId;
+            bubble.innerHTML = `
+                <div class="bubble-header">
+                    ${avatarHtml}
+                    <a href="/user/${encodeURIComponent(comment.username)}" class="bubble-user" style="color: var(--text); text-decoration: none;">${comment.nickname}</a>
+                    <span class="bubble-time">${new Date(comment.timestamp).toLocaleString()}</span>
+                </div>
+                ${comment.selectedText ? `<div class="bubble-quote">“${comment.selectedText}”</div>` : ''}
+                <div class="bubble-content">${comment.comment}</div>
+                <div class="bubble-actions">
+                    <label class="heart-container">
+    <input type="checkbox" id="bubble-check-${comment.id}" ${comment.likes && comment.likes.includes(currentUser?.username) ? 'checked' : ''} onchange="likeComment(this, '${comment.id}')">
+    <div class="heart-checkmark">
+        <svg viewBox="0 0 256 256"><rect fill="none" height="256" width="256"></rect><path d="M224.6,51.9a59.5,59.5,0,0,0-43-19.9,60.5,60.5,0,0,0-44,17.6L128,59.1l-7.5-7.4C97.2,28.3,59.2,26.3,35.9,47.4a59.9,59.9,0,0,0-2.3,87l83.1,83.1a15.9,15.9,0,0,0,22.6,0l81-81C243.7,113.2,245.6,75.2,224.6,51.9Z" stroke-width="10px" stroke="#000" fill="none"></path></svg>
+    </div>
+    <span class="like-count" id="bubble-like-${comment.id}">${comment.likes?.length || 0}</span>
+</label>
+                    ${comment.username === currentUser?.username ? `<span class="delete-btn" onclick="deleteComment('${comment.id}')">删除</span>` : ''}
+                </div>
+            `;
+            document.body.appendChild(bubble);
+            const anchorRect = anchorEl.getBoundingClientRect();
+            bubble.style.left = Math.min(anchorRect.left, window.innerWidth - 270) + 'px';
+            bubble.style.top = (anchorRect.bottom + 5) + 'px';
+            currentBubble = bubble;
+            setTimeout(() => {
+                document.addEventListener('pointerdown', function close(e) {
+                    if (currentBubble && !currentBubble.contains(e.target) && !e.target.classList.contains('comment-anchor')) {
+                        currentBubble.remove(); currentBubble = null;
+                        document.removeEventListener('pointerdown', close);
+                    }
+                }, { once: true });
+            }, 10);
+        };
+
+        window.likeComment = async (event, commentId) => {
+            event.stopPropagation();
+            if (!currentUser) return alert('请先登录');
+            const res = await authFetch(`/api/comments/${docId}/${commentId}/like`, { method: 'POST', headers: { 'X-Username': currentUser.username } });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                const countSpan1 = document.getElementById(`like-count-${commentId}`);
+                const countSpan2 = document.getElementById(`bubble-like-${commentId}`);
+                const countSpan3 = document.getElementById(`all-like-${commentId}`);
+                [countSpan1, countSpan2, countSpan3].forEach(s => { if (s) s.innerText = data.likes; });
+                const c = comments.find(x => x.id === commentId);
+                if (c) {
+                    if (data.action === 'liked') c.likes.push(currentUser.username);
+                    else c.likes = c.likes.filter(u => u !== currentUser.username);
+                }
+            }
+        };
+
+        window.deleteComment = async (commentId) => {
+            if (!confirm('确定删除此评论？')) return;
+            const res = await authFetch(`/api/comments/${docId}/${commentId}`, {
+                method: 'DELETE',
+                headers: { 'X-Username': currentUser.username }
+            });
+            if (res.ok) {
+                comments = comments.filter(c => c.id !== commentId);
+                if (currentBubble?.dataset.commentId === commentId) { currentBubble.remove(); currentBubble = null; }
+                renderAnchors(); renderCommentTree();
+                document.getElementById('commentCount').innerText = comments.length;
+            } else {
+                const data = await res.json();
+                alert(data.message || '删除失败');
+            }
+        };
+
+        function buildCommentTree(flat) {
+            const map = {}, roots = [];
+            flat.forEach(c => { map[c.id] = { ...c, replies: [] }; });
+            flat.forEach(c => {
+                if (c.parentId && map[c.parentId]) map[c.parentId].replies.push(map[c.id]);
+                else roots.push(map[c.id]);
+            });
+            roots.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+            return roots;
+        }
+
+        function renderCommentNode(comment, isReply = false) {
+            const div = document.createElement('div');
+            div.className = 'comment-card';
+            div.style.marginLeft = isReply ? '20px' : '0';
+            div.dataset.commentId = comment.id;
+            const avatarHtml = comment.avatar ? `<img src="/avatars/${comment.avatar}" onclick="location.href='/user/${encodeURIComponent(comment.username)}'" class="comment-avatar-img" style="cursor:pointer;">` : `<div class="comment-avatar" onclick="location.href='/user/${encodeURIComponent(comment.username)}'" style="cursor:pointer;">${comment.nickname.charAt(0).toUpperCase()}</div>`;
+            div.innerHTML = `
+                <div class="bubble-header">
+                    ${avatarHtml}
+                    <a href="/user/${encodeURIComponent(comment.username)}" class="bubble-user" style="color: var(--text); text-decoration: none;">${comment.nickname}</a>
+                    <span class="bubble-time">${new Date(comment.timestamp).toLocaleString()}</span>
+                </div>
+                ${comment.selectedText ? `<div class="bubble-quote">“${comment.selectedText}”</div>` : ''}
+                <div class="bubble-content">${comment.comment}</div>
+                <div class="bubble-actions">
+                    <label class="heart-container">
+    <input type="checkbox" id="like-check-${comment.id}" ${comment.likes && comment.likes.includes(currentUser?.username) ? 'checked' : ''} onchange="likeComment(this, '${comment.id}')">
+    <div class="heart-checkmark">
+        <svg viewBox="0 0 256 256"><rect fill="none" height="256" width="256"></rect><path d="M224.6,51.9a59.5,59.5,0,0,0-43-19.9,60.5,60.5,0,0,0-44,17.6L128,59.1l-7.5-7.4C97.2,28.3,59.2,26.3,35.9,47.4a59.9,59.9,0,0,0-2.3,87l83.1,83.1a15.9,15.9,0,0,0,22.6,0l81-81C243.7,113.2,245.6,75.2,224.6,51.9Z" stroke-width="10px" stroke="#000" fill="none"></path></svg>
+    </div>
+    <span class="like-count" id="like-count-${comment.id}">${comment.likes?.length || 0}</span>
+</label>
+                    <span class="reply-btn" onclick="toggleReplyBox('${comment.id}')">回复</span>
+                    ${comment.username === currentUser?.username ? `<span class="delete-btn" onclick="deleteComment('${comment.id}')">删除</span>` : ''}
+                </div>
+                <div id="reply-box-${comment.id}" class="reply-box hidden"></div>
+                <div class="replies-container" id="replies-${comment.id}"></div>
+            `;
+            const repliesContainer = div.querySelector(`#replies-${comment.id}`);
+            if (comment.replies) {
+                comment.replies.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+                comment.replies.forEach(r => repliesContainer.appendChild(renderCommentNode(r, true)));
+            }
+            return div;
+        }
+
+        function renderCommentTree() {
+            const container = document.getElementById('allCommentsList');
+            if (comments.length === 0) { container.innerHTML = '<p style="opacity:0.7;">暂无评论，快来发表第一条吧~</p>'; return; }
+            const tree = buildCommentTree(comments);
+            container.innerHTML = '';
+            tree.forEach(root => container.appendChild(renderCommentNode(root)));
+        }
+
+        window.toggleReplyBox = function(commentId) {
+            const box = document.getElementById(`reply-box-${commentId}`);
+            if (box.classList.contains('hidden')) {
+                box.classList.remove('hidden');
+                box.innerHTML = `<div class="reply-input-area"><textarea placeholder="写下回复..." rows="2"></textarea><button onclick="submitReply('${commentId}')">发送</button><button class="back-btn" onclick="cancelReply('${commentId}')">取消</button></div>`;
+            } else { box.classList.add('hidden'); box.innerHTML = ''; }
+        };
+        window.cancelReply = (id) => { const box = document.getElementById(`reply-box-${id}`); box.classList.add('hidden'); box.innerHTML = ''; };
+        window.submitReply = async (parentId) => {
+            const box = document.getElementById(`reply-box-${parentId}`);
+            const text = box.querySelector('textarea').value.trim();
+            if (!text) return alert('请输入回复');
+            const res = await authFetch(`/api/comments/${docId}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Username': currentUser.username }, body: JSON.stringify({ selectedText: '', comment: text, parentId }) });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                comments.push(data.comment);
+                await loadComments();
+                renderAnchors(); renderCommentTree();
+                document.getElementById('commentCount').innerText = comments.length;
+            }
+        };
+
+        window.submitDirectComment = async () => {
+            if (!currentUser) return alert('请先登录');
+            const text = document.getElementById('directCommentInput').value.trim();
+            if (!text) return alert('请输入评论');
+            const res = await authFetch(`/api/comments/${docId}`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Username': currentUser.username }, body: JSON.stringify({ selectedText: '', comment: text, parentId: null }) });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                comments.push(data.comment);
+                document.getElementById('directCommentInput').value = '';
+                renderAnchors(); renderCommentTree();
+                document.getElementById('commentCount').innerText = comments.length;
+            }
+        };
+
+        window.togglePermPanel = () => document.getElementById('permPanel').classList.toggle('open');
+        window.handleModeChange = () => {
+            document.getElementById('restrictedUsersArea').style.display = document.getElementById('editModeSelect').value === 'restricted' ? 'block' : 'none';
+        };
+        window.savePermission = async () => {
+            if (!currentUser) return alert('请先登录');
+            const mode = document.getElementById('editModeSelect').value;
+            const allowed = mode === 'restricted' ? document.getElementById('allowedUsersInput').value.split(',').map(s => s.trim()).filter(s => s) : [];
+            const title = document.getElementById('titleInput').value.trim();
+            if (title) {
+                await authFetch(`/api/doc/${docId}/title`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Username': currentUser.username },
+                    body: JSON.stringify({ title })
+                });
+                document.getElementById('docTitle').innerText = document.getElementById('docTitle').innerText.replace(/^#\d+\s*/, '').replace(/.*/, title);
+            }
+            const res = await authFetch(`/api/doc/${docId}/permission`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-Username': currentUser.username },
+                body: JSON.stringify({ mode, allowed_users: allowed })
+            });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                alert('权限与标题已更新');
+                togglePermPanel();
+            } else {
+                alert(data.message || '更新失败');
+            }
+        };
+        window.deleteArticle = async () => {
+            if (!currentUser) return alert('请先登录');
+            if (!confirm('确定要永久删除这篇文章吗？不可恢复！')) return;
+            const res = await authFetch(`/api/doc/${docId}`, { method: 'DELETE', headers: { 'X-Username': currentUser.username } });
+            if (res.ok) {
+                window.location.href = '/';
+            } else {
+                alert('删除失败，可能没有权限');
+            }
+        };
+
+        (async () => { if (await restoreSession()) await load(); })();
+    </script>
+</body>
+</html>

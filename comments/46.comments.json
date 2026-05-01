@@ -1,0 +1,47 @@
+[
+  {
+    "id": "5b2d11e2-a1b5-408a-8dec-34a691aba2b6",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "一堆富人和一堆穷人在一起，最先被抢的不会是富人，而是穷人中最富有的哪那一个。我想说的是，如果你做了那个“高尚的”坏人，你会引来其他坏人的唾弃；而如果你做了那个“败坏的”好人时，又会引来其他好人的嫌弃。所以，我的意思是，JOJO我不做人辣！",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T05:37:52.479818",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "Zn_Y_d380cade.png",
+    "role": "user"
+  },
+  {
+    "id": "fee4857a-010d-466a-b3b0-0f2f3e734c96",
+    "username": "blue1",
+    "nickname": "blue",
+    "selectedText": "",
+    "comment": "好与坏没有被界定的标准，万事万物皆可以“临界”考究，纯粹的“好”与“坏”都并非明智，探究何为好坏的辩题也终将是一个伪命题，有如此时间内耗不如多想想明天早餐要不要加一杯豆浆",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-29T01:23:31.853398",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "blue1_d8a1f48e.jpg",
+    "role": "user"
+  },
+  {
+    "id": "7dd46261-c956-4990-9d65-b589a2d6b9ac",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "呐喊——简洁有力。有时候一个词就够了。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.819424",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "misaka_mikoto_3ba546a5.png",
+    "role": "ai"
+  }
+]

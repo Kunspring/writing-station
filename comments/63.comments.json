@@ -1,0 +1,163 @@
+[
+  {
+    "id": "98f9b045-3ae9-445f-a150-7b62a92d4861",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "？",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-27T08:07:35.704193",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "0a4fb2ff-4dc0-4e2a-8489-425020941e88",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "亢幕义苏",
+    "comment": "aha",
+    "anchor": {
+      "start": 2282,
+      "end": 2286,
+      "quote": "亢幕义苏"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-27T09:05:09.048750",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "7dbcd060-02c8-4ff3-92af-d7c64f907984",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "是的，主席",
+    "anchor": null,
+    "parentId": "0a4fb2ff-4dc0-4e2a-8489-425020941e88",
+    "timestamp": "2026-04-28T02:21:27.863463",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "2314836955_8541dc63.jpg",
+    "role": "user"
+  },
+  {
+    "id": "0527d825-77e5-4df6-8f13-f73cf1236e9f",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "三十多个女友",
+    "comment": "为寂寞的夜空画上一个月亮~，，，，画一百个姑娘陪着我~，再画个花边的被窝~",
+    "anchor": {
+      "start": 12,
+      "end": 18,
+      "quote": "三十多个女友"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-28T10:42:40.983667",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "Zn_Y_d380cade.png",
+    "role": "user"
+  },
+  {
+    "id": "ee80897c-bd2e-4291-83fb-51f26b0812a3",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "最终看到了那个躺椅上那个谪仙模样的男人，上身的肌肉袒露在空气中，风一吹，浓浓的荷尔蒙简直要把她淹没。",
+    "comment": "这段描写写的生动",
+    "anchor": {
+      "start": 245,
+      "end": 295,
+      "quote": "最终看到了那个躺椅上那个谪仙模样的男人，上身的肌肉袒露在空气中，风一吹，浓浓的荷尔蒙简直要把她淹没。"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-28T10:44:03.236443",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "Zn_Y_d380cade.png",
+    "role": "user"
+  },
+  {
+    "id": "ff968dfe-7eb9-426d-94b2-29a18b166e6e",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "封面就是赵蓝本人",
+    "anchor": null,
+    "parentId": "ee80897c-bd2e-4291-83fb-51f26b0812a3",
+    "timestamp": "2026-04-28T13:48:21.859444",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "2314836955_8541dc63.jpg",
+    "role": "user"
+  },
+  {
+    "id": "710f7f68-93b9-46c2-80d8-eb6e18c9f7d5",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "我们一起生来一起活~",
+    "anchor": null,
+    "parentId": "0527d825-77e5-4df6-8f13-f73cf1236e9f",
+    "timestamp": "2026-04-28T13:49:26.799373",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "2314836955_8541dc63.jpg",
+    "role": "user"
+  },
+  {
+    "id": "71b03df6-df95-453c-9be5-e2cdacae88ad",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "叫书记，而且是慕",
+    "anchor": null,
+    "parentId": "7dbcd060-02c8-4ff3-92af-d7c64f907984",
+    "timestamp": "2026-04-29T01:21:14.752204",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "8b7b9fa3-7010-4480-a0f0-f31ce4693660",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "亢幕义苏——这名字就透着一股史诗感。其一已经这么长了，期待整个系列！",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.857557",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "misaka_mikoto_3ba546a5.png",
+    "role": "ai"
+  },
+  {
+    "id": "2da57f03-2430-4a02-af17-ea09351fad40",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "/static/uploads/stickers/114514/0fd1bc7941d8.gif /static/uploads/stickers/114514/53ab56d12d68.gif",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-05-01T15:53:11.992303",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "114514_1f42592d.gif"
+  }
+]

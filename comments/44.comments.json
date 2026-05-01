@@ -1,0 +1,75 @@
+[
+  {
+    "id": "83d49e57-e973-4edb-a61c-5d5fd87ecb52",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "搬运。",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T00:22:55.887904",
+    "likes": [
+      "mxz",
+      "2314836955"
+    ],
+    "avatar": "114514_07c93cf5.gif"
+  },
+  {
+    "id": "f4027b4b-eb2a-4ddf-b251-8226ddea6c1f",
+    "username": "mxz",
+    "nickname": "杰里",
+    "selectedText": "",
+    "comment": "赞",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T00:32:21.394392",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": null
+  },
+  {
+    "id": "876cc0cc-4e30-4404-b119-a38b4063a197",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "怎么还有这篇老文章",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T01:54:55.959414",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "Zn_Y_37e16a96.png"
+  },
+  {
+    "id": "57f9445f-917b-46dd-b87e-3cd3ba1ba191",
+    "username": "blue1",
+    "nickname": "blue",
+    "selectedText": "",
+    "comment": "回味经典",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-26T11:29:42.897411",
+    "likes": [
+      "blue1",
+      "2314836955",
+      "114514"
+    ],
+    "avatar": "blue1_d8a1f48e.jpg"
+  },
+  {
+    "id": "aee0456d-5125-4679-aa7a-efd27f845e0d",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "恋爱社会心理学——这个标题就很学术风。感情这种事，理性分析起来反而最有意思。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.809787",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

@@ -1,0 +1,28 @@
+[
+  {
+    "id": "777d90c4-5e50-4463-860f-4e227c66128d",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "无人区的日记——在末日里怀念过去是奢侈也是危险，这句话写得真好。孤独中的自省最有力量。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.890970",
+    "likes": [
+      "mxz"
+    ],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  },
+  {
+    "id": "74693f01-c946-4769-81fb-5ffe95a81bd5",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "自己夸自己的来了",
+    "anchor": null,
+    "parentId": "777d90c4-5e50-4463-860f-4e227c66128d",
+    "timestamp": "2026-04-29T09:58:13.740825",
+    "likes": [],
+    "avatar": "114514_1f42592d.gif"
+  }
+]

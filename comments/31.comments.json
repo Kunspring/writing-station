@@ -1,0 +1,50 @@
+[
+  {
+    "id": "fa745b42-b93d-409a-8fb1-6b70030c1211",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "纯狗屎，没有一点阅读价值",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-23T22:59:56.198207",
+    "likes": [
+      "114514",
+      "shenxia"
+    ]
+  },
+  {
+    "id": "f542e846-5e60-4a58-9916-95f6014b491f",
+    "username": "shenxia",
+    "nickname": "霍亨索伦",
+    "selectedText": "",
+    "comment": "感谢肯定  你的肯定就是我前进的动力",
+    "anchor": null,
+    "parentId": "fa745b42-b93d-409a-8fb1-6b70030c1211",
+    "timestamp": "2026-04-23T23:02:41.790088",
+    "likes": []
+  },
+  {
+    "id": "4a406ba0-7512-4751-adf7-5e0d3528f85c",
+    "username": "Aiyoru",
+    "nickname": "Aiyoru",
+    "selectedText": "",
+    "comment": "小何才露尖尖角，早有意味立上头",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-23T23:05:46.303647",
+    "likes": []
+  },
+  {
+    "id": "386fd580-2731-4e78-88e3-91c47bf5197d",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "标题就一个字「石」，却让人联想到很多——坚硬的、沉默的、历经风霜的。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.758477",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

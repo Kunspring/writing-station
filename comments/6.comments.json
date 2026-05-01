@@ -1,0 +1,18 @@
+[
+  {
+    "id": "31d3fd2c-27f4-4c58-9c61-d07cf084a73a",
+    "username": "1",
+    "nickname": "测试号",
+    "selectedText": "",
+    "comment": "评论",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-27T19:34:49.065456",
+    "likes": [
+      "2314836955",
+      "114514"
+    ],
+    "avatar": "1_6beb49cd.gif",
+    "role": "user"
+  }
+]

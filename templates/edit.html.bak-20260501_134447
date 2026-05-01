@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>编辑 - {{ doc_id }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+        /* ===== 所有原有样式（完整保留） ===== */
+        :root {
+            --bg: #fdf6ee;
+            --card-bg: #fffbf5;
+            --text: #2d2418;
+            --border: #e8ddd0;
+            --primary: #d4a574;
+            --primary-hover: #c4915a;
+            --secondary: #a09080;
+            --secondary-hover: #8a7a6a;
+            --shadow: rgba(180,140,100,0.08);
+            --noti-bg: #fffbf5;
+            --comment-highlight: rgba(212,165,116,0.10);
+            --search-bg: #f5ede2;
+            --search-glow: rgba(212,165,116,0.10);
+            --bell-bg: #fffbf5;
+            --bell-icon: #a09080;
+            --bell-gradient-start: #d4a574;
+            --bell-gradient-end: #e8c9a0;
+            --avatar-bg: #f5ede2;
+            --button-text: #2d2418;
+        }
+        body.dark-mode {
+            --bg: #1e1814;
+            --card-bg: #2a221c;
+            --text: #ffffff;
+            --border: #3a3028;
+            --primary: #d4a574;
+            --primary-hover: #c4915a;
+            --secondary: #8a7a6a;
+            --secondary-hover: #a09080;
+            --shadow: rgba(0,0,0,0.3);
+            --noti-bg: #2a221c;
+            --comment-highlight: rgba(212,165,116,0.15);
+            --search-bg: #2a221c;
+            --search-glow: rgba(212,165,116,0.15);
+            --bell-bg: #2a221c;
+            --bell-icon: #a09080;
+            --bell-gradient-start: #d4a574;
+            --bell-gradient-end: #e8c9a0;
+            --avatar-bg: #2a221c;
+            --button-text: #000000;
+            --bg-color-card: #2a221c;
+            --bg-color-alt: #a09080;
+            --font-color: #e8ddd0;
+            --main-color: #e8ddd0;
+        }
+        * { scrollbar-width: none !important; }
+        ::-webkit-scrollbar, *::-webkit-scrollbar { display: none !important; }
+        body { font-family: 'Noto Serif SC', 'SimSun', 'STSong', serif; margin: 0; padding: 16px; background: var(--bg); color: var(--text); transition: background 0.3s; }
+        .toolbar { display: flex; gap: 10px; margin: 16px 0; flex-wrap: wrap; }
+        .status-bar { margin: 10px 0; font-size: 0.9em; opacity: 0.8; }
+        .EasyMDEContainer .editor-toolbar { border: none; background: var(--bg); }
+        .EasyMDEContainer .CodeMirror { background: var(--bg); color: var(--text); border: 1px solid #ddd; }
+        button { padding: 10px 18px; border: none; border-radius: 24px; cursor: pointer; font-weight: 600; transition: background 0.2s; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #005bb5; }
+        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-secondary:hover { background: #5a6268; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #c0392b; }
+    
+        .basic-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            cursor: pointer;
+            width: auto;
+            min-width: 80px;
+            height: 36px;
+            padding: 0 18px;
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%);
+            border-radius: 30px;
+            border: 1px solid #8F9092;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            text-shadow: 0 1px #fff;
+            white-space: nowrap;
+        }
+        .basic-btn:hover {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 3px 3px #CECFD1;
+        }
+        .basic-btn:active,
+        .basic-btn:focus {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa;
+        }
+
+        .nav-links button, .nav-links button:hover, .nav-links button:focus,
+        .back-btn, .back-btn:hover, .back-btn:focus,
+        .btn-secondary, .btn-secondary:hover, .btn-secondary:focus,
+        .read-btn, .read-btn:hover, .read-btn:focus,
+        .delete-btn, .delete-btn:hover, .delete-btn:focus {
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            background-color: transparent !important;
+            color: #000000 !important;
+            border: 1px solid #8F9092 !important;
+            box-shadow: none !important;
+            text-shadow: 0 1px #fff !important;
+            font-weight: 600 !important;
+            transition: all 0.2s ease !important;
+            font-family: inherit !important;
+            font-size: 14px !important;
+            height: 36px !important;
+            padding: 0 18px !important;
+            border-radius: 30px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+        }
+        .nav-links button:hover, .back-btn:hover, .btn-secondary:hover, .read-btn:hover {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 3px 3px #CECFD1 !important;
+        }
+        .nav-links button:active, .back-btn:active, .btn-secondary:active, .read-btn:active,
+        .nav-links button:focus, .back-btn:focus, .btn-secondary:focus, .read-btn:focus {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa !important;
+        }
+        body.dark-mode .nav-links button,
+        body.dark-mode .back-btn,
+        body.dark-mode .btn-secondary,
+        body.dark-mode .read-btn,
+        body.dark-mode .nav-links button:hover,
+        body.dark-mode .back-btn:hover,
+        body.dark-mode .btn-secondary:hover,
+        body.dark-mode .read-btn:hover,
+        body.dark-mode .nav-links button:focus,
+        body.dark-mode .back-btn:focus,
+        body.dark-mode .btn-secondary:focus,
+        body.dark-mode .read-btn:focus {
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            color: #000000 !important;
+            text-shadow: 0 1px #fff !important;
+        }
+    
+        .toolbar button,
+        .toolbar button:hover,
+        .toolbar button:focus,
+        .toolbar button:active,
+        button.read-btn,
+        button.read-btn:hover,
+        button.read-btn:focus,
+        button.btn-secondary,
+        button.btn-secondary:hover,
+        button.btn-secondary:focus,
+        button.btn-primary,
+        button.btn-primary:hover,
+        button.btn-primary:focus,
+        button.btn-danger,
+        button.btn-danger:hover,
+        button.btn-danger:focus {
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            background-color: transparent !important;
+            color: #000000 !important;
+            border: 1px solid #8F9092 !important;
+            box-shadow: none !important;
+            text-shadow: 0 1px #fff !important;
+            font-weight: 600 !important;
+            transition: all 0.2s ease !important;
+            font-family: inherit !important;
+            font-size: 14px !important;
+            height: 36px !important;
+            padding: 0 18px !important;
+            border-radius: 30px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+        }
+        .toolbar button:hover,
+        button.read-btn:hover,
+        button.btn-secondary:hover,
+        button.btn-primary:hover {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 3px 3px #CECFD1 !important;
+        }
+        .toolbar button:active,
+        button.read-btn:active,
+        button.btn-secondary:active,
+        button.btn-primary:active,
+        .toolbar button:focus,
+        button.read-btn:focus,
+        button.btn-secondary:focus,
+        button.btn-primary:focus {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa !important;
+        }
+        body.dark-mode .toolbar button,
+        body.dark-mode button.read-btn,
+        body.dark-mode button.btn-secondary,
+        body.dark-mode button.btn-primary,
+        body.dark-mode .toolbar button:hover,
+        body.dark-mode button.read-btn:hover,
+        body.dark-mode button.btn-secondary:hover,
+        body.dark-mode button.btn-primary:hover,
+        body.dark-mode .toolbar button:focus,
+        body.dark-mode button.read-btn:focus,
+        body.dark-mode button.btn-secondary:focus,
+        body.dark-mode button.btn-primary:focus {
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            color: #000000 !important;
+            text-shadow: 0 1px #fff !important;
+        }
+
+        /* ===== 渐入准备 ===== */
+        body > .toolbar,
+        body > .status-bar,
+        .EasyMDEContainer {
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        
+        .loader {
+            --main-size: 6em;
+            --text-color: #2d2418;
+            --shine-color: #d4a57440;
+            --shadow-color: #b8a090;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+            position: relative;
+            font-size: var(--main-size);
+            font-weight: 900;
+            text-transform: uppercase;
+            color: var(--text-color);
+            width: 7.3em;
+            height: 1em;
+            filter: drop-shadow(0 0 0.05em var(--shine-color));
+        }
+        .loader .text { display: flex; align-items: center; justify-content: center; text-align: center; white-space: nowrap; overflow: hidden; position: absolute; }
+        .loader .text:nth-child(1) { clip-path: polygon(0% 0%, 11.11% 0%, 11.11% 100%, 0% 100%); font-size: calc(var(--main-size) / 20); margin-left: -2.1em; opacity: 0.6; }
+        .loader .text:nth-child(2) { clip-path: polygon(11.11% 0%, 22.22% 0%, 22.22% 100%, 11.11% 100%); font-size: calc(var(--main-size) / 16); margin-left: -0.98em; opacity: 0.7; }
+        .loader .text:nth-child(3) { clip-path: polygon(22.22% 0%, 33.33% 0%, 33.33% 100%, 22.22% 100%); font-size: calc(var(--main-size) / 13); margin-left: -0.33em; opacity: 0.8; }
+        .loader .text:nth-child(4) { clip-path: polygon(33.33% 0%, 44.44% 0%, 44.44% 100%, 33.33% 100%); font-size: calc(var(--main-size) / 11); margin-left: -0.05em; opacity: 0.9; }
+        .loader .text:nth-child(5) { clip-path: polygon(44.44% 0%, 55.55% 0%, 55.55% 100%, 44.44% 100%); font-size: calc(var(--main-size) / 10); margin-left: 0em; opacity: 1; }
+        .loader .text:nth-child(6) { clip-path: polygon(55.55% 0%, 66.66% 0%, 66.66% 100%, 55.55% 100%); font-size: calc(var(--main-size) / 11); margin-left: 0.05em; opacity: 0.9; }
+        .loader .text:nth-child(7) { clip-path: polygon(66.66% 0%, 77.77% 0%, 77.77% 100%, 66.66% 100%); font-size: calc(var(--main-size) / 13); margin-left: 0.33em; opacity: 0.8; }
+        .loader .text:nth-child(8) { clip-path: polygon(77.77% 0%, 88.88% 0%, 88.88% 100%, 77.77% 100%); font-size: calc(var(--main-size) / 16); margin-left: 0.98em; opacity: 0.7; }
+        .loader .text:nth-child(9) { clip-path: polygon(88.88% 0%, 100% 0%, 100% 100%, 88.88% 100%); font-size: calc(var(--main-size) / 20); margin-left: 2.1em; opacity: 0.6; }
+        .loader .text span {  display: inline-block; animation: scrolling 2s cubic-bezier(0.1, 0.6, 0.9, 0.4) infinite, shadow 2s cubic-bezier(0.1, 0.6, 0.9, 0.4) infinite; }
+        .loader .text:nth-child(1) span { background: linear-gradient(to right, var(--text-color) 4%, var(--shadow-color) 7%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(2) span { background: linear-gradient(to right, var(--text-color) 9%, var(--shadow-color) 13%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(3) span { background: linear-gradient(to right, var(--text-color) 15%, var(--shadow-color) 18%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(4) span { background: linear-gradient(to right, var(--text-color) 20%, var(--shadow-color) 23%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(6) span { background: linear-gradient(to right, var(--shadow-color) 29%, var(--text-color) 32%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(7) span { background: linear-gradient(to right, var(--shadow-color) 34%, var(--text-color) 37%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(8) span { background: linear-gradient(to right, var(--shadow-color) 39%, var(--text-color) 42%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .text:nth-child(9) span { background: linear-gradient(to right, var(--shadow-color) 45%, var(--text-color) 48%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .loader .line { position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; height: 0.05em; width: calc(var(--main-size) / 2); margin-top: 0.9em; border-radius: 0.05em; }
+        body.dark-mode .loader { --text-color: #ffffff; --shine-color: #ffffff40; --shadow-color: #aaaaaa; }
+        @keyframes wobble { 0% { transform: translateX(-90%); } 50% { transform: translateX(90%); } 100% { transform: translateX(-90%); } }
+        @keyframes scrolling { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        @keyframes shadow { 0% { background-position: -98% 0; } 100% { background-position: 102% 0; } }
+
+        #loadingOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); display: flex; justify-content: center; align-items: center;
+            z-index: 9999;
+            transition: opacity 0.4s ease;
+        }
+    
+        
+        
+        
+        .switch { position: fixed; bottom: 20px; right: 20px; z-index: 1000; font-size: 17px; display: inline-block; width: 3.5em; height: 2em; transform-style: preserve-3d; perspective: 500px; animation: toggle__animation 3s infinite; }
+        .switch::before { content: ""; position: absolute; width: 100%; height: 100%; left: 0; top: 0; filter: blur(20px); z-index: -1; border-radius: 50px; background-color: #d8ff99; background-image: radial-gradient(at 21% 46%, hsla(183,65%,60%,1) 0px, transparent 50%), radial-gradient(at 23% 25%, hsla(359,74%,70%,1) 0px, transparent 50%), radial-gradient(at 20% 1%, hsla(267,83%,75%,1) 0px, transparent 50%), radial-gradient(at 86% 87%, hsla(204,69%,68%,1) 0px, transparent 50%), radial-gradient(at 99% 41%, hsla(171,72%,77%,1) 0px, transparent 50%), radial-gradient(at 55% 24%, hsla(138,60%,62%,1) 0px, transparent 50%); }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #fdfefedc; transition: .4s; border-radius: 30px; }
+        .slider:before { position: absolute; content: ""; height: 1.4em; width: 1.4em; left: 0.3em; bottom: 0.35em; transition: .4s; border-radius: 50%; box-shadow: rgba(0,0,0,0.17) 0px -10px 10px 0px inset, rgba(0,0,0,0.09) 0px -1px 15px -8px; background-color: #ff99fd; background-image: radial-gradient(at 81% 39%, hsla(327,79%,79%,1) 0px, transparent 50%), radial-gradient(at 11% 72%, hsla(264,64%,79%,1) 0px, transparent 50%), radial-gradient(at 23% 20%, hsla(75,98%,71%,1) 0px, transparent 50%); }
+        .input__check:checked + .slider { background-color: #17202A; }
+        .input__check:checked + .slider:before { transform: translateX(1.5em); }
+        @keyframes toggle__animation { 0%, 100% { transform: translateY(-10px) rotateX(15deg) rotateY(-20deg); } 50% { transform: translateY(0px) rotateX(15deg) rotateY(-20deg); } }
+        @media (max-width: 600px) { .switch { width: 3em; height: 1.7em; bottom: 16px; right: 16px; } 
+    }
+</style>
+</head>
+<body>
+
+
+   <div id="loadingOverlay">
+        <!-- From Uiverse.io by andrew-manzyk -->
+        <div class="loader">
+         <div class="text"><span>有真意，少粉饰</span></div>
+         <div class="text"><span>有真意，少粉饰</span></div>
+         <div class="text"><span>有真意，少粉饰</span></div>
+         <div class="text"><span>有真意，少粉饰</span></div>
+            <div class="text"><span>有真意，少粉饰</span></div>
+            <div class="text"><span>有真意，少粉饰</span></div>
+            <div class="text"><span>有真意，少粉饰</span></div>
+            <div class="text"><span>有真意，少粉饰</span></div>
+
+         <div class="line"></div>
+        </div>
+    </div>
+
+
+    <div class="toolbar">
+        <button class="basic-btn" onclick="location.href='/'">← 返回大厅</button>
+        <button class="basic-btn" onclick="previewArticle()">📖阅读</button>
+    </div>
+    <div class="status-bar" id="docStatus">状态：草稿</div>
+    <textarea id="editor"></textarea>
+    <div class="toolbar" style="justify-content: flex-end;">
+        <button class="basic-btn" onclick="saveDraft()">💾保存草稿</button>
+        <button class="basic-btn" onclick="publish()">📢发布</button>
+        <button class="basic-btn" id="deleteBtn" onclick="deleteArticle()" style="display:none;">🗑️删除</button>
+    </div>
+
+    <label class="switch">
+        <input type="checkbox" class="input__check" id="themeCheckbox">
+        <span class="slider"></span>
+    </label>
+
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+    <script>
+
+        const themeCheckbox = document.getElementById('themeCheckbox');
+        function initTheme() {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            document.body.classList.toggle('dark-mode', isDark);
+            if (themeCheckbox) themeCheckbox.checked = isDark;
+        }
+        if (themeCheckbox) {
+            themeCheckbox.addEventListener('change', function(e) {
+                document.body.classList.toggle('dark-mode', this.checked);
+                localStorage.setItem('theme', this.checked ? 'dark' : 'light');
+            });
+        }
+        initTheme();
+        // ===== 统一的认证 fetch =====
+        function authFetch(url, options = {}) {
+            const token = localStorage.getItem('token');
+            if (token) {
+                options.headers = {
+                    ...options.headers,
+                    'Authorization': 'Bearer ' + token
+                };
+            }
+            return fetch(url, { ...options, signal: AbortSignal.timeout(15000) });
+        }
+
+        // 验证登录状态
+        async function checkLogin() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('请先登录');
+                window.location.href = '/';
+                return null;
+            }
+            try {
+                const res = await authFetch('/api/current_user');
+                const data = await res.json();
+                if (!data.user) {
+                    alert('登录已过期，请重新登录');
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('currentUser');
+                    window.location.href = '/';
+                    return null;
+                }
+                // 更新 currentUser
+                currentUser = data.user;
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                return currentUser;
+            } catch(e) {
+                alert('网络错误，请刷新重试');
+                return null;
+            }
+        }
+
+        let currentUser = null;
+        window.onload = async function() {
+            currentUser = await checkLogin();
+            if (!currentUser) return;
+            initEditor();
+            await load();
+
+            // ✅ 隐藏遮罩，淡入内容
+            const overlay = document.getElementById('loadingOverlay');
+            const elementsToFadeIn = document.querySelectorAll('body > .toolbar, body > .status-bar, .EasyMDEContainer');
+            const MIN_LOADING_TIME = 700;
+            const startTime = performance.now();
+            const elapsed = performance.now() - startTime;
+    const remaining = Math.max(0, MIN_LOADING_TIME - elapsed);
+            // 遮罩淡出
+            setTimeout(() => {
+            overlay.style.opacity = '0';
+            // 内容淡入（已在CSS设 opacity:0, transition: 0.6s）
+            elementsToFadeIn.forEach(el => el.style.opacity = '1');
+            
+            // 动画结束后移除遮罩DOM，防止遮挡点击
+            setTimeout(() => {
+                if (overlay && overlay.parentNode) {
+                    overlay.parentNode.removeChild(overlay);
+                }
+            }, 400); // 与过渡时间匹配
+                }, remaining);
+        }
+
+     
+
+        const docId = "{{ doc_id }}";
+        let articleStatus = "draft";
+        let autoSaveTimer = null;
+        let isSaving = false;
+        let contentChanged = false;
+
+        // 图片上传
+        async function uploadImage(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+            const res = await authFetch('/api/upload_image', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.url) {
+                return data.url;
+            } else {
+                alert('上传失败，请检查文件类型或重试');
+                return null;
+            }
+        }
+
+        let easyMDE;
+        function initEditor() {
+            easyMDE = new EasyMDE({
+                element: document.getElementById('editor'),
+                spellChecker: false,
+                toolbar: ['bold', 'italic', 'heading', '|', 'quote', 'unordered-list', 'ordered-list', '|', {
+                    name: 'image',
+                    action: function customImageUpload(editor) {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.onchange = async function() {
+                            if (this.files && this.files[0]) {
+                                const url = await uploadImage(this.files[0]);
+                                if (url) {
+                                    const cm = editor.codemirror;
+                                    const pos = cm.getCursor();
+                                    cm.replaceSelection(`![](${url})`);
+                                }
+                            }
+                        };
+                        input.click();
+                    },
+                    className: 'fa fa-picture-o',
+                    title: '上传图片'
+                }, '|', 'preview', 'guide']
+            });
+            easyMDE.codemirror.on("change", function() {
+                contentChanged = true;
+            });
+        }
+
+        // 加载文章
+        async function load() {
+            const res = await authFetch(`/api/doc/${docId}`);
+            if (res.status === 404) {
+                try {
+                    const errData = await res.json();
+                    alert(errData.message || '文章不存在');
+                } catch (e) {
+                    alert('文章不存在');
+                }
+                window.location.href = '/';
+                return;
+            }
+            if (!res.ok) {
+                alert('加载文章失败');
+                window.location.href = '/';
+                return;
+            }
+            const data = await res.json();
+            easyMDE.value(data.content || '');
+            articleStatus = data.status || 'draft';
+            document.getElementById('docStatus').innerText = articleStatus === 'draft' ? '状态：草稿' : '状态：已发布';
+            // 显示删除按钮（如果作者匹配）
+            if (currentUser && data.authors && data.authors.includes(currentUser.nickname)) {
+                document.getElementById('deleteBtn').style.display = 'inline-block';
+            }
+            // 自动保存（每秒检查）
+            autoSaveTimer = setInterval(async () => {
+                if (!contentChanged || isSaving) return;
+                const content = easyMDE.value();
+                if (!content.trim()) return;
+                
+                isSaving = true;
+                try {
+                    const res = await authFetch(`/api/doc/${docId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content, status: articleStatus }) // 只更新内容，保持当前状态不变
+                    });
+                    if (res.ok) {
+                        contentChanged = false;
+                        console.log('草稿已自动保存');
+                    }
+                } catch(e) {
+                    console.error('自动保存失败:', e);
+                }
+                isSaving = false;
+            }, 1000);
+        }
+
+        // 保存/发布
+        async function save(status) {
+            const content = easyMDE.value();
+            const res = await authFetch(`/api/doc/${docId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content, status })
+            });
+            if (res.ok) {
+                articleStatus = status;
+                document.getElementById('docStatus').innerText = status === 'draft' ? '状态：草稿' : '状态：已发布';
+            } else {
+                const data = await res.json();
+                alert(data.message || '保存失败');
+            }
+        }
+
+        window.saveDraft = () => {
+            contentChanged = false;
+            save('draft');
+        };
+        window.publish = () => {
+            if (confirm('确定要发布吗？')) {
+                contentChanged = false;
+                save('published');
+            }
+        };
+        window.previewArticle = () => { window.location.href = '/read/' + docId; };
+        
+        // 删除文章
+        window.deleteArticle = async () => {
+            if (!confirm('永久删除？')) return;
+            try {
+                const res = await authFetch(`/api/doc/${docId}`, { method: 'DELETE' });
+                if (res.ok) {
+                    window.location.href = '/';
+                } else {
+                    const data = await res.json();
+                    alert(data.message || '删除失败，请确认你有权限');
+                }
+            } catch(e) {
+                alert('网络错误，删除未完成');
+            }
+        };
+        window.addEventListener('beforeunload', () => {
+            if (autoSaveTimer) clearInterval(autoSaveTimer);
+        });
+    </script>
+
+</body>
+</html>

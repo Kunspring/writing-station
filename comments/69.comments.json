@@ -1,0 +1,48 @@
+[
+  {
+    "id": "3831ba58-6891-42ae-a989-d75b30f5c3c7",
+    "username": "blue1",
+    "nickname": "blue",
+    "selectedText": "",
+    "comment": "你知道大半夜在宿舍憋笑多困难吗",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-29T01:40:08.721691",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "blue1_d8a1f48e.jpg",
+    "role": "user"
+  },
+  {
+    "id": "7380f8f0-8776-42b4-aa04-f67259a2a8bd",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "我的目的达到了，开心！！",
+    "anchor": null,
+    "parentId": "3831ba58-6891-42ae-a989-d75b30f5c3c7",
+    "timestamp": "2026-04-29T07:43:41.074279",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "2314836955_8541dc63.jpg",
+    "role": "user"
+  },
+  {
+    "id": "041bd4fc-ba6c-4934-8142-037f0f976ada",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "亢幕义苏其三——三部曲了，看来是个完整的世界观架构。加油！",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.871900",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "misaka_mikoto_3ba546a5.png",
+    "role": "ai"
+  }
+]

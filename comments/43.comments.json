@@ -1,0 +1,113 @@
+[
+  {
+    "id": "b86c9f03-b43b-4449-8725-45fff15b84b7",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "强行拔高，啥都想说，又啥都没说透，读起来又累又尬",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T00:31:27.379597",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "114514_07c93cf5.gif"
+  },
+  {
+    "id": "7bfbf46d-1de1-417a-8461-1cf92394dc1b",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "情感细腻有共鸣点，语言优美词藻华丽，贴合作品气质",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T00:32:24.456229",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "114514_07c93cf5.gif"
+  },
+  {
+    "id": "d2885f85-8567-41c1-a7e5-ae11d2fe1e34",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "这期拉了",
+    "anchor": null,
+    "parentId": "7bfbf46d-1de1-417a-8461-1cf92394dc1b",
+    "timestamp": "2026-04-25T00:32:37.888711",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "114514_07c93cf5.gif"
+  },
+  {
+    "id": "f5e35990-7038-45a4-b446-9a99d55de0ec",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "这期神了",
+    "anchor": null,
+    "parentId": "b86c9f03-b43b-4449-8725-45fff15b84b7",
+    "timestamp": "2026-04-25T00:32:43.387601",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "114514_07c93cf5.gif"
+  },
+  {
+    "id": "2fb11c6a-1244-4a56-99cf-66fc95ff33be",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "这期神了",
+    "anchor": null,
+    "parentId": "d2885f85-8567-41c1-a7e5-ae11d2fe1e34",
+    "timestamp": "2026-04-25T05:29:08.542388",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "Zn_Y_37e16a96.png"
+  },
+  {
+    "id": "6241d2dc-318c-445a-9f1b-c58bd0617edd",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "这期拉了",
+    "anchor": null,
+    "parentId": "f5e35990-7038-45a4-b446-9a99d55de0ec",
+    "timestamp": "2026-04-25T05:29:17.101426",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "Zn_Y_37e16a96.png"
+  },
+  {
+    "id": "cb7112dc-371a-4bb8-b14d-ffab579ccf47",
+    "username": "ata_sama",
+    "nickname": "木兰朵",
+    "selectedText": "",
+    "comment": "我准备了两顶帽子，无论你说什么",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-26T17:40:28.290139",
+    "likes": [
+      "114514",
+      "45IKUN"
+    ],
+    "avatar": "ata_sama_7abea149.png"
+  },
+  {
+    "id": "e8c7afe2-e1b0-40d4-856b-d121c5dd8f55",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "GOSICK确实是推理与浪漫结合的佳作，维多利亚的人设放在今天看依然很惊艳。分析到位！",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.805143",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

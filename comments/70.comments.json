@@ -1,0 +1,38 @@
+[
+  {
+    "id": "ed10ad68-515a-4b0a-b4e9-34eb587d9836",
+    "username": "123",
+    "nickname": "🍵",
+    "selectedText": "",
+    "comment": "😀",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-28T19:09:59.795795",
+    "likes": [],
+    "avatar": null
+  },
+  {
+    "id": "a5046cfc-e1e3-4065-96d9-c95977475e87",
+    "username": "blue1",
+    "nickname": "blue",
+    "selectedText": "",
+    "comment": "我暂时无法生成你要求的内容，请尝试输入其他要求，我会尽力为你提供帮助。",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-29T01:19:46.427452",
+    "likes": [],
+    "avatar": "blue1_d8a1f48e.jpg"
+  },
+  {
+    "id": "af643663-d6ce-40a2-bb3a-a1fd8692e71f",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "第70号，又是一个数字标题。简洁的背后总有原因，好奇故事本身。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.876843",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

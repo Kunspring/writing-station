@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>合集 - 末日回响写作站</title>
+    <link rel="shortcut icon" href="/static/favicon.ico">
+    <style>
+        :root {
+            --bg: #fdf6ee;
+            --card-bg: #fffbf5;
+            --text: #2d2418;
+            --border: #e8ddd0;
+            --primary: #d4a574;
+            --primary-hover: #c4915a;
+            --secondary: #a09080;
+            --secondary-hover: #8a7a6a;
+            --shadow: rgba(180,140,100,0.08);
+            --noti-bg: #fffbf5;
+            --comment-highlight: rgba(212,165,116,0.10);
+            --search-bg: #f5ede2;
+            --search-glow: rgba(212,165,116,0.10);
+            --bell-bg: #fffbf5;
+            --bell-icon: #a09080;
+            --bell-gradient-start: #d4a574;
+            --bell-gradient-end: #e8c9a0;
+            --avatar-bg: #f5ede2;
+            --button-text: #2d2418;
+body.dark-mode {
+            --bg: #1e1814;
+            --card-bg: #2a221c;
+            --text: #ffffff;
+            --border: #3a3028;
+            --primary: #d4a574;
+            --primary-hover: #c4915a;
+            --secondary: #8a7a6a;
+            --secondary-hover: #a09080;
+            --shadow: rgba(0,0,0,0.3);
+            --noti-bg: #2a221c;
+            --comment-highlight: rgba(212,165,116,0.15);
+            --search-bg: #2a221c;
+            --search-glow: rgba(212,165,116,0.15);
+            --bell-bg: #2a221c;
+            --bell-icon: #a09080;
+            --bell-gradient-start: #d4a574;
+            --bell-gradient-end: #e8c9a0;
+            --avatar-bg: #2a221c;
+            --button-text: #000000;
+            --bg-color-card: #2a221c;
+            --bg-color-alt: #a09080;
+            --font-color: #e8ddd0;
+            --main-color: #e8ddd0;
+        }
+        * { box-sizing: border-box; scrollbar-width: none !important; }
+        ::-webkit-scrollbar, *::-webkit-scrollbar { display: none !important; }
+        body {
+            font-family: 'Noto Serif SC', 'SimSun', 'STSong', '宋体', serif;
+            font-weight: 500;
+            max-width: 900px; margin: 0 auto; padding: 16px;
+            background: var(--bg); color: var(--text); line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+        .navbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+        .navbar h1 { border: none; margin: 0; font-size: 1.6em; }
+        .nav-links { display: flex; gap: 12px; align-items: center; }
+        .basic-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            outline: none; cursor: pointer; height: 36px; padding: 0 18px;
+            background: transparent !important;
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            border-radius: 30px; border: 1px solid #8F9092 !important;
+            transition: all 0.2s ease;
+            font-family: inherit; font-size: 14px; font-weight: 600; color: #000000 !important;
+        }
+        .edit-btn {
+            background: var(--primary) !important; border-color: var(--primary) !important;
+            color: white !important;
+        }
+        .danger-btn {
+            background: #e74c3c !important; border-color: #e74c3c !important;
+            color: white !important;
+        }
+        .collection-header { margin: 20px 0; }
+        .collection-name { font-size: 1.8em; font-weight: 700; margin-bottom: 8px; }
+        .collection-desc { font-size: 1em; opacity: 0.7; margin-bottom: 8px; }
+        .collection-meta { font-size: 0.85em; opacity: 0.5; }
+
+        #articleList { margin-top: 24px; }
+        .article-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+            border: 1px solid var(--border); border-radius: 12px;
+            margin-bottom: 8px; cursor: pointer;
+            transition: background 0.2s;
+        }
+        .article-item:hover { background: var(--card-bg); }
+        .article-title { font-weight: 600; flex: 1; }
+        .article-number { opacity: 0.5; font-size: 0.85em; }
+        .article-authors { font-size: 0.85em; opacity: 0.7; }
+        .article-remove-btn {
+            background: transparent; border: 1px solid #e74c3c; color: #e74c3c;
+            border-radius: 20px; padding: 4px 12px; font-size: 12px; cursor: pointer;
+        }
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 5000;
+            justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: var(--card-bg); padding: 24px; border-radius: 16px;
+            max-width: 420px; width: 90%;
+        }
+        .modal-content h3 { margin-top: 0; }
+        .modal-content input, .modal-content textarea {
+            width: 100%; padding: 10px; margin-bottom: 12px;
+            border: 1px solid var(--border); border-radius: 8px;
+            font-size: 14px; font-family: inherit;
+            background: var(--bg); color: var(--text);
+        }
+        .modal-content textarea { min-height: 80px; resize: vertical; }
+        .modal-buttons { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+        .empty-state { text-align: center; opacity: 0.6; padding: 40px 0; }
+        @media (max-width: 600px) {
+            body { padding: 12px; }
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .navbar h1 { font-size: 1.3em; }
+            .nav-links {
+                flex-wrap: wrap;
+                gap: 6px;
+                width: 100%;
+            }
+            .basic-btn {
+                font-size: 12px !important;
+                padding: 0 12px !important;
+                height: 30px !important;
+            }
+            .collection-name { font-size: 1.4em; }
+            .article-item {
+                padding: 10px 12px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+            .article-title { font-size: 0.95em; }
+            .modal-content {
+                width: 95%;
+                padding: 18px;
+            }
+        }
+    }
+        .switch { position: fixed; bottom: 20px; right: 20px; z-index: 1000; font-size: 17px; display: inline-block; width: 3.5em; height: 2em; transform-style: preserve-3d; perspective: 500px; animation: toggle__animation 3s infinite; }
+        .switch::before { content: ""; position: absolute; width: 100%; height: 100%; left: 0; top: 0; filter: blur(20px); z-index: -1; border-radius: 50px; background-color: #d8ff99; background-image: radial-gradient(at 21% 46%, hsla(183,65%,60%,1) 0px, transparent 50%), radial-gradient(at 23% 25%, hsla(359,74%,70%,1) 0px, transparent 50%), radial-gradient(at 20% 1%, hsla(267,83%,75%,1) 0px, transparent 50%), radial-gradient(at 86% 87%, hsla(204,69%,68%,1) 0px, transparent 50%), radial-gradient(at 99% 41%, hsla(171,72%,77%,1) 0px, transparent 50%), radial-gradient(at 55% 24%, hsla(138,60%,62%,1) 0px, transparent 50%); }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #fdfefedc; transition: .4s; border-radius: 30px; }
+        .slider:before { position: absolute; content: ""; height: 1.4em; width: 1.4em; left: 0.3em; bottom: 0.35em; transition: .4s; border-radius: 50%; box-shadow: rgba(0,0,0,0.17) 0px -10px 10px 0px inset, rgba(0,0,0,0.09) 0px -1px 15px -8px; background-color: #ff99fd; background-image: radial-gradient(at 81% 39%, hsla(327,79%,79%,1) 0px, transparent 50%), radial-gradient(at 11% 72%, hsla(264,64%,79%,1) 0px, transparent 50%), radial-gradient(at 23% 20%, hsla(75,98%,71%,1) 0px, transparent 50%); }
+        .input__check:checked + .slider { background-color: #17202A; }
+        .input__check:checked + .slider:before { transform: translateX(1.5em); }
+        @keyframes toggle__animation { 0%, 100% { transform: translateY(-10px) rotateX(15deg) rotateY(-20deg); } 50% { transform: translateY(0px) rotateX(15deg) rotateY(-20deg); } }
+        @media (max-width: 600px) { .switch { width: 3em; height: 1.7em; bottom: 16px; right: 16px; } }
+
+        
+        
+        </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1 id="pageTitle">合集</h1>
+        <div class="nav-links">
+            <button class="basic-btn edit-btn" id="editBtn" style="display:none;" onclick="showEditModal()">编辑</button>
+            <button class="basic-btn danger-btn" id="deleteBtn" style="display:none;" onclick="deleteCollection()">删除</button>
+            <button class="basic-btn" onclick="window.location.href='/'">← 返回大厅</button>
+            <button class="basic-btn" onclick="window.location.href='/collections'">← 返回合集</button>
+        </div>
+    </div>
+
+    <div class="collection-header">
+        <div class="collection-name" id="colName"></div>
+        <div class="collection-desc" id="colDesc"></div>
+        <div class="collection-meta">
+            <span id="colAuthor"></span> · <span id="colDate"></span> · <span id="colCount"></span>
+        </div>
+    </div>
+
+    <h2 style="border-bottom: 1px solid var(--border); padding-bottom: 8px;">文章列表</h2>
+    <div id="articleList">
+        <div class="empty-state">加载中...</div>
+    </div>
+
+    <!-- 编辑弹窗 -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h3>编辑合集</h3>
+            <input type="text" id="editName" placeholder="合集名称" maxlength="50">
+            <textarea id="editDesc" placeholder="合集简介" maxlength="200"></textarea>
+            <div class="modal-buttons">
+                <button class="basic-btn" onclick="document.getElementById('editModal').style.display='none'">取消</button>
+                <button class="basic-btn" onclick="submitEdit()" style="background: var(--primary) !important; color: white !important;">保存</button>
+            </div>
+        </div>
+    </div>
+    <label class="switch">
+        <input type="checkbox" class="input__check" id="themeCheckbox">
+        <span class="slider"></span>
+    </label>
+
+
+<script>
+
+        const themeCheckbox = document.getElementById('themeCheckbox');
+        function initTheme() {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            document.body.classList.toggle('dark-mode', isDark);
+            if (themeCheckbox) themeCheckbox.checked = isDark;
+        }
+        if (themeCheckbox) {
+            themeCheckbox.addEventListener('change', function(e) {
+                document.body.classList.toggle('dark-mode', this.checked);
+                localStorage.setItem('theme', this.checked ? 'dark' : 'light');
+            });
+        }
+        initTheme();
+    const collectionId = '{{ collection_id }}';
+
+    function authFetch(url, options = {}) {
+        const token = localStorage.getItem('token');
+        if (token) {
+            options.headers = { ...options.headers, 'Authorization': 'Bearer ' + token };
+        }
+        return fetch(url, { ...options, signal: AbortSignal.timeout(15000) });
+    }
+
+    async function loadCollection() {
+        const res = await fetch(`/api/collections/${collectionId}`);
+        if (!res.ok) {
+            document.getElementById('colName').textContent = '合集不存在';
+            return;
+        }
+        const col = await res.json();
+        document.getElementById('pageTitle').textContent = col.name;
+        document.getElementById('colName').textContent = col.name;
+        document.getElementById('colDesc').textContent = col.description || '暂无简介';
+        document.getElementById('colAuthor').textContent = col.author_nickname;
+        document.getElementById('colDate').textContent = col.created_at ? new Date(col.created_at).toLocaleDateString() : '';
+        document.getElementById('colCount').textContent = col.articles.length + ' 篇文章';
+
+        // 检查是否是作者
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        if (currentUser && (col.author === currentUser.username || currentUser.role === 'owner')) {
+            document.getElementById('editBtn').style.display = 'inline-block';
+            document.getElementById('deleteBtn').style.display = 'inline-block';
+        }
+
+        const list = document.getElementById('articleList');
+        if (col.articles.length === 0) {
+            list.innerHTML = '<div class="empty-state">合集中还没有文章</div>';
+            return;
+        }
+        list.innerHTML = col.articles.map(a => `
+            <div class="article-item" onclick="window.location.href='/read/${a.id}'">
+                <div style="flex:1;">
+                    <div class="article-title">${a.title || a.id}</div>
+                    <div class="article-authors">${a.authors.join(', ') || '未知'} · #${a.number}</div>
+                </div>
+                ${currentUser && (col.author === currentUser.username || currentUser.role === 'owner') ? `
+                    <button class="article-remove-btn" onclick="event.stopPropagation(); removeArticle('${a.id}')">移除</button>
+                ` : ''}
+            </div>
+        `).join('');
+    }
+
+    async function removeArticle(docId) {
+        if (!confirm('从合集中移除此文章？')) return;
+        const res = await authFetch(`/api/collections/${collectionId}/articles/${docId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.status === 'ok') loadCollection();
+        else alert(data.message);
+    }
+
+    function showEditModal() {
+        document.getElementById('editName').value = document.getElementById('colName').textContent;
+        document.getElementById('editDesc').value = document.getElementById('colDesc').textContent === '暂无简介' ? '' : document.getElementById('colDesc').textContent;
+        document.getElementById('editModal').style.display = 'flex';
+    }
+
+    async function submitEdit() {
+        const name = document.getElementById('editName').value.trim();
+        const desc = document.getElementById('editDesc').value.trim();
+        if (!name) { alert('请填写合集名称'); return; }
+        const res = await authFetch(`/api/collections/${collectionId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, description: desc })
+        });
+        const data = await res.json();
+        if (data.status === 'ok') {
+            document.getElementById('editModal').style.display = 'none';
+            loadCollection();
+        } else alert(data.message);
+    }
+
+    async function deleteCollection() {
+        if (!confirm('确定删除此合集？删除后无法恢复！')) return;
+        const res = await authFetch(`/api/collections/${collectionId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.status === 'ok') window.location.href = '/collections';
+        else alert(data.message);
+    }
+
+    document.getElementById('editModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) e.target.style.display = 'none';
+    });
+
+    loadCollection();
+</script>
+
+</body>
+</html>

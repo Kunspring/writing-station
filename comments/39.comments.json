@@ -1,0 +1,83 @@
+[
+  {
+    "id": "8e7324c6-7ccb-4679-81e4-54c2ff3e2c0e",
+    "username": "1",
+    "nickname": "测试号",
+    "selectedText": "我满嘴答应，但是心里却被那异样的情感影响，不愿真正出门……",
+    "comment": "以后不想出门就不要答应",
+    "anchor": {
+      "start": 319,
+      "end": 348,
+      "quote": "我满嘴答应，但是心里却被那异样的情感影响，不愿真正出门……"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-24T20:04:53.097448",
+    "likes": [
+      "1",
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "1_64159dc7.png"
+  },
+  {
+    "id": "438daf24-e328-4d7d-a283-2b49e6b9c631",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "我也是说",
+    "anchor": null,
+    "parentId": "8e7324c6-7ccb-4679-81e4-54c2ff3e2c0e",
+    "timestamp": "2026-04-24T20:25:08.076619",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "114514_07c93cf5.gif"
+  },
+  {
+    "id": "8fbb6e02-4a52-4182-b89e-62dec162a1e0",
+    "username": "ata_sama",
+    "nickname": "木兰朵",
+    "selectedText": "",
+    "comment": "(╥﹏╥)",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T01:59:54.724896",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "ata_sama_7abea149.png"
+  },
+  {
+    "id": "b1a7e624-fd68-4d11-ad01-c16f47395fb4",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "从前我以为，没有感情，就无从下笔；现在又发现，感情太多，也无从下笔。",
+    "comment": "少年不识愁滋味，爱上层楼。\n爱上层楼，为赋新词强说愁。\n \n而今识尽愁滋味，欲说还休。\n欲说还休，却道天凉好个秋。（辛弃疾《丑奴儿》）",
+    "anchor": {
+      "start": 41,
+      "end": 75,
+      "quote": "从前我以为，没有感情，就无从下笔；现在又发现，感情太多，也无从下笔。"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-25T05:22:26.365386",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "Zn_Y_37e16a96.png"
+  },
+  {
+    "id": "a80e9ad0-bde0-4674-86bf-690ae5c9e7d4",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "《逃离》——每个人或多或少都有想要逃离的瞬间。删减版反而让人好奇完整的样子。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.790822",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

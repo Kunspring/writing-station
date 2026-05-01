@@ -1,0 +1,49 @@
+[
+  {
+    "id": "7f1643b9-6ebc-441e-a976-c8fa9c2663d8",
+    "username": "MAXHOYO",
+    "nickname": "诺贝尔闻雪奖",
+    "selectedText": "",
+    "comment": "emmmm，没玩过明潮，没听过对应的歌，这要我怎么评论O_o，感觉这篇更适合以视频的形式呈现，边放音乐边赏析，以纯文字的方式实在难以让读者有共鸣，我实在没什么好说的了",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-23T19:31:24.072086",
+    "likes": [
+      "1"
+    ]
+  },
+  {
+    "id": "ca22a2f5-8815-4c61-ae05-96e6c4b22818",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "所以我叫你们帮我把歌曲链接打后面边听边看呢（悲",
+    "anchor": null,
+    "parentId": "7f1643b9-6ebc-441e-a976-c8fa9c2663d8",
+    "timestamp": "2026-04-23T19:50:01.053098",
+    "likes": []
+  },
+  {
+    "id": "d83adc2f-f2b0-4efa-b0e6-84ba0e32b1f2",
+    "username": "shenxia",
+    "nickname": "霍亨索伦",
+    "selectedText": "",
+    "comment": "可以 。我也觉得  风吹月影的独步  很有感觉。   缀拾坠绪的落星  也令我印象深刻。",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-23T19:54:43.621246",
+    "likes": []
+  },
+  {
+    "id": "dfc81c3a-f18e-46e1-ab66-e8f4989450fe",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "鸣潮的音乐确实值得专门写一篇来聊，场景和旋律的配合很有沉浸感。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.725967",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

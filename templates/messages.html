@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script crossorigin="anonymous" src="https://polyfill.io/v3/polyfill.min.js?features=default,es2015,es2016,es2017,fetch,Promise,Object.assign,Array.prototype.includes,Element.prototype.closest,CSSVariables,IntersectionObserver"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>站内信 - 末日回响写作站</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+        :root {
+            --bg: #fdf6ee;
+            --card-bg: #fffbf5;
+            --text: #2d2418;
+            --border: #e8ddd0;
+            --primary: #d4a574;
+            --primary-hover: #c4915a;
+            --secondary: #a09080;
+            --secondary-hover: #8a7a6a;
+            --shadow: rgba(180,140,100,0.08);
+            --noti-bg: #fffbf5;
+            --comment-highlight: rgba(212,165,116,0.10);
+            --search-bg: #f5ede2;
+            --search-glow: rgba(212,165,116,0.10);
+            --bell-bg: #fffbf5;
+            --bell-icon: #a09080;
+            --bell-gradient-start: #d4a574;
+            --bell-gradient-end: #e8c9a0;
+            --avatar-bg: #f5ede2;
+            --button-text: #2d2418;
+body.dark-mode {
+            --bg: #1e1814;
+            --card-bg: #2a221c;
+            --text: #ffffff;
+            --border: #3a3028;
+            --primary: #d4a574;
+            --primary-hover: #c4915a;
+            --secondary: #8a7a6a;
+            --secondary-hover: #a09080;
+            --shadow: rgba(0,0,0,0.3);
+            --noti-bg: #2a221c;
+            --comment-highlight: rgba(212,165,116,0.15);
+            --search-bg: #2a221c;
+            --search-glow: rgba(212,165,116,0.15);
+            --bell-bg: #2a221c;
+            --bell-icon: #a09080;
+            --bell-gradient-start: #d4a574;
+            --bell-gradient-end: #e8c9a0;
+            --avatar-bg: #2a221c;
+            --button-text: #000000;
+            --bg-color-card: #2a221c;
+            --bg-color-alt: #a09080;
+            --font-color: #e8ddd0;
+            --main-color: #e8ddd0;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; scrollbar-width: none !important; }
+        ::-webkit-scrollbar, *::-webkit-scrollbar { display: none !important; }
+        body {
+            font-family: 'Noto Serif SC', 'SimSun', 'STSong', '宋体', serif;
+            background: var(--bg); color: var(--text); margin: 0; padding: 16px;
+            max-width: 1000px; margin: 0 auto; transition: background 0.3s, color 0.3s;
+        }
+        .nav {
+            display: flex; align-items: center; gap: 20px; margin-bottom: 20px;
+        }
+        .nav h1 { margin: 0; font-size: 1.6em; }
+
+        .layout {
+            display: flex; gap: 20px; height: calc(100vh - 100px);
+        }
+        .conversations {
+            width: 35%; border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; flex-shrink: 0;
+        }
+        .conv-header-fixed {
+            flex-shrink: 0;
+            padding: 0 10px 10px 10px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+            z-index: 2;
+        }
+        .conv-header-fixed h3 { margin: 0 0 8px 0; }
+
+        .conv-list-scroll {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .conv-list-scroll::-webkit-scrollbar, *::-webkit-scrollbar { display: none !important; }
+
+        .conv-item {
+            display: flex; align-items: center; gap: 10px; padding: 12px 10px;
+            border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.15s;
+        }
+        .conv-item:hover { background: var(--shadow); }
+        .conv-item.active { background: var(--primary); color: white; }
+        .conv-avatar {
+            width: 42px; height: 42px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+            border: 1px solid var(--border); background: var(--primary); color: white;
+            display: flex; align-items: center; justify-content: center; font-weight: 700;
+            font-size: 0.9em; overflow: hidden;
+        }
+        .conv-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .conv-info { flex: 1; overflow: hidden; }
+        .conv-name { font-weight: 700; margin-bottom: 4px; }
+        .conv-last {
+            font-size: 0.85em; opacity: 0.7; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis;
+        }
+        .conv-unread {
+            background: #e74c3c; color: white; border-radius: 50%;
+            width: 20px; height: 20px; font-size: 0.75em;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+
+        .chat-area {
+            flex: 1; display: flex; flex-direction: column; min-height: 0;
+        }
+
+        .chat-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 0 10px 15px 10px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+            flex-shrink: 0;
+        }
+        .chat-avatar {
+            width: 42px; height: 42px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+            background: var(--primary); color: white; display: flex; align-items: center;
+            justify-content: center; font-weight: 700; font-size: 0.9em; overflow: hidden;
+        }
+        .chat-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .chat-header h3 { margin: 0; flex: 1; }
+        .back-btn-mobile {
+            display: none; background: none; border: none; font-size: 1.5em;
+            cursor: pointer; padding: 0 8px; color: var(--text);
+        }
+
+        .messages {
+            flex: 1; overflow-y: auto; padding: 10px 10px 0 10px;
+            display: flex; flex-direction: column; gap: 8px;
+            scrollbar-width: none; -ms-overflow-style: none;
+            min-height: 0;
+        }
+        .messages::-webkit-scrollbar, *::-webkit-scrollbar { display: none !important; }
+
+        .msg-bubble {
+            max-width: 70%; padding: 10px 14px; border-radius: 16px;
+            word-wrap: break-word; font-size: 0.95em; line-height: 1.5;
+            animation: msgSlideIn 0.3s ease;
+        }
+        .msg-from-me {
+            align-self: flex-end; background: var(--primary); color: white;
+            border-bottom-right-radius: 4px; animation-name: msgSlideInRight;
+        }
+        .msg-from-them {
+            align-self: flex-start; background: var(--card-bg);
+            border: 1px solid var(--border); border-bottom-left-radius: 4px;
+            animation-name: msgSlideInLeft;
+        }
+        .msg-time { font-size: 0.7em; opacity: 0.6; margin-top: 4px; }
+        .empty-state { text-align: center; padding: 40px; opacity: 0.6; }
+
+        .input-area {
+            display: flex; gap: 10px; margin-top: 10px;
+            border-top: 1px solid var(--border); padding: 15px 10px 10px 10px;
+            background: var(--bg);
+            flex-shrink: 0;
+        }
+        .input-area input {
+            flex: 1; padding: 12px; border-radius: 20px; border: 1px solid var(--border);
+            background: var(--card-bg); color: var(--text); font-size: 15px;
+        }
+        .sticker-btn {
+            width: 36px; height: 36px; padding: 0; border: none; background: none;
+            font-size: 1.4em; cursor: pointer; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; transition: background 0.15s; flex-shrink: 0;
+        }
+        .sticker-btn:hover { background: var(--shadow); }
+        .sticker-picker {
+            position: absolute; bottom: 70px; right: 10px; width: 280px;
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px;
+            box-shadow: 0 4px 20px var(--shadow); z-index: 200; overflow: hidden;
+        }
+        @media (max-width: 768px) {
+            .sticker-picker { position: fixed; bottom: 0; left: 0; right: 0; width: 100%; max-height: 50vh; border-radius: 16px 16px 0 0; border-bottom: none; z-index: 9999; }
+            .sticker-grid { grid-template-columns: repeat(5, 1fr); max-height: 30vh; }
+            .sticker-btn { width: 40px; height: 40px; font-size: 1.5em; }
+        }
+        .sticker-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.85em;
+        }
+        .sticker-header span { font-weight: 600; }
+        .sticker-upload-btn {
+            padding: 3px 10px; border-radius: 12px; border: 1px solid var(--border);
+            background: var(--primary); color: white; font-size: 0.85em; cursor: pointer;
+        }
+        .sticker-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+            padding: 10px; max-height: 200px; overflow-y: auto;
+        }
+        .sticker-item {
+            width: 100%; aspect-ratio: 1; border-radius: 8px; cursor: pointer;
+            transition: transform 0.15s; object-fit: contain; padding: 4px;
+            background: var(--bg);
+        }
+        .sticker-item:hover { transform: scale(1.15); background: var(--shadow); }
+        .sticker-loading { grid-column: 1 / -1; text-align: center; color: var(--secondary); padding: 20px 0; font-size: 0.8em; }
+        .sticker-empty { grid-column: 1 / -1; text-align: center; color: var(--secondary); padding: 20px 0; font-size: 0.8em; }
+        .sticker-del { position: absolute; top: -2px; right: -2px; width: 18px; height: 18px; border-radius: 50%; border: none; background: rgba(0,0,0,0.5); color: white; font-size: 10px; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; }
+        .sticker-grid > div:hover .sticker-del { display: flex; }
+
+        .basic-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 8px 18px; border-radius: 30px; border: 1px solid #8F9092;
+            background: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            color: #000000 !important; font-weight: 600; cursor: pointer;
+            transition: 0.2s; font-family: inherit; font-size: 14px; white-space: nowrap;
+            text-decoration: none;
+        }
+        body.dark-mode .basic-btn {
+            background: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            color: #000000 !important;
+        }
+        .basic-btn:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+
+        @keyframes msgSlideInRight {
+            from { opacity: 0; transform: translateX(30px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes msgSlideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes msgSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 手机端适配 */
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+            .basic-btn {
+                font-size: 12px !important;
+                padding: 0 12px !important;
+                height: 30px !important;
+            }
+            body { padding: 10px; }
+            .layout { flex-direction: column; height: calc(100vh - 80px); }
+            .conversations {
+                width: 100%; border-right: none; display: flex; flex: 1;
+            }
+            .chat-area { display: none; }
+            .layout.chat-open .conversations { display: none; }
+            .layout.chat-open .chat-area { display: flex; }
+            .back-btn-mobile { display: inline-block; }
+            .nav h1 { font-size: 1.4em; }
+            .chat-header { padding: 10px 10px 15px 10px; }
+        }
+
+    }
+        
+        
+        .switch { position: fixed; bottom: 20px; right: 20px; z-index: 1000; font-size: 17px; display: inline-block; width: 3.5em; height: 2em; transform-style: preserve-3d; perspective: 500px; animation: toggle__animation 3s infinite; }
+        .switch::before { content: ""; position: absolute; width: 100%; height: 100%; left: 0; top: 0; filter: blur(20px); z-index: -1; border-radius: 50px; background-color: #d8ff99; background-image: radial-gradient(at 21% 46%, hsla(183,65%,60%,1) 0px, transparent 50%), radial-gradient(at 23% 25%, hsla(359,74%,70%,1) 0px, transparent 50%), radial-gradient(at 20% 1%, hsla(267,83%,75%,1) 0px, transparent 50%), radial-gradient(at 86% 87%, hsla(204,69%,68%,1) 0px, transparent 50%), radial-gradient(at 99% 41%, hsla(171,72%,77%,1) 0px, transparent 50%), radial-gradient(at 55% 24%, hsla(138,60%,62%,1) 0px, transparent 50%); }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #fdfefedc; transition: .4s; border-radius: 30px; }
+        .slider:before { position: absolute; content: ""; height: 1.4em; width: 1.4em; left: 0.3em; bottom: 0.35em; transition: .4s; border-radius: 50%; box-shadow: rgba(0,0,0,0.17) 0px -10px 10px 0px inset, rgba(0,0,0,0.09) 0px -1px 15px -8px; background-color: #ff99fd; background-image: radial-gradient(at 81% 39%, hsla(327,79%,79%,1) 0px, transparent 50%), radial-gradient(at 11% 72%, hsla(264,64%,79%,1) 0px, transparent 50%), radial-gradient(at 23% 20%, hsla(75,98%,71%,1) 0px, transparent 50%); }
+        .input__check:checked + .slider { background-color: #17202A; }
+        .input__check:checked + .slider:before { transform: translateX(1.5em); }
+        @keyframes toggle__animation { 0%, 100% { transform: translateY(-10px) rotateX(15deg) rotateY(-20deg); } 50% { transform: translateY(0px) rotateX(15deg) rotateY(-20deg); } }
+        @media (max-width: 600px) { .switch { width: 3em; height: 1.7em; bottom: auto; right: 16px; top: 16px; } }
+
+</style>
+</head>
+<body>
+    <div class="nav">
+        <h1>站内信</h1>
+        <button class="basic-btn" onclick="location.href='/'">← 返回大厅</button>
+    </div>
+
+    <div class="layout" id="mainLayout">
+        <div class="conversations">
+            <div class="conv-header-fixed">
+                <h3>对话</h3>
+                <div style="display:flex; gap:8px;">
+                    
+                    <button class="basic-btn" onclick="markAllRead()">✔️ 全部已读</button>
+                </div>
+            </div>
+            <div class="conv-list-scroll" id="convItems">加载中...</div>
+        </div>
+
+        <div class="chat-area" id="chatArea">
+            <div class="empty-state">← 选择一个对话开始聊天</div>
+        </div>
+    </div>
+    <label class="switch">
+        <input type="checkbox" class="input__check" id="themeCheckbox">
+        <span class="slider"></span>
+    </label>
+
+
+    <script>
+
+        const themeCheckbox = document.getElementById('themeCheckbox');
+        function initTheme() {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            document.body.classList.toggle('dark-mode', isDark);
+            if (themeCheckbox) themeCheckbox.checked = isDark;
+        }
+        if (themeCheckbox) {
+            themeCheckbox.addEventListener('change', function(e) {
+                document.body.classList.toggle('dark-mode', this.checked);
+                localStorage.setItem('theme', this.checked ? 'dark' : 'light');
+            });
+        }
+        initTheme();
+
+        async function markAllRead() {
+            await authFetch('/api/read_all', { method: 'POST' });
+            loadConversations();     // 刷新对话列表，移除未读标记
+            updateMsgBadge();        // 更新首页徽章（需要在 messages.html 中也定义此函数）
+        }
+
+        function updateMsgBadge() { /* 仅供首页徽章刷新 */ }
+
+        const token = localStorage.getItem('token');
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!token || !currentUser) window.location.href = '/';
+
+        const pathParts = window.location.pathname.split('/').filter(p => p);
+        let activeConversation = null;
+        let isLoadingConversation = false;
+
+        if (pathParts.length >= 2 && pathParts[0] === 'messages') {
+            activeConversation = decodeURIComponent(pathParts[1]);
+        }
+
+        function authFetch(url, options={}) {
+            options.headers = { ...options.headers, 'Authorization': 'Bearer ' + token };
+            return fetch(url, { ...options, signal: AbortSignal.timeout(15000) });
+        }
+
+        function updateActiveInList(withUser) {
+            document.querySelectorAll('.conv-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.with === withUser);
+            });
+        }
+
+        async function loadConversations() {
+            const res = await authFetch('/api/messages/conversations');
+            const convs = await res.json();
+            const container = document.getElementById('convItems');
+            if (!convs.length) {
+                container.innerHTML = '<div class="empty-state">暂无对话</div>';
+                return;
+            }
+            container.innerHTML = convs.map(c => {
+                const avatarHtml = c.avatar
+                    ? `<img src="/avatars/${c.avatar}" alt="${c.nickname}">`
+                    : c.nickname.charAt(0).toUpperCase();
+                return `
+                <div class="conv-item" data-with="${c.with_user}" onclick="openConversation('${c.with_user}')">
+                    <div class="conv-avatar">${avatarHtml}</div>
+                    <div class="conv-info">
+                        <div class="conv-name">${c.nickname}</div>
+                        <div class="conv-last">${c.last_message?.content || ''}</div>
+                    </div>
+                    ${c.unread_count > 0 ? `<div class="conv-unread">${c.unread_count}</div>` : ''}
+                </div>`;
+            }).join('');
+            if (activeConversation) updateActiveInList(activeConversation);
+        }
+
+        // 已移除 startNewConversation 函数
+
+        function appendMessageToChat(msgData) {
+            const msgList = document.getElementById('messageList');
+            if (!msgList) return;
+            const isMe = msgData.from === currentUser.username;
+            const bubbleClass = isMe ? 'msg-from-me' : 'msg-from-them';
+            const div = document.createElement('div');
+            div.className = `msg-bubble ${bubbleClass}`;
+            div.innerHTML = `<div>${renderMessageContent(msgData.content)}</div><div class="msg-time">${new Date(msgData.timestamp).toLocaleString()}</div>`;
+            msgList.appendChild(div);
+            msgList.scrollTop = msgList.scrollHeight;
+        }
+
+        async function openConversation(withUser) {
+            if (!withUser || isLoadingConversation) return;
+            isLoadingConversation = true;
+            activeConversation = withUser;
+            updateActiveInList(withUser);
+
+            document.getElementById('mainLayout').classList.add('chat-open');
+
+            const chatArea = document.getElementById('chatArea');
+            chatArea.innerHTML = '<div class="empty-state" style="flex:1;">加载中...</div>';
+            const convItems = document.querySelectorAll('.conv-item');
+            for (let item of convItems) {
+                if (item.dataset.with === withUser) {
+                    const badge = item.querySelector('.conv-unread');
+                    if (badge) badge.remove();
+                    break;
+                }
+            }
+            try {
+                const res = await authFetch(`/api/messages?with=${encodeURIComponent(withUser)}`);
+                const messages = await res.json();
+
+                authFetch('/api/messages/read', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ with: withUser })
+                }).catch(() => {});
+
+                let displayNickname = null, avatarUrl = null;
+                try {
+                    const userRes = await authFetch(`/api/user/${encodeURIComponent(withUser)}`);
+                    const userData = await userRes.json();
+                    if (userData && userData.nickname) {
+                        displayNickname = userData.nickname;
+                        avatarUrl = userData.avatar;
+                    }
+                } catch(e) {}
+
+                if (!displayNickname || !avatarUrl) {
+                    const refMsg = messages.find(m => m.from === withUser) || messages.find(m => m.to === withUser);
+                    if (refMsg) {
+                        if (!displayNickname) displayNickname = refMsg.from === withUser ? refMsg.from_nickname : refMsg.to_nickname;
+                        if (!avatarUrl) avatarUrl = refMsg.from === withUser ? refMsg.from_avatar : refMsg.to_avatar;
+                    }
+                }
+                if (!displayNickname) displayNickname = withUser;
+
+                const avatarHtml = avatarUrl
+                    ? `<img src="/avatars/${avatarUrl}" alt="${displayNickname}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
+                    : displayNickname.charAt(0).toUpperCase();
+
+                chatArea.innerHTML = `
+                    <div class="chat-header">
+                        <button class="back-btn-mobile" onclick="closeChatView()">←</button>
+                        <div class="chat-avatar">${avatarHtml}</div>
+                        <h3>${displayNickname}</h3>
+                    </div>
+                    <div class="messages" id="messageList">
+                        ${messages.length === 0 ? '<div class="empty-state">暂无消息，发送第一条吧</div>' : ''}
+                    </div>
+                    <div class="input-area">
+                        <input type="text" id="messageInput" placeholder="输入消息..." onkeydown="if(event.key==='Enter')sendMessage()">
+                        <button class="sticker-btn" onclick="toggleStickerPicker(event)" title="表情包">😊</button>
+                        <button class="basic-btn" onclick="sendMessage()">发送</button>
+                    </div>
+                    <div id="stickerPicker" class="sticker-picker" style="display:none;">
+                        <div class="sticker-header">
+                            <span>我的表情包</span>
+                            <button class="sticker-upload-btn" onclick="document.getElementById('stickerFileInput').click()">+ 上传</button>
+                            <input type="file" id="stickerFileInput" accept="image/*" style="display:none" onchange="uploadSticker(this)">
+                        </div>
+                        <div class="sticker-grid" id="stickerGrid">
+                            <div class="sticker-loading">加载中...</div>
+                        </div>
+                    </div>
+                `;
+
+                if (messages.length > 0) {
+                    const msgList = document.getElementById('messageList');
+                    messages.forEach(m => {
+                        const isMe = m.from === currentUser.username;
+                        const cls = isMe ? 'msg-from-me' : 'msg-from-them';
+                        const div = document.createElement('div');
+                        div.className = `msg-bubble ${cls}`;
+                        div.innerHTML = `<div>${renderMessageContent(m.content)}</div><div class="msg-time">${new Date(m.timestamp).toLocaleString()}</div>`;
+                        msgList.appendChild(div);
+                    });
+                    msgList.scrollTop = msgList.scrollHeight;
+                }
+            } catch (e) {
+                chatArea.innerHTML = '<div class="empty-state">加载失败，请重试</div>';
+            } finally {
+                isLoadingConversation = false;
+            }
+        }
+
+        function closeChatView() {
+            document.getElementById('mainLayout').classList.remove('chat-open');
+        }
+
+        // 渲染内容中的图片URL
+        function renderMessageContent(text) {
+            if (!text) return '';
+            return text.replace(/(https?:\/\/[^\s]+\.(?:png|jpg|jpeg|gif|webp)(?:\?[^\s]*)?)/gi, function(m) {
+                return '<img src="' + m + '" style="max-width:120px;max-height:120px;border-radius:8px;display:block;margin:4px 0;object-fit:cover;" loading="lazy">';
+            }).replace(/(\/static\/uploads\/stickers\/[^\s]+)/g, function(m) {
+                return '<img src="' + m + '" style="max-width:120px;max-height:120px;border-radius:8px;display:block;margin:4px 0;object-fit:cover;" loading="lazy">';
+            });
+        }
+
+        // ===== 表情包功能 =====
+        function toggleStickerPicker(e) {
+            e.stopPropagation();
+            var picker = document.getElementById('stickerPicker');
+            if (picker.style.display !== 'none') {
+                picker.style.display = 'none';
+                return;
+            }
+            picker.style.display = 'block';
+            loadStickers();
+        }
+        // 点击外面关闭
+        document.addEventListener('click', function(e) {
+            var picker = document.getElementById('stickerPicker');
+            if (picker && !e.target.closest('#stickerPicker') && !e.target.closest('.sticker-btn')) {
+                picker.style.display = 'none';
+            }
+        });
+
+        async function loadStickers() {
+            var grid = document.getElementById('stickerGrid');
+            try {
+                var res = await authFetch('/api/stickers');
+                var data = await res.json();
+                var stickers = data.stickers || [];
+                if (stickers.length === 0) {
+                    grid.innerHTML = '<div class="sticker-empty">还没有表情包，点「+ 上传」添加</div>';
+                    return;
+                }
+                grid.innerHTML = stickers.map(function(s) {
+                    return '<div style="position:relative;"><img class="sticker-item" src="' + s.url + '" onclick="insertSticker(\'' + s.url.replace(/'/g, "\\'") + '\')" title="' + (s.name||'') + '"><button class="sticker-del" onclick="event.stopPropagation();deleteSticker(\'' + (s.name||'').replace(/'/g, "\\'") + '\')">✕</button></div>';
+                }).join('');
+            } catch(e) {
+                grid.innerHTML = '<div class="sticker-loading">加载失败</div>';
+            }
+        }
+
+        function insertSticker(url) {
+            var input = document.getElementById('messageInput');
+            if (input) {
+                input.value += (input.value ? ' ' : '') + url;
+                input.focus();
+            }
+            document.getElementById('stickerPicker').style.display = 'none';
+        }
+
+        async function deleteSticker(name) {
+            if (!confirm('删除这个表情包？')) return;
+            try {
+                var res = await authFetch('/api/stickers/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name })
+                });
+                var data = await res.json();
+                if (data.status === 'ok') loadStickers();
+                else alert(data.message || '删除失败');
+            } catch(e) { alert('删除失败'); }
+        }
+
+        async function uploadSticker(input) {
+            var file = input.files[0];
+            if (!file) return;
+            var formData = new FormData();
+            formData.append('sticker', file);
+            try {
+                var res = await authFetch('/api/stickers/upload', { method: 'POST', body: formData });
+                var data = await res.json();
+                if (data.status === 'ok') {
+                    loadStickers();
+                } else {
+                    alert(data.message || '上传失败');
+                }
+            } catch(e) {
+                alert('上传失败');
+            }
+            input.value = '';
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            if (!input) return;
+            const content = input.value.trim();
+            if (!content || !activeConversation) return;
+            input.value = '';
+            const sendBtn = document.querySelector('.input-area .basic-btn');
+            if (sendBtn) sendBtn.disabled = true;
+
+            try {
+                const res = await authFetch('/api/messages', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ to: activeConversation, content })
+                });
+                const data = await res.json();
+                if (data.status === 'ok') {
+                    appendMessageToChat(data.message);
+                    loadConversations();
+                } else alert('发送失败：' + (data.message || '未知错误'));
+            } catch(e) { alert('网络错误'); }
+            finally {
+                if (sendBtn) sendBtn.disabled = false;
+                input.focus();
+            }
+        }
+
+
+        loadConversations();
+        if (activeConversation) openConversation(activeConversation);
+    </script>
+
+</body>
+</html>

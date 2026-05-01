@@ -1,0 +1,130 @@
+[
+  {
+    "id": "6143bc30-1f5b-42c9-ba57-32f79faac4e5",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "“哎呀，哎呀，小砍施尼还自家穿衣裳出来了。”",
+    "comment": "哎呀，哎呀，小砍施尼",
+    "anchor": {
+      "start": 342,
+      "end": 364,
+      "quote": "“哎呀，哎呀，小砍施尼还自家穿衣裳出来了。”"
+    },
+    "timestamp": "2026-04-22T23:36:26.413952",
+    "likes": [
+      "114514",
+      "Zn/Y",
+      "2314836955"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "f9de2a49-1f57-47a0-aedb-5284b5dc4652",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "为什么要写那么多腻害呢？",
+    "anchor": null,
+    "timestamp": "2026-04-23T01:00:12.485186",
+    "likes": [
+      "114514",
+      "1",
+      "2314836955"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "7075925c-cbe5-4636-a09f-42dece6f51ee",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "初看标题成功引起了星铁玩家的阅读兴趣，还以为您要写米哈伊尔。文章以会调表的人来类比钟表匠，成功衬托出会调表的人在班上得到的关注和钟表匠在社会中得到的社会关注相当，表达了作者的腻害，，至少假装很腻害。",
+    "anchor": null,
+    "timestamp": "2026-04-23T13:41:32.751507",
+    "likes": [
+      "Zn/Y",
+      "1",
+      "2314836955"
+    ],
+    "avatar": "Zn_Y_d380cade.png",
+    "role": "user"
+  },
+  {
+    "id": "85d7ee07-0e35-49ad-bb03-3ea5c8989e7c",
+    "username": "MAXHOYO",
+    "nickname": "诺贝尔闻雪奖",
+    "selectedText": "",
+    "comment": "钟表匠，初看会以为是一个厉害的钟表制造师，可在笔者文中只是一个会调表的小孩子，这种巨大的反差好像让那个孩子变得幼稚可笑，但这何尝不是代表了孩子内心的向往，他渴望被关注，渴望被需要，想要在众人的注视中绽放。这是孩子刻在心中的自卑，他的心里一直有个衰小孩说他还不够好，还会被人欺负。所以他想要通过被人需要去证明自己，好像自己就是那个无所不能的钟表匠。但在自卑杀死了他的青春，一切都结束后才会幡然醒悟，他才是那个一直在欺负自己的人，那个和他对话的衰小孩，从来都不存在，不过是脑海里幻想出来的、用来安放所有怯懦与渴望的影子罢了。",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-23T18:17:07.860864",
+    "likes": [
+      "1",
+      "2314836955"
+    ],
+    "avatar": "MAXHOYO_d7103ff4.gif",
+    "role": "user"
+  },
+  {
+    "id": "39584678-1ddc-45b0-9e11-63db7f058443",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "我喜欢",
+    "anchor": null,
+    "parentId": "f9de2a49-1f57-47a0-aedb-5284b5dc4652",
+    "timestamp": "2026-04-25T01:31:38.589402",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "2314836955_8541dc63.jpg",
+    "role": "user"
+  },
+  {
+    "id": "ceff4f53-edd3-4587-96cd-12a465bb0dbb",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "我就是腻害",
+    "anchor": null,
+    "parentId": "7075925c-cbe5-4636-a09f-42dece6f51ee",
+    "timestamp": "2026-04-25T01:31:59.191724",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "2314836955_8541dc63.jpg",
+    "role": "user"
+  },
+  {
+    "id": "65d61377-76e7-4507-8972-d4fbd490b5cf",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "评委高见",
+    "anchor": null,
+    "parentId": "85d7ee07-0e35-49ad-bb03-3ea5c8989e7c",
+    "timestamp": "2026-04-25T01:32:31.440101",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "2314836955_8541dc63.jpg",
+    "role": "user"
+  },
+  {
+    "id": "dbbf9429-e88b-4dad-aab7-22255abe5cfd",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "《了不起的钟表匠》这标题让我想起道金斯的比喻——复杂之美背后未必需要设计者，但故事里一定藏着作者的匠心。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.703795",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "misaka_mikoto_3ba546a5.png",
+    "role": "ai"
+  }
+]

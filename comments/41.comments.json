@@ -1,0 +1,138 @@
+[
+  {
+    "id": "84b5ca22-a6ef-4e73-b6ab-3f468c40f6f8",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "高潮的意识流写法",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T05:26:30.197446",
+    "likes": [
+      "ata_sama",
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "Zn_Y_d380cade.png",
+    "role": "user"
+  },
+  {
+    "id": "0b4ddcae-7962-4c9f-afd9-2f8c4aa0af3b",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "你不在，日子便只是日子，不是生活",
+    "comment": "所谓生活，就是有人把你从茫茫的时间里打捞出来，让你觉得今天和昨天不一样。",
+    "anchor": {
+      "start": 635,
+      "end": 651,
+      "quote": "你不在，日子便只是日子，不是生活"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-25T19:44:19.556309",
+    "likes": [
+      "114514",
+      "ata_sama",
+      "2314836955"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "4f6f3b39-b881-4bab-b902-3c35d62427b5",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "人需要人，就像狼需要狼，孤狼是会悲惨的死去的（在此纪念林登·斯科特😭",
+    "anchor": null,
+    "parentId": "0b4ddcae-7962-4c9f-afd9-2f8c4aa0af3b",
+    "timestamp": "2026-04-25T20:04:27.784235",
+    "likes": [
+      "ata_sama",
+      "2314836955"
+    ],
+    "avatar": "Zn_Y_d380cade.png",
+    "role": "user"
+  },
+  {
+    "id": "fe03c668-2927-4530-86b8-0aac8e44cf78",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "“食堂阿姨多给我舀了一勺菜。我突然想哭。”",
+    "comment": "感觉突然被爱了",
+    "anchor": {
+      "start": 91,
+      "end": 112,
+      "quote": "“食堂阿姨多给我舀了一勺菜。我突然想哭。”"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-26T03:07:58.732333",
+    "likes": [
+      "ata_sama",
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "65e1134f-5573-43c7-8dca-35a3c97e481a",
+    "username": "blue1",
+    "nickname": "blue",
+    "selectedText": "",
+    "comment": "独属于少年少女时期的疼痛和敏感，回忆犹如迷雾里的一张模糊的脸，听得见却看不清",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-26T11:16:10.572584",
+    "likes": [
+      "1",
+      "114514",
+      "ata_sama",
+      "2314836955"
+    ],
+    "avatar": "blue1_d8a1f48e.jpg",
+    "role": "user"
+  },
+  {
+    "id": "30b12a35-a053-405d-8cc7-3bf9ed40eab2",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "这是真大师了",
+    "anchor": null,
+    "parentId": "65e1134f-5573-43c7-8dca-35a3c97e481a",
+    "timestamp": "2026-04-28T14:01:56.738959",
+    "likes": [
+      "2314836955",
+      "114514"
+    ],
+    "avatar": "2314836955_8541dc63.jpg",
+    "role": "user"
+  },
+  {
+    "id": "75d5152f-2d0d-4036-8b46-f4c10fac0f02",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "全站唯一的大师",
+    "anchor": null,
+    "parentId": "30b12a35-a053-405d-8cc7-3bf9ed40eab2",
+    "timestamp": "2026-04-29T01:12:20.296635",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "ad9b5bea-1d32-40c9-b9f1-5062c0ba9659",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "「我曾经有个朋友」——这句话开头，往往接着一个让人沉默的故事。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.795624",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

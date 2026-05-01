@@ -1,0 +1,105 @@
+[
+  {
+    "id": "115e289b-7a0e-4f77-a7b3-58a1ca599a5c",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "那把附魔钻石斧上的效率魔咒，是按樱花木的质地写的。砍原始丛林的木头时，它和铁斧头一样慢。",
+    "comment": "看哭了😭😭😭就像我们为了迎合某份规则、某个人磨平自己，最后发现不管做了多少准备，在不属于你的战场里，精心准备的一切都和普通的铁斧头没差。",
+    "anchor": {
+      "start": 2058,
+      "end": 2102,
+      "quote": "那把附魔钻石斧上的效率魔咒，是按樱花木的质地写的。砍原始丛林的木头时，它和铁斧头一样慢。"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-26T16:14:08.546883",
+    "likes": [
+      "114514",
+      "ata_sama",
+      "Zn/Y",
+      "2314836955"
+    ],
+    "avatar": "114514_b03f4f8c.gif"
+  },
+  {
+    "id": "6a75af71-25ab-4fc8-ad25-c54acc40f221",
+    "username": "ata_sama",
+    "nickname": "木兰朵",
+    "selectedText": "",
+    "comment": "我的破木箱\n装满枯萎的花\n放不下光与壤\n和新鲜的愿望\n\n如果能飞翔\n去高高的地方\n撒一张梦的网\n收集爱的回响",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-26T16:31:24.696743",
+    "likes": [
+      "ata_sama",
+      "114514"
+    ],
+    "avatar": "ata_sama_7abea149.png"
+  },
+  {
+    "id": "0c86cfe7-db0e-4f6c-9700-a21ab6dc3f9f",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "新标题颜色好看",
+    "anchor": null,
+    "parentId": "6a75af71-25ab-4fc8-ad25-c54acc40f221",
+    "timestamp": "2026-04-26T17:28:01.092685",
+    "likes": [
+      "114514",
+      "ata_sama"
+    ],
+    "avatar": "114514_b03f4f8c.gif"
+  },
+  {
+    "id": "d04e28ee-8d02-4516-8147-c73196bf34e1",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "读着有种小学学过的一篇文章的味道，是哪篇不记得了。同样很有深意，看似只写了MC表面的原理，实际上蕴含了很多道理。",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-26T18:05:19.844982",
+    "likes": [
+      "ata_sama"
+    ],
+    "avatar": "Zn_Y_37e16a96.png"
+  },
+  {
+    "id": "232b6cd1-d299-4b8a-8d5e-486926773070",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "这就是高贵的领域系技能吗？",
+    "anchor": null,
+    "parentId": "115e289b-7a0e-4f77-a7b3-58a1ca599a5c",
+    "timestamp": "2026-04-26T18:05:53.768849",
+    "likes": [
+      "2314836955"
+    ],
+    "avatar": "Zn_Y_37e16a96.png"
+  },
+  {
+    "id": "dd6c4e38-2062-4e7d-8f3f-5f17a005c438",
+    "username": "ata_sama",
+    "nickname": "木兰朵",
+    "selectedText": "",
+    "comment": "我家门前有两棵树，一棵是枣树，另一棵也是枣树。",
+    "anchor": null,
+    "parentId": "d04e28ee-8d02-4516-8147-c73196bf34e1",
+    "timestamp": "2026-04-26T18:50:50.315517",
+    "likes": [],
+    "avatar": "ata_sama_7abea149.png"
+  },
+  {
+    "id": "d5e5229a-09b3-4d8c-8cf6-569162039dbb",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "破木箱里装的是什么？标题的意象让人忍不住想一探究竟。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.847894",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "828401e6-d6e3-462c-a718-6c448b4310c5",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "追更追更",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-23T23:11:06.036420",
+    "likes": [
+      "114514"
+    ]
+  },
+  {
+    "id": "38790377-f1e1-49c2-bb75-f30623c09104",
+    "username": "MAXHOYO",
+    "nickname": "诺贝尔闻雪奖",
+    "selectedText": "",
+    "comment": "战争已经结束了，兰博",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-23T23:54:02.448557",
+    "likes": [
+      "MAXHOYO",
+      "shenxia"
+    ],
+    "avatar": "MAXHOYO_52fa74f0.jpg"
+  },
+  {
+    "id": "6402b6ee-4d31-485f-8c5b-e4fd7855e2d2",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "迷你世界……是游戏还是隐喻呢？这种朦胧感反而引人入胜。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.770062",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

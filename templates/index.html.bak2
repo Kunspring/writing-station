@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>末日回响写作站</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <style>
+        :root {
+            --bg: #fafbfc;
+            --card-bg: #ffffff;
+            --text: #1e1e2f;
+            --border: #ddd;
+            --primary: #0070f3;
+            --primary-hover: #005bb5;
+            --secondary: #6c757d;
+            --secondary-hover: #5a6268;
+            --shadow: rgba(0,0,0,0.05);
+            --noti-bg: #ffffff;
+            --comment-highlight: rgba(0,112,243,0.1);
+            --search-bg: #f0f2f5;
+            --search-glow: rgba(0,112,243,0.1);
+            --bell-bg: #ffffff;
+            --bell-icon: #777;
+            --bell-gradient-start: #0070f3;
+            --bell-gradient-end: #5ce1e6;
+            --avatar-bg: #f0f2f5;
+        }
+        body.dark-mode {
+            --bg: #1a1a2e;
+            --card-bg: #16213e;
+            --text: #e0e0e0;
+            --border: #2a2a4a;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --secondary: #4b5563;
+            --secondary-hover: #374151;
+            --shadow: rgba(0,0,0,0.3);
+            --noti-bg: #1e293b;
+            --search-bg: #1e293b;
+            --search-glow: rgba(59,130,246,0.2);
+            --bell-bg: #1e293b;
+            --bell-icon: #cbd5e1;
+            --bell-gradient-start: #3b82f6;
+            --bell-gradient-end: #00bf63;
+            --avatar-bg: #2a2a4a;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            font-weight: 500;
+            max-width: 900px; margin: 0 auto; padding: 16px; background: var(--bg);
+            line-height: 1.6; color: var(--text);
+            transition: background 0.3s, color 0.3s;
+        }
+        h1, h2, h3 { font-weight: 700; }
+        h1 { border-bottom: 2px solid var(--border); font-size: 1.8em; }
+        .hidden { display: none !important; }
+        .auth-container {
+            max-width: 400px; margin: 30px auto; background: var(--card-bg); padding: 24px;
+            border-radius: 12px; box-shadow: 0 4px 12px var(--shadow);
+        }
+        .auth-tabs { display: flex; margin-bottom: 20px; }
+        .auth-tab { flex: 1; text-align: center; padding: 12px; cursor: pointer; border-bottom: 2px solid transparent; font-weight: 600; color: var(--text); }
+        .auth-tab.active { border-bottom-color: var(--primary); color: var(--primary); }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; color: var(--text); font-weight: 600; }
+        .form-group input {
+            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px;
+            font-size: 16px; font-family: inherit; background: var(--card-bg); color: var(--text);
+        }
+        button {
+            padding: 12px 20px; background: var(--primary); color: white; border: none;
+            border-radius: 8px; cursor: pointer; font-size: 16px; font-family: inherit;
+            font-weight: 600; transition: background 0.2s; outline: none;
+        }
+        button:hover { background: var(--primary-hover); }
+        .error-message { color: #e74c3c; margin-top: 12px; }
+        
+        .navbar {
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+        }
+        .navbar h1 { border: none; margin: 0; font-size: 1.6em; }
+        .user-info { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .avatar, .noti-avatar, .profile-avatar, .avatar-placeholder { 
+            width: 36px; height: 36px; border-radius: 50%; object-fit: cover;
+            flex-shrink: 0; border: 1px solid var(--border);
+        }
+        .avatar, .noti-avatar, .profile-avatar { background: var(--avatar-bg); }
+        .avatar-placeholder {
+            background: var(--primary); color: white; display: flex; 
+            align-items: center; justify-content: center; font-weight: 700; font-size: 1.2em;
+        }
+        .nav-links { display: flex; gap: 12px; align-items: center; }
+        .nav-links button { padding: 8px 16px; font-size: 14px; background: var(--secondary); }
+        .nav-links button:hover { background: var(--secondary-hover); }
+
+        .notification-wrapper { position: relative; display: inline-block; }
+        .noti-bell {
+            position: relative; width: 40px; height: 40px; background: var(--bell-bg);
+            border-radius: 40px; cursor: pointer; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05); transition: all 0.4s ease; border: none; padding: 0; outline: none; overflow: hidden;
+        }
+        .noti-bell:hover { width: 120px; background: linear-gradient(45deg, var(--bell-gradient-start), var(--bell-gradient-end)); box-shadow: 0 6px 15px rgba(0,0,0,0.15); }
+        .bell-icon { font-size: 1.5em; transition: opacity 0.3s, transform 0.3s; position: relative; z-index: 2; color: var(--bell-icon); }
+        .noti-bell:hover .bell-icon { animation: bellShake 0.5s ease-in-out infinite; opacity: 0; }
+        .bell-title { position: absolute; color: white; font-size: 0.95em; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; transform: scale(0); transition: transform 0.3s ease; z-index: 2; white-space: nowrap; }
+        .noti-bell:hover .bell-title { transform: scale(1); }
+        .noti-badge { position: absolute; top: 2px; right: 2px; background: #e74c3c; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 10px; display: flex; align-items: center; justify-content: center; z-index: 5; pointer-events: none; transition: all 0.3s; }
+        .noti-bell:hover .noti-badge { right: 8px; top: 50%; transform: translateY(-50%); }
+        .noti-dropdown { position: absolute; right: 0; top: 48px; width: 320px; max-width: 90vw; background: var(--noti-bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); z-index: 999; display: none; max-height: 400px; overflow-y: auto; }
+        .noti-header { padding: 12px 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; font-weight: 600; }
+        .noti-item { padding: 12px 15px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+        .noti-item.unread { background: var(--comment-highlight); }
+        .noti-item img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+        .noti-content { flex: 1; font-size: 0.9em; }
+        .noti-time { font-size: 0.8em; opacity: 0.7; margin-top: 4px; }
+        .noti-empty { padding: 20px; text-align: center; opacity: 0.7; }
+
+         
+
+        .switch {
+            position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+            font-size: 17px;
+            display: inline-block;
+            width: 3.5em;
+            height: 2em;
+            transform-style: preserve-3d;
+            perspective: 500px;
+            animation: toggle__animation 3s infinite;
+        }
+        .switch::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            filter: blur(20px);
+            z-index: -1;
+            border-radius: 50px;
+            background-color: #d8ff99;
+            background-image: radial-gradient(at 21% 46%, hsla(183,65%,60%,1) 0px, transparent 50%),
+            radial-gradient(at 23% 25%, hsla(359,74%,70%,1) 0px, transparent 50%),
+            radial-gradient(at 20% 1%, hsla(267,83%,75%,1) 0px, transparent 50%),
+            radial-gradient(at 86% 87%, hsla(204,69%,68%,1) 0px, transparent 50%),
+            radial-gradient(at 99% 41%, hsla(171,72%,77%,1) 0px, transparent 50%),
+            radial-gradient(at 55% 24%, hsla(138,60%,62%,1) 0px, transparent 50%);
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #fdfefedc;
+            transition: .4s;
+            border-radius: 30px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 1.4em;
+            width: 1.4em;
+            left: 0.3em;
+            bottom: 0.35em;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: rgba(0, 0, 0, 0.17) 0px -10px 10px 0px inset,
+                 rgba(0, 0, 0, 0.09) 0px -1px 15px -8px;
+            background-color: #ff99fd;
+            background-image: radial-gradient(at 81% 39%, hsla(327,79%,79%,1) 0px, transparent 50%),
+            radial-gradient(at 11% 72%, hsla(264,64%,79%,1) 0px, transparent 50%),
+            radial-gradient(at 23% 20%, hsla(75,98%,71%,1) 0px, transparent 50%);
+        }
+        .input__check:checked + .slider {
+            background-color: #17202A;
+        }
+        .input__check:checked + .slider:before {
+            transform: translateX(1.5em);
+        }
+        @keyframes toggle__animation {
+            0%, 100% { transform: translateY(-10px) rotateX(15deg) rotateY(-20deg); }
+            50% { transform: translateY(0px) rotateX(15deg) rotateY(-20deg); }
+        }
+
+        .shadow__btn {
+            padding: 10px 20px; border: none; font-size: 17px; color: #fff; border-radius: 7px;
+            letter-spacing: 4px; font-weight: 700; text-transform: uppercase; transition: 0.5s;
+            transition-property: box-shadow, transform; background: rgb(0,140,255);
+            box-shadow: 0 0 25px rgb(0,140,255); cursor: pointer; display: inline-flex;
+            align-items: center; justify-content: center; outline: none;
+        }
+        .shadow__btn svg {
+            width: 1.2em; height: 1.2em; margin-right: 0.5em; stroke-width: 2px;
+        }
+        .shadow__btn:hover {
+            box-shadow: 0 0 5px rgb(0,140,255), 0 0 25px rgb(0,140,255),
+                        0 0 50px rgb(0,140,255), 0 0 100px rgb(0,140,255);
+            transform: translateY(-2px);
+        }
+        .shadow__btn:active { transform: scale(0.95); }
+        body.dark-mode .shadow__btn {
+            background: rgb(30, 136, 229);
+            box-shadow: 0 0 25px rgba(30, 136, 229, 0.6);
+        }
+        body.dark-mode .shadow__btn:hover {
+            box-shadow: 0 0 5px rgba(30, 136, 229, 0.8), 0 0 25px rgba(30, 136, 229, 0.8),
+                        0 0 50px rgba(30, 136, 229, 0.6), 0 0 100px rgba(30, 136, 229, 0.4);
+        }
+
+        #docList { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+        .doc-btn { background: var(--primary); color: white; border: none; border-radius: 30px; padding: 8px 20px; font-size: 16px; cursor: pointer; font-weight: 600; }
+        .doc-btn:hover { background: var(--primary-hover); }
+        
+        .profile-header { display: flex; flex-direction: column; align-items: center; gap: 20px; margin: 20px 0; }
+        @media (min-width: 600px) { .profile-header { flex-direction: row; align-items: flex-start; } }
+        .profile-avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
+        .my-articles { margin-top: 24px; }
+        .article-item { margin: 8px 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .article-btn { background: var(--primary); color: white; border: none; border-radius: 30px; padding: 8px 18px; font-size: 14px; cursor: pointer; font-weight: 600; }
+        .article-btn:hover { background: var(--primary-hover); }
+
+        #loadingOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); display: flex; justify-content: center; align-items: center;
+            z-index: 9999;
+        }
+            .switch { width: 3em; height: 1.7em; bottom: 16px; right: 16px; }
+            .navbar { flex-direction: column; align-items: flex-start; }
+        }
+        ::selection { background: var(--primary); color: white; }
+
+        @media (max-width: 600px) {
+            
+        }
+
+        .basic-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            cursor: pointer;
+            width: auto;
+            min-width: 80px;
+            height: 36px;
+            padding: 0 18px;
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%);
+            border-radius: 30px;
+            border: 1px solid #8F9092;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: #606060;
+            text-shadow: 0 1px #fff;
+            white-space: nowrap;
+        }
+        .basic-btn:hover {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 3px 3px #CECFD1;
+        }
+        .basic-btn:active,
+        .basic-btn:focus {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa;
+        }
+
+        .nav-links button, .nav-links button:hover, .nav-links button:focus,
+        .back-btn, .back-btn:hover, .back-btn:focus,
+        .btn-secondary, .btn-secondary:hover, .btn-secondary:focus,
+        .read-btn, .read-btn:hover, .read-btn:focus,
+        .delete-btn, .delete-btn:hover, .delete-btn:focus {
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            background-color: transparent !important;
+            color: #606060 !important;
+            border: 1px solid #8F9092 !important;
+            box-shadow: none !important;
+            text-shadow: 0 1px #fff !important;
+            font-weight: 600 !important;
+            transition: all 0.2s ease !important;
+            font-family: inherit !important;
+            font-size: 14px !important;
+            height: 36px !important;
+            padding: 0 18px !important;
+            border-radius: 30px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            white-space: nowrap !important;
+        }
+        .nav-links button:hover, .back-btn:hover, .btn-secondary:hover, .read-btn:hover {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 3px 3px #CECFD1 !important;
+        }
+        .nav-links button:active, .back-btn:active, .btn-secondary:active, .read-btn:active,
+        .nav-links button:focus, .back-btn:focus, .btn-secondary:focus, .read-btn:focus {
+            box-shadow: 0 4px 3px 1px #FCFCFC, 0 6px 8px #D6D7D9, 0 -4px 4px #CECFD1, 0 -6px 4px #FEFEFE, inset 0 0 5px 3px #999, inset 0 0 30px #aaa !important;
+        }
+        body.dark-mode .nav-links button,
+        body.dark-mode .back-btn,
+        body.dark-mode .btn-secondary,
+        body.dark-mode .read-btn,
+        body.dark-mode .nav-links button:hover,
+        body.dark-mode .back-btn:hover,
+        body.dark-mode .btn-secondary:hover,
+        body.dark-mode .read-btn:hover,
+        body.dark-mode .nav-links button:focus,
+        body.dark-mode .back-btn:focus,
+        body.dark-mode .btn-secondary:focus,
+        body.dark-mode .read-btn:focus {
+            background-image: linear-gradient(to top, #D8D9DB 0%, #fff 80%, #FDFDFD 100%) !important;
+            color: #606060 !important;
+            text-shadow: 0 1px #fff !important;
+        }
+
+        .loader-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 120px;
+            width: auto;
+            margin: 2rem;
+            font-family: "Poppins", sans-serif;
+            font-size: 1.6em;
+            font-weight: 600;
+            user-select: none;
+            color: #fff;
+            scale: 2;
+        }
+        .loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            z-index: 1;
+            background-color: transparent;
+            mask: repeating-linear-gradient(
+                90deg,
+                transparent 0,
+                transparent 6px,
+                black 7px,
+                black 8px
+            );
+        }
+        .loader::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 50% 50%, #ff0 0%, transparent 50%),
+                radial-gradient(circle at 45% 45%, #f00 0%, transparent 45%),
+                radial-gradient(circle at 55% 55%, #0ff 0%, transparent 45%),
+                radial-gradient(circle at 45% 55%, #0f0 0%, transparent 45%),
+                radial-gradient(circle at 55% 45%, #00f 0%, transparent 45%);
+            mask: radial-gradient(
+                circle at 50% 50%,
+                transparent 0%,
+                transparent 10%,
+                black 25%
+            );
+            animation:
+                transform-animation 2s infinite alternate,
+                opacity-animation 4s infinite;
+            animation-timing-function: cubic-bezier(0.6, 0.8, 0.5, 1);
+        }
+        @keyframes transform-animation {
+            0% { transform: translate(-55%); }
+            100% { transform: translate(55%); }
+        }
+        @keyframes opacity-animation {
+            0%, 100% { opacity: 0; }
+            15% { opacity: 1; }
+            65% { opacity: 0; }
+        }
+        .loader-letter {
+            display: inline-block;
+            opacity: 0;
+            animation: loader-letter-anim 4s infinite linear;
+            z-index: 2;
+        }
+        .loader-letter:nth-child(1) { animation-delay: 0.1s; }
+        .loader-letter:nth-child(2) { animation-delay: 0.205s; }
+        .loader-letter:nth-child(3) { animation-delay: 0.31s; }
+        .loader-letter:nth-child(4) { animation-delay: 0.415s; }
+        .loader-letter:nth-child(5) { animation-delay: 0.521s; }
+        .loader-letter:nth-child(6) { animation-delay: 0.626s; }
+        .loader-letter:nth-child(7) { animation-delay: 0.731s; }
+        @keyframes loader-letter-anim {
+            0% { opacity: 0; }
+            5% { opacity: 1; text-shadow: 0 0 4px #fff; transform: scale(1.1) translateY(-2px); }
+            20% { opacity: 0.2; }
+            100% { opacity: 0; }
+        }
+
+                document.getElementById('profileContent').innerHTML = '<p>加载失败：' + err.message + '</p>';
+            }
+        }
+
+        window.showMyFollowers = async function() {
+            const res = await authFetch(`/api/user/${encodeURIComponent(currentUser.username)}/followers`, { credentials: "same-origin" });
+            const users = await res.json();
+            let html = `<h3>粉丝列表</h3>`;
+            if (users.length === 0) html += '<p>暂无</p>';
+            else {
+                users.forEach(u => {
+                    html += `<div class="user-list-item">
+                        ${u.avatar ? `<img src="/avatars/${u.avatar}">` : `<div class="avatar-placeholder">${u.nickname.charAt(0)}</div>`}
+                        <a href="/user/${encodeURIComponent(u.username)}">${u.nickname} (@${u.username})</a>
+                    </div>`;
+                });
+            }
+            html += '<button class="btn btn-secondary" onclick="loadProfile()">返回主页</button>';
+            document.getElementById('profileContent').innerHTML = html;
+        };
+
+        window.showMyFollowing = async function() {
+            const res = await authFetch(`/api/user/${encodeURIComponent(currentUser.username)}/following`, { credentials: "same-origin" });
+            const users = await res.json();
+            let html = `<h3>关注列表</h3>`;
+            if (users.length === 0) html += '<p>暂无</p>';
+            else {
+                users.forEach(u => {
+                    html += `<div class="user-list-item">
+                        ${u.avatar ? `<img src="/avatars/${u.avatar}">` : `<div class="avatar-placeholder">${u.nickname.charAt(0)}</div>`}
+                        <a href="/user/${encodeURIComponent(u.username)}">${u.nickname} (@${u.username})</a>
+                    </div>`;
+                });
+            }
+            html += '<button class="btn btn-secondary" onclick="loadProfile()">返回主页</button>';
+            document.getElementById('profileContent').innerHTML = html;
+        };
+
+        async function uploadAvatar(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('avatar', file);
+            const res = await authFetch('/api/upload_avatar', {
+                method: 'POST',
+                headers: { 'X-Username': currentUser.username },
+                credentials: "same-origin",
+                body: formData
+            });
+            const data = await res.json();
+            if (data.status === 'ok') {
+                currentUser.avatar = data.avatar;
+                localStorage.setItem('token', data.token);
+localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                updateNavbar();
+                loadProfile();
+            } else alert('上传失败');
+        }
+
+        // ===== 搜索、通知、Toast（保持原来已修复的版本） =====
+        let searchTimer;
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('searchInput');
+            input.addEventListener('input', function() {
+                clearTimeout(searchTimer);
+                const query = this.value.trim();
+                if (query.length === 0) { loadDocList(); return; }
+                searchTimer = setTimeout(() => search(query), 300);
+            });
+        });
+
+        async function search(query) {
+            const [docRes, userRes] = await Promise.all([
+                authFetch('/api/search?q=' + encodeURIComponent(query), { credentials: "same-origin" }),
+                authFetch('/api/search/users?q=' + encodeURIComponent(query), { credentials: "same-origin" })
+            ]);
+            const docs = await docRes.json();
+            const users = await userRes.json();
+            let html = '';
+            users.forEach(u => {
+                html += `<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    ${u.avatar ? `<img src="/avatars/${u.avatar}" style="width:36px;height:36px;border-radius:50%;">` : `<div style="width:36px;height:36px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:bold;">${u.nickname.charAt(0)}</div>`}
+                    <a href="/user/${u.username}" style="color: var(--primary); text-decoration: none; font-weight: 600;">${u.nickname} (@${u.username})</a>
+                </div>`;
+            });
+            docs.forEach(item => {
+                const title = item.title || item.id;
+                html += `<button class="doc-btn" onclick="location.href='/read/${item.id}'">📖 #${item.number} ${title}</button>`;
+            });
+            document.getElementById('docList').innerHTML = html || '<p>没有找到结果</p>';
+        }
+
+        async function updateNotiBadge(customCount = null) {
+            if (!currentUser) return;
+            if (customCount !== null) {
+                const badge = document.getElementById('notiBadge');
+                badge.textContent = customCount || 0;
+                badge.style.display = customCount > 0 ? 'flex' : 'none';
+                return;
+            }
+            const res = await authFetch('/api/notifications/count', { 
+                headers: { 'X-Username': currentUser.username },
+                credentials: "same-origin"
+            });
+            const data = await res.json();
+            const totalUnread = data.count || 0;
+            // 排除本地标记已读的通知
+            const readList = JSON.parse(localStorage.getItem('readNotis') || '[]');
+            if (readList.length > 0) {
+                // 无法精确知道哪些是本地标记的未读，但可以通过拉取全部通知来过滤
+                const allRes = await authFetch('/api/notifications', { 
+                    headers: { 'X-Username': currentUser.username },
+                    credentials: "same-origin"
+                });
+                const allData = await allRes.json();
+                const allNotis = allData.list || allData;
+                const unreadLocal = allNotis.filter(n => !n.read && !readList.includes(n.id)).length;
+                const badge = document.getElementById('notiBadge');
+                badge.textContent = unreadLocal || 0;
+                badge.style.display = unreadLocal > 0 ? 'flex' : 'none';
+                return;
+            }
+            const badge = document.getElementById('notiBadge');
+            badge.textContent = totalUnread;
+            badge.style.display = totalUnread > 0 ? 'flex' : 'none';
+        }
+
+        async function loadNotifications() {
+            if (!currentUser) return;
+            const res = await authFetch('/api/notifications', { 
+                headers: { 'X-Username': currentUser.username },
+                credentials: "same-origin"
+            });
+            const result = await res.json();
+            const notis = result.list || result;
+            const container = document.getElementById('notiList');
+            if (notis.length === 0) {
+                container.innerHTML = '<div class="noti-empty">暂无通知</div>';
+                return;
+            }
+            container.innerHTML = notis.map(n => `
+                <div class="noti-item ${(n.read || JSON.parse(localStorage.getItem('readNotis') || '[]').includes(n.id)) ? '' : 'unread'}" data-notification-id="${n.id}" data-doc-id="${n.doc_id}" data-comment-id="${n.comment_id || ''}">
+                    ${n.from_avatar ? `<img src="/avatars/${n.from_avatar}" class="noti-avatar">` : '<div class="noti-avatar" style="width:32px;height:32px;">'+(n.from_user?.charAt(0).toUpperCase()||'?')+'</div>'}
+                    <div class="noti-content">
+                        <strong>${n.from_user}</strong> ${n.type === 'reply' ? '回复了你' : '赞了你的评论'}
+                        <div style="opacity:0.8; margin-top:3px;">${n.content || ''}</div>
+                        <div class="noti-time">${new Date(n.timestamp).toLocaleString()}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.toggleNotiDropdown = () => {
+            const dd = document.getElementById('notiDropdown');
+            if (dd.style.display === 'block') dd.style.display = 'none';
+            else { loadNotifications(); dd.style.display = 'block'; }
+        };
+
+        window.markAllRead = async () => {
+            if (!currentUser) return;
+            await authFetch('/api/notifications/read', { 
+                method: 'POST', 
+                headers: { 'X-Username': currentUser.username, 'Content-Type': 'application/json' },
+                credentials: "same-origin"
+            });
+            updateNotiBadge(0);
+            loadNotifications();
+            document.getElementById('notiDropdown').style.display = 'none';
+        };
+
+        document.addEventListener('click', async (e) => {
+            const wrapper = document.querySelector('.notification-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                document.getElementById('notiDropdown').style.display = 'none';
+            }
+
+            const notiItem = e.target.closest('.noti-item');
+            if (notiItem) {
+                e.preventDefault();
+                const notificationId = notiItem.dataset.notificationId;
+                const docId = notiItem.dataset.docId;
+                const commentId = notiItem.dataset.commentId;
+
+                if (notificationId && currentUser) {
+                    // 记录已读通知到本地
+                    let readList = JSON.parse(localStorage.getItem('readNotis') || '[]');
+                    if (!readList.includes(notificationId)) {
+                        readList.push(notificationId);
+                        localStorage.setItem('readNotis', JSON.stringify(readList));
+                    }
+                    updateMsgBadge(); // 重新计算未读数
+                    notiItem.classList.remove('unread');
+                }
+
+                if (docId) {
+                    window.location.href = commentId ? `/read/${docId}#comment-${commentId}` : `/read/${docId}`;
+                }
+            }
+        });
+
+        function showToast(title, content) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed; top: 20px; right: 20px; z-index: 9999;
+                background: var(--card-bg); border: 1px solid var(--border);
+                border-radius: 8px; padding: 12px 16px; box-shadow: 0 4px 12px var(--shadow);
+                max-width: 300px; animation: toastSlideIn 0.3s ease;
+            `;
+            toast.innerHTML = `
+                <strong style="color: var(--primary); display: block; margin-bottom: 4px;">${title}</strong>
+                <div style="font-size: 0.9em; color: var(--text);">${content}</div>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'toastSlideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes toastSlideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes toastSlideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+            .user-list-item {
+                display: flex; align-items: center; gap: 10px;
+                padding: 8px 0; border-bottom: 1px solid var(--border);
+            }
+            .user-list-item img, .user-list-item .avatar-placeholder {
+                width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
+            }
+            .user-list-item img { background: var(--avatar-bg); object-fit: cover; }
+        `;
+        document.head.appendChild(style);
+
+        // 启动
+        checkLogin();
+    </script>
+</body>
+</html>

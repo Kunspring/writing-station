@@ -1,0 +1,49 @@
+[
+  {
+    "id": "e84f52c4-1d87-48f8-9e6f-00f64ccebfa8",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "小北掏出半截粉笔，在向日葵旁边加了一朵小的",
+    "comment": "为寂寞的夜空画上一个月亮～",
+    "anchor": {
+      "start": 366,
+      "end": 387,
+      "quote": "小北掏出半截粉笔，在向日葵旁边加了一朵小的"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-29T01:23:18.896761",
+    "likes": [
+      "2314836955",
+      "114514"
+    ],
+    "avatar": "114514_1f42592d.gif",
+    "role": "owner"
+  },
+  {
+    "id": "18627b2d-dfd6-4c5d-a30a-e2301f34d458",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "画我站在月亮下边歌唱~",
+    "anchor": null,
+    "parentId": "e84f52c4-1d87-48f8-9e6f-00f64ccebfa8",
+    "timestamp": "2026-04-29T07:39:24.430636",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "2314836955_8541dc63.jpg",
+    "role": "user"
+  },
+  {
+    "id": "c00ad483-6a5a-4e91-bc88-d99d02b7cfb5",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "星辰坠落之后，第426天。用天数来丈量时间，本身就透着一种坚持的重量。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.893375",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  }
+]

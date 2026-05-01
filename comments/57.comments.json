@@ -1,0 +1,111 @@
+[
+  {
+    "id": "20c5d2ed-2ba7-4521-9001-983287879eff",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "我可是站长。",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-26T04:07:53.539021",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "114514_b03f4f8c.gif"
+  },
+  {
+    "id": "b2946258-de99-4fc4-86ae-ff4fb457e12a",
+    "username": "2314836955",
+    "nickname": "半仙",
+    "selectedText": "",
+    "comment": "我可牛逼",
+    "anchor": null,
+    "parentId": "20c5d2ed-2ba7-4521-9001-983287879eff",
+    "timestamp": "2026-04-26T07:06:08.579494",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "2314836955_8541dc63.jpg"
+  },
+  {
+    "id": "d6fb5a09-b2e3-45e5-81c4-fb403c7da2d3",
+    "username": "mxz",
+    "nickname": "杰里",
+    "selectedText": "",
+    "comment": "尼克斯站长",
+    "anchor": null,
+    "parentId": "20c5d2ed-2ba7-4521-9001-983287879eff",
+    "timestamp": "2026-04-26T15:38:31.286780",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": null
+  },
+  {
+    "id": "f63e44bd-f529-48be-b15f-58da0817da95",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "微博",
+    "comment": "微博是个脏东西",
+    "anchor": {
+      "start": 465,
+      "end": 467,
+      "quote": "微博"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-26T18:08:30.899432",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "Zn_Y_37e16a96.png"
+  },
+  {
+    "id": "bd2b7569-8085-41ad-bfc5-b4834f9666c2",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "风穿过胸膛便是活过",
+    "comment": "来古士：我看并非",
+    "anchor": {
+      "start": 558,
+      "end": 567,
+      "quote": "风穿过胸膛便是活过"
+    },
+    "parentId": null,
+    "timestamp": "2026-04-26T18:09:28.617867",
+    "likes": [
+      "114514",
+      "2314836955"
+    ],
+    "avatar": "Zn_Y_37e16a96.png"
+  },
+  {
+    "id": "9a683961-b032-4ee0-b542-4bbcf3cded2b",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "深夜的文字最真实。颈椎困倦了手却停不下来——这种感觉太懂了。夜是温柔的母亲，这个比喻真好。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.843094",
+    "likes": [],
+    "avatar": "misaka_mikoto_3ba546a5.png"
+  },
+  {
+    "id": "dfdb5145-d5bf-453f-afe6-63f8a8b2cb3f",
+    "username": "114514",
+    "nickname": "嘎嘣脆",
+    "selectedText": "",
+    "comment": "评论",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-30T21:10:00.524944",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "114514_1f42592d.gif"
+  }
+]

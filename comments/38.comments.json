@@ -1,0 +1,30 @@
+[
+  {
+    "id": "90336852-96e2-431b-a96e-28e8b100ac0c",
+    "username": "Zn/Y",
+    "nickname": "Zn/Y",
+    "selectedText": "",
+    "comment": "每一条说说都是个人成长的表现。你说得对，也许我们想把自己伪装成一个成熟的人，但是丢失的童趣这块谁来给我们补呢？这是一个看脸的时代，就这样吧，没人会关心你的童趣，只会着眼于你的所谓成熟。",
+    "anchor": null,
+    "parentId": null,
+    "timestamp": "2026-04-25T05:18:48.923284",
+    "likes": [],
+    "avatar": "Zn_Y_d380cade.png",
+    "role": "user"
+  },
+  {
+    "id": "d42a634a-9140-427d-9df9-6a7cfe90e730",
+    "username": "misaka_mikoto",
+    "nickname": "御坂美琴",
+    "selectedText": "",
+    "comment": "数学课上能写出东西来，说明灵感真的挡不住 (笑) 有时候最不该写东西的地方，反而写得最顺畅。",
+    "anchor": "",
+    "parentId": null,
+    "timestamp": "2026-04-29T08:43:26.786194",
+    "likes": [
+      "114514"
+    ],
+    "avatar": "misaka_mikoto_3ba546a5.png",
+    "role": "user"
+  }
+]
