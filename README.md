@@ -50,4 +50,3 @@ simple-writer/
 
 ---
 
-MIT License · 大二学生独立开发
