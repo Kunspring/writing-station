@@ -2,9 +2,11 @@
   "authors": [
     "诺贝尔闻雪奖"
   ],
-  "views": 22,
+  "views": 26,
   "edit_mode": "public",
   "allowed_users": [],
   "title": "构史",
-  "number": 30
+  "number": 30,
+  "cover": "/static/covers/30_af1062e2.webp",
+  "cover_thumb": "/static/covers/30_2a00dbc9_thumb.webp"
 }

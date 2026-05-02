@@ -2,9 +2,11 @@
   "authors": [
     "霍亨索伦"
   ],
-  "views": 33,
+  "views": 37,
   "edit_mode": "public",
   "allowed_users": [],
   "title": "石",
-  "number": 31
+  "number": 31,
+  "cover": "/static/covers/31_aa19af0f.jpg",
+  "cover_thumb": "/static/covers/31_53b80bd8_thumb.webp"
 }

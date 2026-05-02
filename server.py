@@ -81,9 +81,15 @@ os.makedirs(COLLECTIONS_DIR, exist_ok=True)
 STICKERS_DIR = os.path.join(UPLOADS_DIR, "stickers")
 os.makedirs(STICKERS_DIR, exist_ok=True)
 
+VIDEOS_DIR = os.path.join(UPLOADS_DIR, "videos")
+os.makedirs(VIDEOS_DIR, exist_ok=True)
+
 # ---- 工具函数 ----
 def allowed_ext():
     return {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+def allowed_video_ext():
+    return {'mp4', 'webm', 'mov', 'avi'}
 
 def is_allowed_ext(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_ext()
@@ -386,7 +392,8 @@ def login():
             "nickname": users[username]["nickname"],
             "avatar": users[username].get("avatar"),
             "unread": unread,
-            "role": users[username].get("role", "user")
+            "role": users[username].get("role", "user"),
+            "is_dojin": users[username].get("dojin", False)
         }
     })
 
@@ -398,6 +405,7 @@ def current_user():
     if username in users:
         return jsonify({"user": {
             "role": users[username].get("role", "user"),
+            "is_dojin": users[username].get("dojin", False),
             "username": username,
             "nickname": users[username]["nickname"],
             "avatar": users[username].get("avatar")
@@ -444,7 +452,9 @@ def list_collections():
             "article_count": len(cdata.get("articles", []))
         })
     result.sort(key=lambda x: x["created_at"], reverse=True)
-    return jsonify(result)
+    resp = jsonify(result)
+    resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return resp
 
 @app.route("/api/collections", methods=["POST"])
 @login_required
@@ -618,6 +628,28 @@ def set_admin():
     save_users(users)
     return jsonify({"status": "ok", "message": f"已{'设为' if action=='promote' else '取消'}管理员"})
 
+@app.route("/api/admin/set_dojin", methods=["POST"])
+@login_required
+def set_dojin():
+    if g.role != "owner":
+        return jsonify({"status": "error", "message": "仅站长可操作"}), 403
+    data = request.json
+    target = data.get("username")
+    action = data.get("action")  # "set" or "unset"
+    if not target or action not in ("set", "unset"):
+        return jsonify({"status": "error", "message": "参数错误"}), 400
+    users = load_users()
+    if target not in users:
+        return jsonify({"status": "error", "message": "用户不存在"}), 404
+    if action == "set":
+        users[target]["dojin"] = True
+        msg = "已设为同人"
+    else:
+        users[target].pop("dojin", None)
+        msg = "已取消同人"
+    save_users(users)
+    return jsonify({"status": "ok", "message": msg})
+
 # ---------- 文档 API ----------
 @app.route("/api/docs")
 def list_docs():
@@ -651,12 +683,22 @@ def list_docs():
             updated = datetime.fromtimestamp(os.path.getmtime(filepath)).isoformat()
         except OSError:
             updated = datetime.now().isoformat()
-        # 获取作者头像（通过 nickname 映射）
+        # 获取作者头像和角色（通过 nickname 映射）
         authors = meta.get("authors", [])
         author_avatars = {}
+        author_roles = {}
         for a in authors:
             if a in _nickname_avatar:
                 author_avatars[a] = _nickname_avatar[a]
+            # 找作者的 role 和 dojin 状态
+            for u, info in users.items():
+                if info.get("nickname") == a:
+                    role = info.get("role", "user")
+                    if role != "user":
+                        author_roles[a] = role
+                    if info.get("dojin"):
+                        author_roles[a] = author_roles.get(a, "") + "_dojin"
+                    break
         docs.append({
             "text_stroke": meta.get("text_stroke", False),
             "cover": meta.get("cover", ""),
@@ -667,6 +709,7 @@ def list_docs():
             "views": meta.get("views", 0),
             "authors": authors,
             "author_avatars": author_avatars,
+            "author_roles": author_roles,
             "title": meta.get("title", doc_id),
             "status": meta.get("status", "draft"),
             "updated": updated
@@ -749,15 +792,25 @@ def search_docs():
                 (meta.get("number") and str(meta["number"]) == q)):
                 authors = meta.get("authors", [])
                 author_avatars = {}
+                author_roles = {}
                 for a in authors:
                     if a in _nickname_avatar:
                         author_avatars[a] = _nickname_avatar[a]
+                    for u, info in users.items():
+                        if info.get("nickname") == a:
+                            role = info.get("role", "user")
+                            if role != "user":
+                                author_roles[a] = role
+                            if info.get("dojin"):
+                                author_roles[a] = author_roles.get(a, "") + "_dojin"
+                            break
                 results.append({
                     "id": doc_id,
                     "number": meta.get("number", 0),
                     "title": title,
                     "authors": authors,
                     "author_avatars": author_avatars,
+                    "author_roles": author_roles,
                     "views": meta.get("views", 0),
                     "cover": meta.get("cover", ""),
                     "prompt_color": meta.get("prompt_color", "#0f0b0b"),
@@ -924,6 +977,17 @@ def delete_doc(doc_id):
     for p in [path, meta_path, comments_path]:
         if os.path.exists(p):
             os.remove(p)
+    # 从所有合集中移除
+    collections = load_collections()
+    changed = False
+    for cid, cdata in collections.items():
+        articles = cdata.get("articles", [])
+        if doc_id in articles:
+            articles.remove(doc_id)
+            cdata["articles"] = articles
+            save_collection(cid, cdata)
+            changed = True
+
     # 清理临时缓存
     cache_del('docs_list_updated')
     cache_del('docs_list_number')
@@ -1106,11 +1170,37 @@ def upload_image():
     optimize_image(filepath)
     return jsonify({"status": "ok", "url": f"/static/uploads/{filename}"})
 
+@app.route("/api/upload_video", methods=["POST"])
+@login_required
+def upload_video():
+    username = g.username
+    if 'video' not in request.files:
+        return jsonify({"status": "error", "message": "没有文件"}), 400
+    file = request.files['video']
+    if file.filename == '':
+        return jsonify({"status": "error", "message": "空文件名"}), 400
+
+    # 大小检查（100MB）
+    file.seek(0, os.SEEK_END)
+    size = file.tell()
+    file.seek(0)
+    if size > 100 * 1024 * 1024:
+        return jsonify({"status": "error", "message": "视频文件过大，最大允许100MB"}), 400
+
+    ext = file.filename.rsplit('.', 1)[-1].lower()
+    if ext not in allowed_video_ext():
+        return jsonify({"status": "error", "message": "不支持的视频格式，支持 mp4, webm, mov, avi"}), 400
+
+    filename = f"{uuid.uuid4().hex[:12]}.{ext}"
+    filepath = os.path.join(VIDEOS_DIR, filename)
+    file.save(filepath)
+    return jsonify({"status": "ok", "url": f"/static/uploads/videos/{filename}"})
+
 # ---------- 图片缓存 ----------
 @app.after_request
 def add_cache_header(response):
     path = request.path
-    if path.startswith('/static/covers') or path.startswith('/avatars') or path.startswith('/static/uploads'):
+    if path.startswith('/static/covers') or path.startswith('/avatars') or path.startswith('/static/uploads/videos') or path.startswith('/static/uploads'):
         response.headers['Cache-Control'] = 'public, max-age=604800'
     return response
 
@@ -1145,6 +1235,7 @@ def api_user_profile(username):
         "nickname": user.get("nickname", username),
         "avatar": user.get("avatar"),
         "role": user.get("role", "user"),
+        "is_dojin": user.get("dojin", False),
         "articles": docs,
         "followers_count": len(user.get("followers", [])),
         "following_count": len(user.get("following", [])),
@@ -1163,6 +1254,22 @@ def get_following(username):
         if info:
             result.append({"username": u, "nickname": info.get("nickname", u), "avatar": info.get("avatar")})
     return jsonify(result)
+
+@app.route("/api/admin/user_list")
+@login_required
+def api_admin_user_list():
+    if g.role != "owner":
+        return jsonify({"status": "error", "message": "仅站长可操作"}), 403
+    users = load_users()
+    result = []
+    for u, info in users.items():
+        result.append({
+            "username": u,
+            "nickname": info.get("nickname", u),
+            "role": info.get("role", "user"),
+            "is_dojin": info.get("dojin", False)
+        })
+    return jsonify({"users": result})
 
 @app.route("/api/user/<path:username>/followers")
 def get_followers(username):
@@ -1277,6 +1384,7 @@ def get_comments(doc_id):
         uname = c.get("username")
         c["avatar"] = users[uname].get("avatar") if uname and uname in users else None
         c["role"] = users[uname].get("role", "user") if uname and uname in users else "user"
+        c["is_dojin"] = users[uname].get("dojin", False) if uname and uname in users else False
     return jsonify(comments)
 
 @app.route("/api/comments/<doc_id>", methods=["POST"])

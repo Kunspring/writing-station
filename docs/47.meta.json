@@ -2,10 +2,12 @@
   "authors": [
     "半仙"
   ],
-  "views": 25,
+  "views": 29,
   "edit_mode": "public",
   "allowed_users": [],
   "title": "彷徨",
   "status": "published",
-  "number": 47
+  "number": 47,
+  "cover": "/static/covers/47_00c54195.webp",
+  "cover_thumb": "/static/covers/47_b5f19ebb_thumb.webp"
 }

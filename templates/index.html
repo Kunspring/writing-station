@@ -197,13 +197,58 @@
             50% { transform: translateY(0px) rotateX(15deg) rotateY(-20deg); }
         }
 
-        #docList { column-count: 5; column-gap: 14px; margin-top: 20px; max-width: 100%; }
+        #collectionSection { margin-bottom:20px; }
+        #collectionSection h3 { color:var(--text); margin-bottom:8px; font-size:1em; font-weight:600; }
+        #collectionBar { display:flex; gap:12px; overflow-x:auto; padding:8px 0; scrollbar-width:thin; }
+        #collectionBar::-webkit-scrollbar { height:4px; }
+        #collectionBar::-webkit-scrollbar-thumb { background:var(--primary); border-radius:4px; }
+        .collection-chip { flex-shrink:0; display:flex; align-items:center; gap:8px; padding:8px 16px; border-radius:20px; border:1px solid var(--border); background:var(--card-bg); cursor:pointer; transition:all .2s; }
+        .collection-chip:hover { border-color:var(--primary); background:var(--primary); color:white; }
+        .collection-chip-cover { width:28px; height:28px; border-radius:50%; object-fit:cover; }
+        .collection-chip-name { font-size:0.85em; white-space:nowrap; font-weight:500; }
+        .collection-chip-count { font-size:0.75em; color:var(--secondary); }
+        .collection-chip:hover .collection-chip-count { color:rgba(255,255,255,0.7); }
+        #docList { column-count: 5; column-gap: 14px; margin-top: 0; max-width: 100%; }
         @media (min-width: 1600px) { #docList { column-count: 6; } }
         @media (min-width: 2000px) { #docList { column-count: 7; } }
         .doc-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; cursor: pointer; border: 1px solid var(--border); box-shadow: 0 2px 8px var(--shadow); transition: transform 0.2s, box-shadow 0.2s; break-inside: avoid; margin-bottom: 16px; }
         .doc-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px var(--shadow); }
         .doc-card-img { width: 100%; height: auto; display: block; }
         .doc-card-placeholder { width: 100%; aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center; background: var(--card-bg); color: var(--text); font-size: 1.3em; font-weight: 900; padding: 20px; text-align: center; line-height: 1.4; border-bottom: 1px solid var(--border); }
+
+        /* GitHub 按钮 */
+        .gh-btn {
+            width: 40px; height: 40px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border: none !important; background-color: transparent !important;
+            padding: 0 !important; font: inherit !important;
+            position: relative; border-radius: 7px; cursor: pointer;
+            transition: all .3s; flex-shrink: 0; color: inherit !important;
+            text-decoration: none;
+        }
+        .gh-btn .svgContainer {
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background-color: transparent; backdrop-filter: blur(0px);
+            letter-spacing: 0.8px; border-radius: 10px;
+            transition: all .3s;
+            border: 1px solid rgba(156,156,156,0.466);
+        }
+        .gh-btn .BG {
+            position: absolute; content: "";
+            width: 100%; height: 100%;
+            background: #181818; z-index: -1;
+            border-radius: 10px; pointer-events: none;
+            transition: all .3s;
+        }
+        .gh-btn:hover .BG {
+            transform: rotate(35deg);
+            transform-origin: bottom;
+        }
+        .gh-btn:hover .svgContainer {
+            background-color: rgba(156,156,156,0.466);
+            backdrop-filter: blur(4px);
+        }
         .doc-card-info { padding: 10px 12px; }
         .sort-tabs { display: flex; gap: 4px; flex-wrap: wrap; }
         .sort-btn { padding: 4px 10px; font-size: 0.8em; border: 1px solid var(--border); border-radius: 14px; background: var(--card-bg); color: var(--secondary); cursor: pointer; transition: all 0.2s; white-space: nowrap; }
@@ -220,6 +265,9 @@
         .doc-card-author { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
         .doc-card-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.7em; font-weight: 700; flex-shrink: 0; object-fit: cover; }
         .doc-card-author-name { font-size: 0.8em; color: var(--secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .role-badge { font-size:0.7em; margin-left:4px; border-radius:4px; padding:1px 6px; font-weight:600; white-space:nowrap; }
+        .role-badge.owner { background:#c0392b; color:#f1c40f; }
+        .role-badge.dojin { background:#e67e22; color:white; }
         .doc-card-title { font-weight: 700; font-size: 0.95em; color: var(--text); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .doc-card-meta { font-size: 0.8em; color: var(--secondary); margin-top: 4px; display: flex; justify-content: space-between; }
         @media (max-width: 768px) { #docList { column-count: 2; column-gap: 10px; } .doc-card { margin-bottom: 10px; } .doc-card-info { padding: 8px 10px; } .doc-card-title { font-size: 0.85em; } }
@@ -290,12 +338,22 @@
             .sort-tabs { width: 100%; }
             .sort-btn { flex: 1; text-align: center; padding: 5px 4px; font-size: 0.75em; }
 
-            .navbar { flex-direction: column; align-items: flex-start; gap: 8px; }
-            .navbar h1 { font-size: 1.2em; }
-            .user-info { width: 100%; justify-content: space-between; }
-            .nav-links { flex-wrap: wrap; gap: 6px; width: 100%; }
-            .nav-links button { padding: 6px 10px; font-size: 12px; white-space: nowrap; }
-            .noti-dropdown { width: 260px; right: -80px; max-width: 90vw; }
+            .navbar { flex-direction: row; align-items: center; gap: 6px; padding: 8px 12px; }
+            .navbar h1 { font-size: 1em; margin: 0; }
+            .user-info { flex: 1; justify-content: flex-end; gap: 6px; }
+            #displayNickname { display: none; }
+            #avatarContainer img, #avatarContainer .avatar-placeholder { width: 32px; height: 32px; font-size: 14px; }
+            .nav-links { flex-wrap: nowrap; gap: 4px; width: auto; }
+            .nav-links button { padding: 4px 8px; font-size: 11px; white-space: nowrap; }
+            .gh-btn { width: 32px; height: 32px; }
+            .gh-btn .svgContainer svg { width: 16px; height: 16px; }
+            .noti-bell { width: 32px; height: 32px; }
+            .noti-bell .bell-icon { font-size: 14px; }
+            .noti-dropdown { width: 260px; right: 0; max-width: 90vw; }
+            #collectionBar { gap: 8px; }
+            .collection-chip { padding: 6px 12px; }
+            .collection-chip-name { font-size: 0.8em; }
+            .collection-chip-cover { width: 24px; height: 24px; }
             .input { width: 100% !important; max-width: 100%; font-size: 14px; }
             .input:focus { width: 100% !important; transform: none; }
 
@@ -449,10 +507,6 @@
                 <span id="displayNickname"></span>
                 <div id="avatarContainer"></div>
                 <div class="nav-links">
-                    <button onclick="location.href='/collections'" style="background:var(--primary);color:white;">📚 合集</button>
-                    <button onclick="location.href='/messages'">✉️ 消息</button>
-                    <button onclick="showProfile()">个人主页</button>
-                    <button onclick="logout()" style="background:var(--secondary);">退出</button>
                     <div class="notification-wrapper">
                         <button class="noti-bell" onclick="toggleNotiDropdown()">
                             <span class="bell-icon">🔔</span>
@@ -464,6 +518,8 @@
                             <div id="notiList">加载中...</div>
                         </div>
                     </div>
+                    <a href="https://github.com/Kunspring/writing-station" target="_blank" class="gh-btn"><span class="svgContainer"><svg fill="white" viewBox="0 0 496 512" height="1.6em"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path></svg></span><span class="BG"></span></a>
+                    <button id="adminBtn" class="basic-btn" style="display:none;" onclick="showAdminPanel()">管理</button>
                 </div>
             </div>
         </div>
@@ -471,7 +527,13 @@
         <input id="searchInput" class="input" type="text" placeholder="搜索..." oninput="search()">
         </form>
         <button class="basic-btn" onclick="createNewDoc()">+ 创建新文章</button>
-        <div style="display:flex;align-items:center;gap:10px;margin:12px 0;">
+        <hr>
+        <div style="display:flex;align-items:center;gap:20px;margin:12px 0;">
+            <h2 style="margin:0;">合集</h2>
+        </div>
+            <div id="collectionSection"><h3 style="display:none;">合集</h3><div id="collectionBar"></div></div>
+        <hr>
+        <div style="display:flex;align-items:center;gap:30px;margin:12px 0;">
             <h2 style="margin:0;">所有文章</h2>
             <div class="sort-tabs">
                 <button class="sort-btn active" data-sort="updated" onclick="setSort('updated')">🕐 最新</button>
@@ -479,18 +541,28 @@
                 <button class="sort-btn" data-sort="number" onclick="setSort('number')">🔢 编号</button>
             </div>
         </div>
+        
+        
         <div id="docList">加载中...</div>
         <div id="draftsSection" style="display:none;margin-top:24px;">
             <h2>我的草稿</h2>
             <div id="draftList">加载中...</div>
         </div>
+        <div style="text-align: center; position: relative; margin: 20px 0;">
+            <span style=" padding: 0 10px; position: relative; z-index: 1;">但愿我们还不至于完全忘记了做“人”的滋味</span>
+        
+        </div>
     </div>
+        
 
     <div id="profileView" class="hidden">
         <div class="navbar">
             <h1>个人主页</h1>
             <div class="nav-links">
                 <button onclick="showMain()">← 返回大厅</button>
+                <button onclick="location.href='/collections'" style="background:var(--primary);color:white;">合集</button>
+                <button onclick="location.href='/messages'">✉️</button>
+                <a href="https://github.com/Kunspring/writing-station" target="_blank" class="gh-btn"><span class="svgContainer"><svg fill="white" viewBox="0 0 496 512" height="1.6em"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path></svg></span><span class="BG"></span></a>
             </div>
         </div>
         <div id="profileContent"></div>
@@ -519,6 +591,7 @@
         window.onload = async function() {
             currentUser = await checkLogin();
             if (!currentUser) return;
+            checkAdminBtn();
             initEditor();
             await load();
 
@@ -621,6 +694,8 @@
             document.getElementById('profileView').classList.add('hidden');
             updateNavbar();
             loadDocList();
+            loadCollectionBar();
+            checkAdminBtn();
         }
         function showProfile() {
             document.getElementById('authView').classList.add('hidden');
@@ -640,10 +715,11 @@
                 document.getElementById('displayNickname').innerText = currentUser.nickname;
                 const avatarCont = document.getElementById('avatarContainer');
                 if (currentUser.avatar) {
-                    avatarCont.innerHTML = `<img src="/avatars/${currentUser.avatar}" class="avatar">`;
+                    avatarCont.innerHTML = `<img src="/avatars/${currentUser.avatar}" class="avatar" style="cursor:pointer;">`;
                 } else {
-                    avatarCont.innerHTML = `<div class="avatar-placeholder">${currentUser.nickname.charAt(0).toUpperCase()}</div>`;
+                    avatarCont.innerHTML = `<div class="avatar-placeholder" style="cursor:pointer;">${currentUser.nickname.charAt(0).toUpperCase()}</div>`;
                 }
+                avatarCont.onclick = showProfile;
             }
         }
 
@@ -696,10 +772,20 @@ localStorage.setItem('currentUser', JSON.stringify(currentUser));
             return '<div class="doc-card-avatar">' + author.charAt(0).toUpperCase() + '</div>';
         }
 
+        function roleBadgeHtml(roles, author) {
+            var role = (roles || {})[author];
+            var html = '';
+            if (role === 'owner' || role === 'owner_dojin') html += '<span class="role-badge owner">站长</span>';
+            if (role === 'admin' || role === 'admin_dojin') html += '<span class="role-badge admin">管理员</span>';
+            if (role && role.indexOf('_dojin') !== -1) html += '<span class="role-badge dojin">同人</span>';
+            return html;
+        }
+
         function renderCard(item) {
             var title = item.title || item.id;
             var author = (item.authors || [])[0] || '';
             var avatars = item.author_avatars || {};
+            var roles = item.author_roles || {};
             var cover = item.cover || '';
             var coverHtml = cover 
                 ? '<img class="doc-card-img" src="' + cover + '" alt="' + title + '" loading="lazy">'
@@ -728,6 +814,23 @@ localStorage.setItem('currentUser', JSON.stringify(currentUser));
             const docs = await res.json();
             var html = docs.map(renderCard).join('');
             document.getElementById('docList').innerHTML = html || '<p>暂无文章</p>';
+        }
+
+        async function loadCollectionBar() {
+            try {
+                const res = await fetch('/api/collections');
+                const cols = await res.json();
+                var bar = document.getElementById('collectionBar');
+                var section = document.getElementById('collectionSection');
+                if (!cols.length) { section.style.display = 'none'; return; }
+                section.style.display = 'block';
+                bar.innerHTML = cols.map(function(c) {
+                    var imgHtml = c.cover ? '<img class="collection-chip-cover" src="' + c.cover + '">' : '';
+                    return '<div class="collection-chip" onclick="location.href=\'/collections/' + c.id + '\'">' + imgHtml + '<span class="collection-chip-name">' + c.name + '</span></div>';
+                }).join('');
+            } catch(e) {
+                document.getElementById('collectionSection').style.display = 'none';
+            }
         }
 
         async function toggleDrafts() {
@@ -763,13 +866,10 @@ localStorage.setItem('currentUser', JSON.stringify(currentUser));
         window.toggleDrafts = toggleDrafts;
 
         function createNewDoc() {
-            const docId = prompt('输入新文章标题:');
-            if (docId) {
-                authFetch('/api/create_doc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ docId }) })
-                    .then(r => r.json())
-                    .then(data => { window.location.href = `/edit/${data.doc_id}`; })
-                    .catch(() => alert('创建失败，请刷新重试'));
-            }
+            authFetch('/api/create_doc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ docId: '' }) })
+                .then(r => r.json())
+                .then(data => { window.location.href = `/edit/${data.doc_id}`; })
+                .catch(() => alert('创建失败，请刷新重试'));
         }
 
         async function loadProfile() {
@@ -803,6 +903,7 @@ localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 html += renderCard(fakeItem);
             }
             html += '</div></div>';
+            html += '<div style="margin-top:30px;text-align:center;"><button style="background:transparent;color:#c0392b;padding:8px 24px;border:1px solid #c0392b;border-radius:6px;cursor:pointer;font-size:14px;font-family:inherit;" onclick="logout()">退出登录</button></div>';
             document.getElementById('profileContent').innerHTML = html;
         }
 
@@ -918,6 +1019,7 @@ localStorage.setItem('currentUser', JSON.stringify(currentUser));
                         var title = item.title || item.id;
                         var author = (item.authors || [])[0] || '';
                         var avatars = item.author_avatars || {};
+                        var roles = item.author_roles || {};
                         var cover = item.cover || '';
                         var coverHtml = cover
                             ? '<img class="doc-card-img" src="' + cover + '" alt="' + title + '" loading="lazy">'
@@ -1052,6 +1154,72 @@ localStorage.setItem('currentUser', JSON.stringify(currentUser));
             if (e.target === this) this.style.display = 'none';
         });
     }
+
+    // ---------- 站长管理面板 ----------
+    function showAdminPanel() {
+        var panel = document.getElementById('adminPanel');
+        var shown = panel.style.display === 'block';
+        panel.style.display = shown ? 'none' : 'block';
+        if (!shown) loadUserListForAdmin();
+    }
+
+    async function loadUserListForAdmin() {
+        var list = document.getElementById('adminUserList');
+        list.innerHTML = '<p style="opacity:0.7;">加载中...</p>';
+        try {
+            var res = await authFetch('/api/admin/user_list');
+            var data = await res.json();
+            if (data.users) {
+                list.innerHTML = data.users.map(function(u) {
+                    var badge = '';
+                    if (u.role === 'owner') badge = '<span class="role-badge owner">站长</span>';
+                    else if (u.role === 'admin') badge = '<span class="role-badge admin">管理员</span>';
+                    var dojinBtn = u.is_dojin
+                        ? '<button class="basic-btn" style="min-width:60px;" onclick="toggleDojin(\'' + u.username + '\', false)">取消同人</button>'
+                        : '<button class="basic-btn" style="min-width:60px;" onclick="toggleDojin(\'' + u.username + '\', true)">设为同人</button>';
+                    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">'
+                        + '<span>' + u.nickname + ' (@' + u.username + ')' + badge + (u.is_dojin ? '<span class="role-badge dojin">同人</span>' : '') + '</span>'
+                        + '<span style="margin-left:auto;">' + dojinBtn + '</span>'
+                        + '</div>';
+                }).join('');
+            }
+        } catch(e) {
+            console.error('admin load error:', e);
+            list.innerHTML = '<p style="color:red;">加载失败</p>';
+        }
+    }
+
+    function toggleDojin(targetUsername, setDojin) {
+        authFetch('/api/admin/set_dojin', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username: targetUsername, action: setDojin ? 'set' : 'unset'})
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.status === 'ok') {
+                loadUserListForAdmin();
+            } else {
+                alert(data.message || '操作失败');
+            }
+        }).catch(function() { alert('网络错误'); });
+    }
+
+    // 站长登录后显示管理按钮
+    function checkAdminBtn() {
+        var btn = document.getElementById('adminBtn');
+        if (btn && currentUser && currentUser.role === 'owner') {
+            btn.style.display = 'inline-block';
+        }
+    }
 </script>
+
+<!-- 站长管理面板 -->
+<div id="adminPanel" style="display:none;position:fixed;top:60px;right:20px;width:360px;max-width:90vw;max-height:70vh;overflow-y:auto;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:3000;padding:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h3 style="margin:0;">👑 站长管理</h3>
+        <button class="basic-btn" onclick="document.getElementById('adminPanel').style.display='none'">✕</button>
+    </div>
+    <div style="font-size:0.85em;opacity:0.7;margin-bottom:10px;">设置用户为「同人」，会在用户名旁显示橙色标识</div>
+    <div id="adminUserList"></div>
+</div>
 </body>
 </html>

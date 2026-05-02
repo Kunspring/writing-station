@@ -2,10 +2,12 @@
   "authors": [
     "blue"
   ],
-  "views": 57,
+  "views": 65,
   "edit_mode": "public",
   "allowed_users": [],
   "title": "随笔",
   "number": 28,
-  "status": "published"
+  "status": "published",
+  "cover": "/static/covers/28_36285136.jpg",
+  "cover_thumb": "/static/covers/28_e8b56c79_thumb.webp"
 }

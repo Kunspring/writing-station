@@ -2,7 +2,7 @@
   "authors": [
     "半仙"
   ],
-  "views": 26,
+  "views": 31,
   "edit_mode": "public",
   "allowed_users": [],
   "title": "末日回想重置版，第一章",
@@ -11,6 +11,6 @@
   "text_stroke": true,
   "prompt_color": "#f1e9e9",
   "title_color": "#ededed",
-  "cover": "/static/covers/45_b4694968.jpg",
-  "cover_thumb": "/static/covers/45_1d4521ef_thumb.webp"
+  "cover": "/static/covers/45_41bfacd1.png",
+  "cover_thumb": "/static/covers/45_170264f7_thumb.webp"
 }

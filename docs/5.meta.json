@@ -3,8 +3,10 @@
   "authors": [
     "半仙"
   ],
-  "views": 64,
+  "views": 66,
   "title": "我不是好人",
   "edit_mode": "public",
-  "allowed_users": []
+  "allowed_users": [],
+  "cover": "/static/covers/5_ecbc2d67.png",
+  "cover_thumb": "/static/covers/5_4d013b5c_thumb.webp"
 }

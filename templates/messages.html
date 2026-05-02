@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script crossorigin="anonymous" src="https://polyfill.io/v3/polyfill.min.js?features=default,es2015,es2016,es2017,fetch,Promise,Object.assign,Array.prototype.includes,Element.prototype.closest,CSSVariables,IntersectionObserver"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>站内信 - 末日回响写作站</title>
@@ -388,6 +387,12 @@ body.dark-mode {
             const bubbleClass = isMe ? 'msg-from-me' : 'msg-from-them';
             const div = document.createElement('div');
             div.className = `msg-bubble ${bubbleClass}`;
+            var msgLink = extractLink(msgData.content);
+            if (msgLink) {
+                div.style.cursor = 'pointer';
+                div.title = '点击跳转';
+                (function(link) { div.addEventListener('click', function() { window.open(link, '_blank'); }); })(msgLink);
+            }
             div.innerHTML = `<div>${renderMessageContent(msgData.content)}</div><div class="msg-time">${new Date(msgData.timestamp).toLocaleString()}</div>`;
             msgList.appendChild(div);
             msgList.scrollTop = msgList.scrollHeight;
@@ -477,6 +482,12 @@ body.dark-mode {
                         const cls = isMe ? 'msg-from-me' : 'msg-from-them';
                         const div = document.createElement('div');
                         div.className = `msg-bubble ${cls}`;
+                        var msgLink = extractLink(m.content);
+                        if (msgLink) {
+                            div.style.cursor = 'pointer';
+                            div.title = '点击跳转';
+                            (function(link) { div.addEventListener('click', function() { window.open(link, '_blank'); }); })(msgLink);
+                        }
                         div.innerHTML = `<div>${renderMessageContent(m.content)}</div><div class="msg-time">${new Date(m.timestamp).toLocaleString()}</div>`;
                         msgList.appendChild(div);
                     });
@@ -493,6 +504,12 @@ body.dark-mode {
             document.getElementById('mainLayout').classList.remove('chat-open');
         }
 
+        function extractLink(text) {
+            if (!text) return null;
+            var m = text.match(/(https?:\/\/[^\s]+)/);
+            return m ? m[1] : null;
+        }
+
         // 渲染内容中的图片URL
         function renderMessageContent(text) {
             if (!text) return '';
@@ -500,6 +517,10 @@ body.dark-mode {
                 return '<img src="' + m + '" style="max-width:120px;max-height:120px;border-radius:8px;display:block;margin:4px 0;object-fit:cover;" loading="lazy">';
             }).replace(/(\/static\/uploads\/stickers\/[^\s]+)/g, function(m) {
                 return '<img src="' + m + '" style="max-width:120px;max-height:120px;border-radius:8px;display:block;margin:4px 0;object-fit:cover;" loading="lazy">';
+            }).replace(/(https?:\/\/[^\s]+\/read\/\d+(?:\?[^\s]*)?)/gi, function(m) {
+                return '<a href="' + m + '" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;padding:4px 12px;border-radius:6px;border:1px solid #f1c40f;color:#f1c40f;text-decoration:none;font-size:0.85em;margin:2px 0;">⚡ 跳转文章</a>';
+            }).replace(/(https?:\/\/[^\s]+)/gi, function(m) {
+                return '<a href="' + m + '" target="_blank" onclick="event.stopPropagation()" style="color:var(--primary);text-decoration:underline;word-break:break-all;">' + m + '</a>';
             });
         }
 

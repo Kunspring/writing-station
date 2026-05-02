@@ -2,10 +2,12 @@
   "authors": [
     "半仙"
   ],
-  "views": 16,
+  "views": 19,
   "edit_mode": "public",
   "allowed_users": [],
   "title": "呐喊",
   "status": "published",
-  "number": 46
+  "number": 46,
+  "cover": "/static/covers/46_b5615711.webp",
+  "cover_thumb": "/static/covers/46_862ea033_thumb.webp"
 }
