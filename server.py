@@ -1541,7 +1541,7 @@ def upload_video():
         return jsonify({"status": "ok", "url": f"/static/uploads/videos/{out_filename}", "note": "转码失败，原始文件已保留"})
 
 # ---------- 错字检查 ----------
-DEEPSEEK_API_KEY = "sk-a26520e32f6047729c52033b2ea3099e"
+DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
 
 # 加载本地错别字字典
