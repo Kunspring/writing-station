@@ -22,12 +22,54 @@ users/messages.json
 # 修复脚本
 scripts/
 
+# 封面图片
+static/covers/
+
+# PWA 图标
+static/icons/
+
+# Service Worker 和 Manifest（自动生成）
+static/sw.js
+static/manifest.json
+
 # 用户上传（仅保留框架）
 static/uploads/
 
 # 用户头像
 users/avatars/
 
+# 截图（本地开发用）
+static/screenshots/
+
 # 已发布的备份
 docs/*.published.bak
+
+# 数据库
+writer.db
+
+# 小说草稿（发布后才追踪）
+novel/ch*.md
+
+# 文章内容（用户数据，不纳入Git仓库）
+docs/*.txt
+docs/*.meta.json
+docs/.counter.*
+
+# 评论数据（用户数据）
+comments/*.comments.json
+
+# 合集数据（用户数据）
+collections/*.json
+
+# 小说发布日志（用户数据）
+novel/progress.json
+novel/publish.log
+
+# 杂项残留
+spell_dict.csv
+server.py.bak
+server.py.bak2
+
+# Profile页面实现（自动生成）
+templates/profile.html
 

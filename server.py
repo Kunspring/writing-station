@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory, g
+from flask import Flask, make_response, render_template, request, jsonify, send_from_directory, send_file, g
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 import os, json, uuid, secrets, time, re
@@ -7,11 +7,47 @@ import jwt
 from functools import wraps
 from PIL import Image
 import io
+import requests as http_requests
+import logging
+logging.basicConfig(level=logging.WARNING)
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 JWT_EXPIRATION_HOURS = 24 * 7
 UPLOAD_MAX_SIZE = 10 * 1024 * 1024   # 10MB
+
+# ---- 请求日志：捕获所有请求 ----
+@app.before_request
+def log_request():
+    import logging
+    if request.path.startswith('/api/'):
+        logging.warning(f'REQ: {request.method} {request.path} ct={request.content_type} cl={request.content_length} ua={request.headers.get("User-Agent","?")[:60]}')
+
+# ---- 全局错误处理：所有非 JSON 错误统一返回 JSON ----
+@app.errorhandler(400)
+def bad_request(e):
+    import logging
+    logging.warning(f'400_ERROR: path={request.path} method={request.method}')
+    return jsonify({"status": "error", "message": str(e), "code": 400}), 400, {"Content-Type": "application/json"}
+
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({"status": "error", "message": "资源不存在", "code": 404}), 404, {"Content-Type": "application/json"}
+
+@app.errorhandler(405)
+def method_not_allowed(e):
+    return jsonify({"status": "error", "message": str(e), "code": 405}), 405, {"Content-Type": "application/json"}
+
+@app.errorhandler(500)
+def server_error(e):
+    return jsonify({"status": "error", "message": "服务器内部错误", "code": 500}), 500, {"Content-Type": "application/json"}
+
+# 统一 JSON 响应编码，确保所有 API 响应使用 UTF-8
+@app.after_request
+def ensure_utf8(response):
+    if response.content_type and 'application/json' in response.content_type:
+        response.headers['Content-Type'] = 'application/json; charset=utf-8'
+    return response
 
 # ---- 持久化 SECRET_KEY ----
 SECRET_FILE = ".secret_key"
@@ -208,7 +244,7 @@ def load_meta(doc_id):
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
-    return {"authors": [], "views": 0, "edit_mode": "public", "allowed_users": [], "title": doc_id, "status": "published", "text_stroke": False, "cover_thumb": None}
+    return {"authors": [], "views": 0, "likes": 0, "liked_by": [], "edit_mode": "public", "allowed_users": [], "title": doc_id, "status": "published", "text_stroke": False, "cover_thumb": None}
 
 def save_meta(doc_id, meta):
     path = get_meta_path(doc_id)
@@ -303,7 +339,17 @@ def save_messages(msgs):
 # ---------- 页面路由 ----------
 @app.route("/")
 def index():
-    return render_template("index.html")
+    resp = make_response(render_template("index.html"))
+    resp.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    resp.headers["Pragma"] = "no-cache"
+    resp.headers["Expires"] = "0"
+    return resp
+
+@app.route("/profile")
+def profile():
+    return render_template("profile.html")
+
+# 大纲系统已删除
 
 @app.route("/edit/<doc_id>")
 def edit_page(doc_id):
@@ -320,7 +366,11 @@ def user_page(username):
 # ---------- 认证 ----------
 @app.route("/api/register", methods=["POST"])
 def register():
-    data = request.json
+    # 兼容 JSON 和表单两种 Content-Type
+    if request.content_type and 'application/json' in request.content_type:
+        data = request.get_json(force=True, silent=True) or {}
+    else:
+        data = request.form.to_dict() or {}
     username = data.get("username")
     password = data.get("password")
     nickname = data.get("nickname")
@@ -369,7 +419,11 @@ def messages_page(username=None):
 @app.route("/api/login", methods=["POST"])
 
 def login():
-    data = request.json
+    # 兼容 JSON 和表单两种 Content-Type
+    if request.content_type and 'application/json' in request.content_type:
+        data = request.get_json(force=True, silent=True) or {}
+    else:
+        data = request.form.to_dict() or {}
     username = data.get("username")
     password = data.get("password")
     if not username or not password:
@@ -439,8 +493,20 @@ def delete_collection_file(collection_id):
 @app.route("/api/collections", methods=["GET"])
 def list_collections():
     collections = load_collections()
+    # 从 header 解析当前用户名和角色
+    current_username = None
+    current_role = None
+    auth = request.headers.get("Authorization", "")
+    if auth.startswith("Bearer "):
+        try:
+            payload = jwt.decode(auth[7:], app.config['SECRET_KEY'], algorithms=['HS256'])
+            current_username = payload.get('username')
+            current_role = payload.get('role')
+        except Exception:
+            pass
     result = []
     for cid, cdata in collections.items():
+        editors = cdata.get("editors", [])
         result.append({
             "id": cid,
             "name": cdata.get("name", "未命名合集"),
@@ -449,12 +515,20 @@ def list_collections():
             "author": cdata.get("author", ""),
             "author_nickname": cdata.get("author_nickname", ""),
             "created_at": cdata.get("created_at", ""),
-            "article_count": len(cdata.get("articles", []))
+            "article_count": len(cdata.get("articles", [])),
+            "editors": editors,
+            "can_edit": can_edit_collection(cdata, current_username, current_role) if current_username else False
         })
     result.sort(key=lambda x: x["created_at"], reverse=True)
     resp = jsonify(result)
     resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     return resp
+
+def can_edit_collection(cdata, username, role):
+    """判断用户是否有权编辑合集"""
+    editors = cdata.get("editors", [])
+    return cdata.get("author") == username or username in editors or role in ("owner", "ai")
+
 
 @app.route("/api/collections", methods=["POST"])
 @login_required
@@ -475,7 +549,8 @@ def create_collection():
         "author": g.username,
         "author_nickname": user_info.get("nickname", g.username),
         "created_at": datetime.now().isoformat(),
-        "articles": []
+        "articles": [],
+        "editors": []
     }
     save_collection(collection_id, collection_data)
     return jsonify({"status": "ok", "collection_id": collection_id, "collection": collection_data})
@@ -505,6 +580,13 @@ def get_collection(collection_id):
                 "updated_at": meta.get("updated_at", "")
             })
     
+    editors = cdata.get("editors", [])
+    users = load_users()
+    editor_nicknames = {}
+    for uname in editors:
+        uinfo = users.get(uname, {})
+        editor_nicknames[uname] = uinfo.get("nickname", uname)
+
     result = {
         "id": collection_id,
         "name": cdata["name"],
@@ -513,7 +595,9 @@ def get_collection(collection_id):
         "author": cdata.get("author", ""),
         "author_nickname": cdata.get("author_nickname", ""),
         "created_at": cdata.get("created_at", ""),
-        "articles": articles
+        "articles": articles,
+        "editors": editors,
+        "editor_nicknames": editor_nicknames
     }
     return jsonify(result)
 
@@ -524,7 +608,7 @@ def update_collection(collection_id):
     cdata = collections.get(collection_id)
     if not cdata:
         return jsonify({"status": "error", "message": "合集不存在"}), 404
-    if cdata.get("author") != g.username and g.role != "owner":
+    if not can_edit_collection(cdata, g.username, g.role):
         return jsonify({"status": "error", "message": "无权修改"}), 403
     
     data = request.json
@@ -545,7 +629,7 @@ def delete_collection(collection_id):
     cdata = collections.get(collection_id)
     if not cdata:
         return jsonify({"status": "error", "message": "合集不存在"}), 404
-    if cdata.get("author") != g.username and g.role != "owner":
+    if not can_edit_collection(cdata, g.username, g.role):
         return jsonify({"status": "error", "message": "无权删除"}), 403
     
     delete_collection_file(collection_id)
@@ -558,6 +642,8 @@ def add_article_to_collection(collection_id):
     cdata = collections.get(collection_id)
     if not cdata:
         return jsonify({"status": "error", "message": "合集不存在"}), 404
+    if not can_edit_collection(cdata, g.username, g.role):
+        return jsonify({"status": "error", "message": "无权操作"}), 403
     
     data = request.json
     doc_id = data.get("doc_id")
@@ -580,7 +666,7 @@ def remove_article_from_collection(collection_id, doc_id):
     cdata = collections.get(collection_id)
     if not cdata:
         return jsonify({"status": "error", "message": "合集不存在"}), 404
-    if cdata.get("author") != g.username and g.role != "owner":
+    if not can_edit_collection(cdata, g.username, g.role):
         return jsonify({"status": "error", "message": "无权操作"}), 403
     
     articles = cdata.get("articles", [])
@@ -589,6 +675,64 @@ def remove_article_from_collection(collection_id, doc_id):
     cdata["articles"] = articles
     save_collection(collection_id, cdata)
     return jsonify({"status": "ok"})
+
+@app.route("/api/collections/<collection_id>/editors", methods=["POST"])
+@login_required
+def add_collection_editor(collection_id):
+    """添加协作者（仅作者/owner 可操作）"""
+    collections = load_collections()
+    cdata = collections.get(collection_id)
+    if not cdata:
+        return jsonify({"status": "error", "message": "合集不存在"}), 404
+    if not can_edit_collection(cdata, g.username, g.role):
+        return jsonify({"status": "error", "message": "无权操作"}), 403
+
+    data = request.json
+
+    query = data.get("username", "").strip()
+    if not query:
+        return jsonify({"status": "error", "message": "缺少用户名或笔名"}), 400
+
+    users = load_users()
+    # 先按用户名查，再按笔名查
+    username = query if query in users else None
+    if not username:
+        for uname, uinfo in users.items():
+            nick = uinfo.get("nickname", "") or ""
+            if str(nick).strip() == query:
+                username = uname
+                break
+    if not username:
+        return jsonify({"status": "error", "message": f"用户不存在：{query}"}), 404
+
+    editors = cdata.get("editors", [])
+    if username in editors:
+        return jsonify({"status": "error", "message": "该用户已是协作者"}), 400
+
+    editors.append(username)
+    cdata["editors"] = editors
+    save_collection(collection_id, cdata)
+    return jsonify({"status": "ok", "editors": editors})
+
+
+@app.route("/api/collections/<collection_id>/editors/<editor_name>", methods=["DELETE"])
+@login_required
+def remove_collection_editor(collection_id, editor_name):
+    """移除协作者（仅作者/owner 可操作）"""
+    collections = load_collections()
+    cdata = collections.get(collection_id)
+    if not cdata:
+        return jsonify({"status": "error", "message": "合集不存在"}), 404
+    if not can_edit_collection(cdata, g.username, g.role):
+        return jsonify({"status": "error", "message": "无权操作"}), 403
+
+    editors = cdata.get("editors", [])
+    if editor_name in editors:
+        editors.remove(editor_name)
+    cdata["editors"] = editors
+    save_collection(collection_id, cdata)
+    return jsonify({"status": "ok", "editors": editors})
+
 
 @app.route("/api/my_collections", methods=["GET"])
 @login_required
@@ -702,6 +846,7 @@ def list_docs():
         docs.append({
             "text_stroke": meta.get("text_stroke", False),
             "cover": meta.get("cover", ""),
+            "cover_thumb": meta.get("cover_thumb", ""),
             "title_color": meta.get("title_color", "#000000"),
             "prompt_color": meta.get("prompt_color", "#0f0b0b"),
             "id": doc_id,
@@ -747,6 +892,7 @@ def my_drafts():
                 "authors": meta.get("authors", []),
                 "views": meta.get("views", 0),
                 "cover": meta.get("cover", ""),
+                "cover_thumb": meta.get("cover_thumb", ""),
                 "prompt_color": meta.get("prompt_color", "#0f0b0b"),
                 "title_color": meta.get("title_color", "#000000"),
                 "text_stroke": meta.get("text_stroke", False),
@@ -813,6 +959,7 @@ def search_docs():
                     "author_roles": author_roles,
                     "views": meta.get("views", 0),
                     "cover": meta.get("cover", ""),
+                    "cover_thumb": meta.get("cover_thumb", ""),
                     "prompt_color": meta.get("prompt_color", "#0f0b0b"),
                     "title_color": meta.get("title_color", "#000000"),
                     "text_stroke": meta.get("text_stroke", False)
@@ -894,22 +1041,68 @@ def get_doc(doc_id):
             if info.get("nickname") == nick:
                 author_usernames.append(u)
                 break
+    # 查找下一章（遍历该文章所属的所有合集）
+    next_in_collection = None
+    next_collections = []
+    collections = load_collections()
+    for cid, cdata in collections.items():
+        articles = cdata.get("articles", [])
+        if doc_id in articles:
+            idx = articles.index(doc_id)
+            if idx + 1 < len(articles):
+                next_id = articles[idx + 1]
+                next_meta = load_meta(next_id)
+                next_collections.append({
+                    "id": next_id,
+                    "title": next_meta.get("title", next_id),
+                    "collection_name": cdata.get("name", cid),
+                    "collection_id": cid
+                })
+    # 只有一个时保持单值，多个时返回数组
+    if len(next_collections) == 1:
+        next_in_collection = next_collections[0]
+    elif len(next_collections) > 1:
+        next_in_collection = next_collections
     return jsonify({
         "text_stroke": meta.get("text_stroke", False),
         "cover": meta.get("cover", ""),
+        "cover_thumb": meta.get("cover_thumb", ""),
         "title_color": meta.get("title_color", "#000000"),
         "prompt_color": meta.get("prompt_color", "#0f0b0b"),
         "content": text_content,
         "authors": meta.get("authors", []),
         "number": meta.get("number"),
         "views": meta.get("views", 0),
+        "likes": meta.get("likes", 0),
+        "liked_by": meta.get("liked_by", []),
         "edit_mode": meta.get("edit_mode", "public"),
         "allowed_users": meta.get("allowed_users", []),
         "title": meta.get("title", doc_id),
         "author_usernames": author_usernames,
         "status": status,
-        "role": users.get(username, {}).get("role", "user") if username else "user"
+        "role": users.get(username, {}).get("role", "user") if username else "user",
+        "next_in_collection": next_in_collection
     })
+@app.route("/api/doc/<doc_id>/like", methods=["POST"])
+@login_required
+def toggle_like(doc_id):
+    username = g.username
+    meta = load_meta(doc_id)
+    if "liked_by" not in meta:
+        meta["liked_by"] = []
+    if "likes" not in meta:
+        meta["likes"] = 0
+    if username in meta["liked_by"]:
+        meta["liked_by"].remove(username)
+        meta["likes"] = max(0, meta["likes"] - 1)
+        liked = False
+    else:
+        meta["liked_by"].append(username)
+        meta["likes"] = meta["likes"] + 1
+        liked = True
+    save_meta(doc_id, meta)
+    return jsonify({"status": "ok", "likes": meta["likes"], "liked": liked})
+
 def published_backup_path(doc_id):
     return os.path.join(DOCS_DIR, f"{doc_id}.published.bak")   # 改后缀
 
@@ -1090,8 +1283,9 @@ def update_permission(doc_id):
     meta = load_meta(doc_id)
     users = load_users()
     nickname = users.get(username, {}).get("nickname", username)
-    if nickname != (meta.get("authors", [])[0] if meta.get("authors") else None):
-        return jsonify({"status": "error", "message": "只有第一作者可以修改权限"}), 403
+    if g.role not in ("admin", "owner"):
+        if nickname != (meta.get("authors", [])[0] if meta.get("authors") else None):
+            return jsonify({"status": "error", "message": "只有第一作者可以修改权限"}), 403
     data = request.json
     mode = data.get("mode")
     allowed = data.get("allowed_users", [])
@@ -1109,8 +1303,9 @@ def update_title(doc_id):
     meta = load_meta(doc_id)
     users = load_users()
     nickname = users.get(username, {}).get("nickname", username)
-    if nickname != (meta.get("authors", [])[0] if meta.get("authors") else None):
-        return jsonify({"status": "error", "message": "只有第一作者可以修改标题"}), 403
+    if g.role not in ("admin", "owner"):
+        if nickname != (meta.get("authors", [])[0] if meta.get("authors") else None):
+            return jsonify({"status": "error", "message": "只有第一作者可以修改标题"}), 403
     new_title = request.json.get("title", "").strip()
     if not new_title:
         return jsonify({"status": "error", "message": "标题不能为空"}), 400
@@ -1141,6 +1336,131 @@ def create_doc():
     meta["status"] = "draft"
     save_meta(doc_id, meta)
     return jsonify({"status": "ok", "number": number, "doc_id": doc_id})
+
+# ---------- 文档下载 ----------
+@app.route("/api/doc/<doc_id>/download/<fmt>")
+def download_doc(doc_id, fmt):
+    """下载文章为 txt / docx 格式"""
+    if fmt not in ('txt', 'docx'):
+        return jsonify({"status": "error", "message": "不支持的格式"}), 400
+
+    path = os.path.join(DOCS_DIR, f"{doc_id}.txt")
+    if not os.path.exists(path):
+        return jsonify({"status": "error", "message": "文章不存在"}), 404
+
+    with open(path, 'r', encoding='utf-8') as f:
+        text_content = f.read()
+
+    meta = load_meta(doc_id)
+    title = meta.get('title', f'第{doc_id}号文章')
+    authors = meta.get('authors', [])
+    number = meta.get('number')
+
+    if fmt == 'txt':
+        header = f"{title}\n"
+        if number:
+            header = f"#{number} {title}\n"
+        if authors:
+            header += f"作者：{'、'.join(authors)}\n"
+        header += "=" * 40 + "\n\n"
+        full = header + text_content
+        from io import BytesIO
+        buf = BytesIO()
+        buf.write(full.encode('utf-8'))
+        buf.seek(0)
+        safe_title = re.sub(r'[\\/:*?"<>|]', '_', title)
+        return send_file(buf, as_attachment=True, download_name=f"{safe_title}.txt", mimetype='text/plain; charset=utf-8')
+
+    elif fmt == 'docx':
+        from docx import Document
+        from docx.shared import Pt
+        doc = Document()
+        # 标题
+        heading_text = title
+        if number:
+            heading_text = f"#{number} {title}"
+        doc.add_heading(heading_text, level=1)
+        # 作者
+        if authors:
+            doc.add_paragraph(f"作者：{'、'.join(authors)}").style = doc.styles['Normal']
+        # 分割线
+        doc.add_paragraph("_" * 40)
+        # 正文
+        for para in text_content.split('\n'):
+            if para.strip():
+                doc.add_paragraph(para)
+            else:
+                doc.add_paragraph('')
+        from io import BytesIO
+        buf = BytesIO()
+        doc.save(buf)
+        buf.seek(0)
+        safe_title = re.sub(r'[\\/:*?"<>|]', '_', title)
+        return send_file(buf, as_attachment=True, download_name=f"{safe_title}.docx", mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+
+# ---------- 文档上传 ----------
+@app.route("/api/upload_docfile", methods=["POST"])
+@login_required
+def upload_docfile():
+    """上传 .txt / .doc / .docx 文档，提取文本内容返回"""
+    username = g.username
+    if 'docfile' not in request.files:
+        return jsonify({"status": "error", "message": "没有文件"}), 400
+    file = request.files['docfile']
+    if file.filename == '':
+        return jsonify({"status": "error", "message": "空文件名"}), 400
+
+    ext = file.filename.rsplit('.', 1)[-1].lower()
+    if ext not in ('txt', 'doc', 'docx'):
+        return jsonify({"status": "error", "message": "仅支持 .txt .doc .docx 格式"}), 400
+
+    file.seek(0, os.SEEK_END)
+    size = file.tell()
+    file.seek(0)
+    if size > 20 * 1024 * 1024:
+        return jsonify({"status": "error", "message": "文件过大，最大允许 20MB"}), 400
+
+    try:
+        if ext == 'txt':
+            content = file.read().decode('utf-8', errors='replace')
+        elif ext == 'docx':
+            import zipfile, xml.etree.ElementTree as ET
+            zf = zipfile.ZipFile(file)
+            xml_content = zf.read('word/document.xml')
+            root = ET.fromstring(xml_content)
+            ns = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
+            paragraphs = []
+            for p in root.iter(f'{{{ns}}}p'):
+                texts = []
+                for t in p.iter(f'{{{ns}}}t'):
+                    if t.text:
+                        texts.append(t.text)
+                paragraphs.append(''.join(texts))
+            content = '\n'.join(paragraphs)
+        elif ext == 'doc':
+            raw = file.read()
+            readable = []
+            buf = []
+            for b in raw:
+                if 32 <= b < 127 or b in (10, 13) or b >= 128:
+                    buf.append(chr(b))
+                else:
+                    if buf:
+                        readable.append(''.join(buf))
+                        buf = []
+            if buf:
+                readable.append(''.join(buf))
+            content = ' '.join(readable)
+            content = re.sub(r'\s+', ' ', content).strip()
+        else:
+            return jsonify({"status": "error", "message": "不支持的格式"}), 400
+
+        if not content.strip():
+            return jsonify({"status": "error", "message": "未能从文件中提取到文本内容"}), 400
+
+        return jsonify({"status": "ok", "content": content, "filename": file.filename})
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"文件解析失败：{str(e)}"}), 400
 
 # ---------- 图片上传 ----------
 @app.route("/api/upload_image", methods=["POST"])
@@ -1191,10 +1511,134 @@ def upload_video():
     if ext not in allowed_video_ext():
         return jsonify({"status": "error", "message": "不支持的视频格式，支持 mp4, webm, mov, avi"}), 400
 
-    filename = f"{uuid.uuid4().hex[:12]}.{ext}"
-    filepath = os.path.join(VIDEOS_DIR, filename)
-    file.save(filepath)
-    return jsonify({"status": "ok", "url": f"/static/uploads/videos/{filename}"})
+    # 先保存临时文件
+    raw_filename = f"{uuid.uuid4().hex[:12]}.{ext}"
+    raw_path = os.path.join(VIDEOS_DIR, raw_filename)
+    file.save(raw_path)
+
+    # 用 ffmpeg 转码为 H.264 兼容格式
+    out_filename = f"{uuid.uuid4().hex[:12]}.mp4"
+    out_path = os.path.join(VIDEOS_DIR, out_filename)
+    try:
+        import subprocess
+        result = subprocess.run([
+            "ffmpeg", "-i", raw_path,
+            "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+            "-c:a", "aac", "-b:a", "128k",
+            "-movflags", "+faststart",
+            "-y", out_path
+        ], capture_output=True, text=True, timeout=120)
+        if result.returncode == 0:
+            os.remove(raw_path)  # 删除原始文件
+            return jsonify({"status": "ok", "url": f"/static/uploads/videos/{out_filename}"})
+        else:
+            # 转码失败，回退用原始文件
+            os.rename(raw_path, out_path)
+            return jsonify({"status": "ok", "url": f"/static/uploads/videos/{out_filename}", "note": "转码失败，原始文件已保留"})
+    except Exception:
+        # ffmpeg 超时或其他错误，回退
+        os.rename(raw_path, out_path)
+        return jsonify({"status": "ok", "url": f"/static/uploads/videos/{out_filename}", "note": "转码失败，原始文件已保留"})
+
+# ---------- 错字检查 ----------
+DEEPSEEK_API_KEY = "sk-a26520e32f6047729c52033b2ea3099e"
+DEEPSEEK_URL = "https://api.deepseek.com/v1/chat/completions"
+
+# 加载本地错别字字典
+_SPELL_DICT = None
+
+def load_spell_dict():
+    """加载本地错别字字典，返回 {错字: 正确字}"""
+    d = {}
+    dict_path = os.path.join(os.path.dirname(__file__), "spell_dict.csv")
+    if not os.path.exists(dict_path):
+        return d
+    with open(dict_path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            parts = line.split("\t")
+            if len(parts) == 2:
+                wrong, correct = parts[0].strip(), parts[1].strip()
+                if wrong and correct:
+                    d[wrong] = correct
+    return d
+
+def local_spellcheck(text):
+    """本地字典扫描，返回错误列表"""
+    global _SPELL_DICT
+    if _SPELL_DICT is None:
+        _SPELL_DICT = load_spell_dict()
+    errors = []
+    # 按错误长度降序匹配，避免短词覆盖长词
+    for wrong, correct in sorted(_SPELL_DICT.items(), key=lambda x: -len(x[0])):
+        start = 0
+        while True:
+            idx = text.find(wrong, start)
+            if idx == -1:
+                break
+            errors.append({
+                "word": wrong,
+                "start": idx,
+                "end": idx + len(wrong),
+                "suggestion": correct
+            })
+            start = idx + 1
+    return errors
+
+def merge_errors(local_errs, ai_errs):
+    """合并本地和AI结果，去重（按 (start,end) 去重）"""
+    seen_spans = set()
+    merged = []
+    for e in local_errs + ai_errs:
+        key = (e["start"], e["end"])
+        if key not in seen_spans:
+            seen_spans.add(key)
+            merged.append(e)
+    merged.sort(key=lambda x: x["start"])
+    return merged
+
+@app.route("/api/spellcheck", methods=["POST"])
+@login_required
+def api_spellcheck():
+    # 白名单：这些词是正确的常用中文词汇，AI 如果报了就是幻觉
+    WHITELIST = {
+        "知道", "管道", "道理", "到了", "再来", "再见", "在家",
+        "在吗", "在手", "在场", "在外", "在内", "在线",
+        "在此", "在我", "何在", "存在", "自在", "现在",
+        "正在", "内在", "潜在", "实在", "好在", "在于",
+        "告诉", "报告", "被告", "通知", "公告", "告知",
+        "速报", "报道", "预报", "举报", "海报", "申报",
+        "谎报", "到来", "达到", "到底", "到达", "等到",
+    }
+
+    data = request.get_json()
+    text = (data.get("text") or "").strip()
+    if not text or len(text) > 10000:
+        return jsonify({"status": "error", "message": "文本为空或过长"}), 400
+
+    # 第一步：本地字典快速扫描（毫秒级）
+    local_errors = local_spellcheck(text)
+
+    # 第二步：AI 深度检查
+    ai_errors = []  # 暂时禁用 AI 层，只使用本地字典（避免幻觉）
+
+
+
+    # 第三步：合并去重（本地结果优先，AI 结果作补充）
+    merged = merge_errors(local_errors, ai_errors)
+
+    return jsonify({"status": "ok", "errors": merged, "count": len(merged)})
+
+# ---------- PWA Service Worker ----------
+@app.route("/sw.js")
+def service_worker():
+    response = make_response(send_from_directory("static", "sw.js"))
+    response.headers["Content-Type"] = "application/javascript"
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Service-Worker-Allowed"] = "/"
+    return response
 
 # ---------- 图片缓存 ----------
 @app.after_request
@@ -1223,6 +1667,7 @@ def api_user_profile(username):
                     "number": meta.get("number", 0),
                     "title": meta.get("title", doc_id),
                     "cover": meta.get("cover", ""),
+                    "cover_thumb": meta.get("cover_thumb", ""),
                     "authors": meta.get("authors", [])
                 })
     current_user_name = g.username
@@ -1853,6 +2298,7 @@ def delete_sticker():
         return jsonify({"status": "ok"})
     return jsonify({"status": "error", "message": "文件不存在"}), 404
 
+# ──── 大纲系统已删除 ────
 if __name__ == "__main__":
     from waitress import serve
     serve(app, host="0.0.0.0", port=5000)

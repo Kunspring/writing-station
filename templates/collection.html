@@ -4,7 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>合集 - 末日回响写作站</title>
+    <meta name="theme-color" content="#d4a574">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="manifest" href="/static/manifest.json">
     <link rel="shortcut icon" href="/static/favicon.ico">
+    <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
     <style>
         :root {
             --bg: #fdf6ee;
@@ -195,8 +200,18 @@ body.dark-mode {
             <h3>编辑合集</h3>
             <input type="text" id="editName" placeholder="合集名称" maxlength="50">
             <textarea id="editDesc" placeholder="合集简介" maxlength="200"></textarea>
-            <div class="modal-buttons">
-                <button class="basic-btn" onclick="document.getElementById('editModal').style.display='none'">取消</button>
+
+            <hr style="border: none; border-top: 1px solid var(--border); margin: 16px 0;">
+            <h4 style="margin:0 0 8px;">协作者管理</h4>
+            <div id="editorList" style="margin-bottom:10px;">加载中...</div>
+            <div style="display:flex; gap:6px;">
+                <input type="text" id="editorInput" placeholder="输入用户名或笔名" style="flex:1;">
+                <button class="basic-btn" onclick="addEditor()" style="white-space:nowrap;">添加</button>
+            </div>
+            <div id="editorError" class="error-message" style="display:none; margin-top:6px; font-size:0.85em; color:#e74c3c;"></div>
+
+            <div class="modal-buttons" style="margin-top:16px;">
+                <button class="basic-btn" onclick="document.getElementById('editModal').style.display='none'">关闭</button>
                 <button class="basic-btn" onclick="submitEdit()" style="background: var(--primary) !important; color: white !important;">保存</button>
             </div>
         </div>
@@ -208,6 +223,16 @@ body.dark-mode {
 
 
 <script>
+        /* ---- Service Worker（PWA） ---- */
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(function(reg) {
+                console.log('SW registered:', reg.scope);
+            }).catch(function(err) {
+                console.log('SW registration failed:', err);
+            });
+        }
+/* ---- 兼容性 polyfill ---- */
+(function(){if(!NodeList.prototype.forEach)NodeList.prototype.forEach=Array.prototype.forEach;if(!Array.prototype.includes)Array.prototype.includes=function(e){return this.indexOf(e)!==-1};if(!String.prototype.endsWith)String.prototype.endsWith=function(s){return this.length>=s.length&&this.indexOf(s,this.length-s.length)!==-1};if(!String.prototype.startsWith)String.prototype.startsWith=function(s){return this.indexOf(s)===0}})();
 
         const themeCheckbox = document.getElementById('themeCheckbox');
         function initTheme() {
@@ -229,7 +254,71 @@ body.dark-mode {
         if (token) {
             options.headers = { ...options.headers, 'Authorization': 'Bearer ' + token };
         }
-        return fetch(url, { ...options, signal: AbortSignal.timeout(15000) });
+        // 兼容的 fetch 超时：用 AbortController + Promise.race 替代 AbortSignal.timeout
+        var controller = new AbortController();
+        var timeoutId = setTimeout(function() { controller.abort(); }, 15000);
+        return Promise.race([
+            fetch(url, { ...options, signal: controller.signal }),
+            new Promise(function(resolve, reject) {
+                setTimeout(function() { reject(new Error('网络请求超时')); }, 15000);
+            })
+        ]).then(function(v) { clearTimeout(timeoutId); return v; }, function(e) { clearTimeout(timeoutId); throw e; });
+    }
+
+    let colData = null;
+
+    async function loadEditors() {
+        if (!colData) {
+            const res = await fetch(`/api/collections/${collectionId}`);
+            colData = await res.json();
+        }
+        const nicknames = colData.editor_nicknames || {};
+        const editors = colData.editors || [];
+        const container = document.getElementById('editorList');
+        if (editors.length === 0) {
+            container.innerHTML = '<span style="opacity:0.5; font-size:0.9em;">暂无协作者</span>';
+            return;
+        }
+        container.innerHTML = editors.map(u => {
+            const nickname = nicknames[u] || u;
+            return `
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:6px 8px; border:1px solid var(--border); border-radius:6px; margin-bottom:4px;">
+                <span>${nickname}${nickname !== u ? `<span style="opacity:0.4; font-size:0.85em; margin-left:6px;">(@${u})</span>` : ''}</span>
+                <span onclick="removeEditor('${u}')" style="cursor:pointer; color:#e74c3c; font-size:0.85em;">移除</span>
+            </div>
+        `}).join('');
+    }
+
+    async function addEditor() {
+        const input = document.getElementById('editorInput');
+        const username = input.value.trim();
+        if (!username) return;
+        const errorEl = document.getElementById('editorError');
+        errorEl.style.display = 'none';
+        const res = await authFetch(`/api/collections/${collectionId}/editors`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+        });
+        const data = await res.json();
+        if (data.status === 'ok') {
+            input.value = '';
+            colData.editors = data.editors;
+            loadEditors();
+        } else {
+            errorEl.textContent = data.message;
+            errorEl.style.display = 'block';
+        }
+    }
+
+    async function removeEditor(username) {
+        if (!confirm(`移除协作者 ${username}？`)) return;
+        const res = await authFetch(`/api/collections/${collectionId}/editors/${username}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.status === 'ok') {
+            colData.editors = data.editors;
+            loadEditors();
+        } else alert(data.message);
     }
 
     async function loadCollection() {
@@ -248,8 +337,12 @@ body.dark-mode {
 
         // 检查是否是作者
         const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-        if (currentUser && (col.author === currentUser.username || currentUser.role === 'owner')) {
+        const canEdit = currentUser && (col.author === currentUser.username || (col.editors || []).includes(currentUser.username) || currentUser.role === 'owner' || currentUser.role === 'ai');
+        if (canEdit) {
             document.getElementById('editBtn').style.display = 'inline-block';
+        }
+        // 删除按钮只有作者/owner 可操作
+        if (currentUser && (col.author === currentUser.username || currentUser.role === 'owner')) {
             document.getElementById('deleteBtn').style.display = 'inline-block';
         }
 
@@ -264,7 +357,7 @@ body.dark-mode {
                     <div class="article-title">${a.title || a.id}</div>
                     <div class="article-authors">${a.authors.join(', ') || '未知'} · #${a.number}</div>
                 </div>
-                ${currentUser && (col.author === currentUser.username || currentUser.role === 'owner') ? `
+                ${canEdit ? `
                     <button class="article-remove-btn" onclick="event.stopPropagation(); removeArticle('${a.id}')">移除</button>
                 ` : ''}
             </div>
@@ -283,6 +376,9 @@ body.dark-mode {
         document.getElementById('editName').value = document.getElementById('colName').textContent;
         document.getElementById('editDesc').value = document.getElementById('colDesc').textContent === '暂无简介' ? '' : document.getElementById('colDesc').textContent;
         document.getElementById('editModal').style.display = 'flex';
+        document.getElementById('editorError').style.display = 'none';
+        document.getElementById('editorInput').value = '';
+        loadEditors();
     }
 
     async function submitEdit() {
